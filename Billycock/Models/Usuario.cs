@@ -14,6 +14,6 @@ namespace Billycock.Models
         public DateTime? fechaInscripcion { get; set; }
         public int? idEstado { get; set; }
         public string facturacion { get; set; }
-        public double? pago { get; set; }
+        public int? pago { get; set; }
     }
 }

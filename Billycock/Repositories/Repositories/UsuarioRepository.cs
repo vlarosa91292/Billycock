@@ -83,6 +83,7 @@ namespace Billycock.Repositories.Repositories
         public async Task<string> InsertUsuario(UsuarioDTO usuario)
         {
             UsuarioDTO user = new UsuarioDTO();
+            PlataformaCuenta platform = new PlataformaCuenta();
             List<PlataformaCuentaDTO> plataformacuentas = new List<PlataformaCuentaDTO>();
             PlataformaCuentaDTO plataformacuenta = new PlataformaCuentaDTO();
             List<string> resultadonulo = new List<string>();
@@ -124,6 +125,14 @@ namespace Billycock.Repositories.Repositories
                         idCuenta = plataformacuentas[i].idCuenta
                     });
                     await Save();
+
+                    platform = await (from p in _context.PLATAFORMACUENTA
+                                      where p.idPlataforma == plataformacuentas[i].idPlataforma && p.idCuenta == plataformacuentas[i].idCuenta
+                                      select p).FirstOrDefaultAsync();
+                    platform.usuariosdisponibles -= usuario.plataformasxusuario[i].cantidad;
+
+                    _context.PLATAFORMACUENTA.Update(platform);
+                    await Save();
                 }
                 _context.HISTORY.Add(new BillycockHistory() 
                 {
@@ -148,33 +157,34 @@ namespace Billycock.Repositories.Repositories
             }
         }
 
-        private double? ObtenerMontoPago(List<UsuarioPlataformaDTO> usuarioPlataforma)
+        private int? ObtenerMontoPago(List<UsuarioPlataformaDTO> usuarioPlataforma)
         {
-            double? pago = 0;
+            int? pago = 0;
+            double? acumulado=0;
             for (int i = 0; i < usuarioPlataforma.Count; i++)
             {
-                pago += ((from p in _context.PLATAFORMA
+                acumulado += ((from p in _context.PLATAFORMA
                             where p.idPlataforma == usuarioPlataforma[i].idPlataforma
                             select p.precio).FirstOrDefault()) * usuarioPlataforma[i].cantidad;
                 
                 if(i == usuarioPlataforma.Count-1)
                 {
-                    if (usuarioPlataforma[i].cantidad == 1 && usuarioPlataforma.Count > 1) { pago = reproceso(1,usuarioPlataforma.Count,pago); }
-                    else if (usuarioPlataforma[i].cantidad > 1 && usuarioPlataforma.Count == 1) { pago = reproceso(2, usuarioPlataforma[i].cantidad, pago); }
+                    if (usuarioPlataforma[i].cantidad == 1 && usuarioPlataforma.Count > 1) { pago = reproceso(1,usuarioPlataforma.Count,acumulado); }
+                    else if (usuarioPlataforma[i].cantidad > 1 && usuarioPlataforma.Count == 1) { pago = reproceso(2, usuarioPlataforma[i].cantidad, acumulado); }
                 }
             }
             return pago;
         }
 
-        private double reproceso(int tipo, int? cuenta,double? monto)
+        private int reproceso(int tipo, int? cuenta,double? monto)
         {
             if(tipo == 1)
             {
-                return (double)((monto / cuenta) * (cuenta * 0.8)); 
+                return (int)((monto / cuenta) * (cuenta * 0.9)); 
             }
             else
             {
-                return (double)(monto * 0.7);
+                return (int)(monto * 0.85);
             }
         }
 
@@ -190,7 +200,7 @@ namespace Billycock.Repositories.Repositories
                     idEstado = user.idEstado,
                     fechaInscripcion = user.fechaInscripcion,
                     facturacion = user.facturacion,
-                    pago = ObtenerMontoPago(user.plataformasxusuario)
+                    pago = user.pago
                 });
                 await Save();
                 return "Actualizacion de Usuario Correcta";

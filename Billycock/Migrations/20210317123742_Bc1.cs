@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Billycock.Migrations
 {
-    public partial class Billycock1 : Migration
+    public partial class Bc1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -41,6 +41,21 @@ namespace Billycock.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ESTADO", x => x.idEstado);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "HISTORY",
+                columns: table => new
+                {
+                    idHistory = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Request = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Response = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HISTORY", x => x.idHistory);
                 });
 
             migrationBuilder.CreateTable(
@@ -83,7 +98,7 @@ namespace Billycock.Migrations
                     fechaInscripcion = table.Column<DateTime>(type: "datetime2", nullable: true),
                     idEstado = table.Column<int>(type: "int", nullable: true),
                     facturacion = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    pago = table.Column<double>(type: "float", nullable: true)
+                    pago = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -112,6 +127,9 @@ namespace Billycock.Migrations
 
             migrationBuilder.DropTable(
                 name: "ESTADO");
+
+            migrationBuilder.DropTable(
+                name: "HISTORY");
 
             migrationBuilder.DropTable(
                 name: "PLATAFORMA");

@@ -162,8 +162,8 @@ namespace Billycock.Migrations
                     b.Property<int?>("idEstado")
                         .HasColumnType("int");
 
-                    b.Property<double?>("pago")
-                        .HasColumnType("float");
+                    b.Property<int?>("pago")
+                        .HasColumnType("int");
 
                     b.HasKey("idUsuario");
 

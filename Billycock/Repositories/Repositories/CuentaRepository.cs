@@ -327,6 +327,7 @@ namespace Billycock.Repositories.Repositories
                           select new PlataformaCuentaDTO()
                           {
                               idCuenta = pc.idCuenta,
+                              idPlataforma = pc.idPlataforma,
                               usuariosdisponibles = pc.usuariosdisponibles
                           }).FirstOrDefaultAsync();
         }

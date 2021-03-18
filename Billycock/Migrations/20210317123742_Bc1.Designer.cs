@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Billycock.Migrations
 {
     [DbContext(typeof(BillycockServiceContext))]
-    [Migration("20210311224750_Billycock2")]
-    partial class Billycock2
+    [Migration("20210317123742_Bc1")]
+    partial class Bc1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -164,8 +164,8 @@ namespace Billycock.Migrations
                     b.Property<int?>("idEstado")
                         .HasColumnType("int");
 
-                    b.Property<double?>("pago")
-                        .HasColumnType("float");
+                    b.Property<int?>("pago")
+                        .HasColumnType("int");
 
                     b.HasKey("idUsuario");
 

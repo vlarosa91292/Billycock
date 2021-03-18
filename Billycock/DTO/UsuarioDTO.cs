@@ -13,7 +13,7 @@ namespace Billycock.DTO
         public int? idEstado { get; set; }
         public string descEstado { get; set; }
         public string facturacion { get; set; }
-        public double? pago { get; set; }
+        public int? pago { get; set; }
         public List<UsuarioPlataformaDTO> plataformasxusuario { get; set; }
     }
 }

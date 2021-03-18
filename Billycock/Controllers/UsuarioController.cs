@@ -24,6 +24,17 @@ namespace Billycock.Controllers
         }
 
         // GET: api/Usuario
+        [HttpGet]
+        public UsuarioDTO GetUsuariosPrueba()
+        {
+            return new UsuarioDTO()
+            {
+                idUsuario = 1,
+                descripcion = "Prueba"
+            };
+        }
+
+        // GET: api/Usuario
         [HttpGet("ViewUsers")]
         public async Task<ActionResult<IEnumerable<UsuarioDTO>>> GetUsuarios()
         {
