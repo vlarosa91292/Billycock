@@ -35,38 +35,39 @@ namespace Billycock.Repositories.Repositories
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        public async Task Save()
-        {
-            await _context.SaveChangesAsync();
-        }
 
         public async Task<string> DeleteCuenta(Cuenta cuenta)
         {
+            CommonRepository<Cuenta> _commonRepository_C = new CommonRepository<Cuenta>();
+            CommonRepository<PlataformaCuenta> _commonRepository_PC = new CommonRepository<PlataformaCuenta>();
+            string mensaje = string.Empty;
             CuentaDTO account = await GetCuentabyId(cuenta.idCuenta);
-            try
+            mensaje = await _commonRepository_C.DeleteLogicoObjeto(new Cuenta()
+            { 
+                idCuenta = account.idCuenta,
+                descripcion = account.descripcion,
+                diminutivo = account.diminutivo,
+                nombre = account.nombre,
+                password = account.password,
+                netflix = account.netflix,
+                amazon = account.amazon,
+                disney = account.disney,
+                hbo = account.hbo,
+                youtube = account.youtube,
+                spotify = account.spotify,
+                idEstado = 2
+            }) + Environment.NewLine;
+            foreach (var item in account.plataformaCuentas)
             {
-                _context.Update(new Cuenta()
+                mensaje += await _commonRepository_PC.UpdateObjeto(new PlataformaCuenta()
                 {
-                    idCuenta = account.idCuenta,
-                    descripcion = cuenta.descripcion,
-                    idEstado = 2,
-                    netflix = cuenta.netflix,
-                    amazon = cuenta.amazon,
-                    disney = cuenta.disney,
-                    hbo = cuenta.hbo,
-                    youtube = cuenta.youtube,
-                    spotify = cuenta.spotify,
-                    diminutivo = cuenta.diminutivo,
-                    nombre = cuenta.nombre,
-                    password = cuenta.password
+                    idPlataforma = item.idPlataforma,
+                    idCuenta = item.idCuenta,
+                    fechaPago = item.fechaPago,
+                    usuariosdisponibles = item.usuariosdisponibles
                 });
-                await Save();
-                return "Eliminacion de Cuenta Correcta";
             }
-            catch (Exception ex)
-            {
-                return "Error en la eliminacion de Cuenta";
-            }
+            return mensaje;
         }
 
         public async Task<CuentaDTO> GetCuentabyId(int? id)
@@ -86,47 +87,43 @@ namespace Billycock.Repositories.Repositories
 
         public async Task<string> InsertCuenta(Cuenta cuenta)
         {
+            CommonRepository<Cuenta> _commonRepository_C = new CommonRepository<Cuenta>();
+            CommonRepository<PlataformaCuenta> _commonRepository_PC = new CommonRepository<PlataformaCuenta>();
             CuentaDTO account;
             List<int> idPlataformas=new List<int>();
-            try
-            {
-                await _context.CUENTA.AddAsync(new Cuenta()
-                {
-                    descripcion = cuenta.descripcion,
-                    netflix = cuenta.netflix,
-                    amazon = cuenta.amazon,
-                    disney = cuenta.disney,
-                    hbo = cuenta.hbo,
-                    youtube = cuenta.youtube,
-                    spotify = cuenta.spotify,
-                    diminutivo = cuenta.diminutivo,
-                    idEstado = 1,
-                    nombre = cuenta.nombre,
-                    password = cuenta.password
-                });
-                await Save();
-                if (cuenta.netflix == 1) idPlataformas.Add(1);
-                if (cuenta.amazon == 1) idPlataformas.Add(2);
-                if (cuenta.disney == 1) idPlataformas.Add(3);
-                if (cuenta.hbo == 1) idPlataformas.Add(4);
-                if (cuenta.youtube == 1) idPlataformas.Add(5);
-                if (cuenta.spotify == 1) idPlataformas.Add(6);
-                account = await GetCuentabyName(cuenta.descripcion);
-                foreach (var item in idPlataformas)
-                {
-                    await _context.PLATAFORMACUENTA.AddAsync(new PlataformaCuenta()
-                    {
-                        idCuenta = account.idCuenta,
-                        idPlataforma = item,
-                        fechaPago = DateTime.Now.ToShortDateString(),
-                        usuariosdisponibles = await (from p in _context.PLATAFORMA where p.idPlataforma == item select p.numeroMaximoUsuarios).FirstOrDefaultAsync()
-                    });
-                    await Save();
-                }
+            string mensaje=string.Empty;
 
-                return "CREACION DE CUENTA EXITOSA";
+            mensaje = await _commonRepository_C.InsertObjeto(cuenta) + Environment.NewLine;
+            if(mensaje != "0")
+            {
+                try
+                {
+                    if (cuenta.netflix == 1) idPlataformas.Add(1);
+                    if (cuenta.amazon == 1) idPlataformas.Add(2);
+                    if (cuenta.disney == 1) idPlataformas.Add(3);
+                    if (cuenta.hbo == 1) idPlataformas.Add(4);
+                    if (cuenta.youtube == 1) idPlataformas.Add(5);
+                    if (cuenta.spotify == 1) idPlataformas.Add(6);
+                    account = await GetCuentabyName(cuenta.descripcion);
+                    foreach (var item in idPlataformas)
+                    {
+                        mensaje += await _commonRepository_PC.InsertObjeto(new PlataformaCuenta()
+                        {
+                            idCuenta = account.idCuenta,
+                            idPlataforma = item,
+                            fechaPago = DateTime.Now.ToShortDateString(),
+                            usuariosdisponibles = await (from p in _context.PLATAFORMA where p.idPlataforma == item select p.numeroMaximoUsuarios).FirstOrDefaultAsync()
+                        });
+                    }
+
+                    return mensaje;
+                }
+                catch 
+                {
+                    return "ERROR EN LA CREACION DE PLATAFORMAS EN CUENTA-SERVER";
+                }
             }
-            catch 
+            else
             {
                 return "ERROR EN LA CREACION DE CUENTA-SERVER";
             }
@@ -134,85 +131,94 @@ namespace Billycock.Repositories.Repositories
 
         public async Task<string> UpdateCuenta(Cuenta cuenta)
         {
+            CommonRepository<Cuenta> _commonRepository_C = new CommonRepository<Cuenta>();
+            CommonRepository<PlataformaCuenta> _commonRepository_PC = new CommonRepository<PlataformaCuenta>();
             CuentaDTO account = await GetCuentabyId(cuenta.idCuenta);
             List<int> idPlataformasAgregar = new List<int>();
             List<int> idPlataformasEliminar = new List<int>();
-            try
-            {
-                _context.Update(new Cuenta()
-                {
-                    idCuenta = cuenta.idCuenta,
-                    descripcion = cuenta.descripcion,
-                    netflix = cuenta.netflix,
-                    amazon = cuenta.amazon,
-                    disney = cuenta.disney,
-                    hbo = cuenta.hbo,
-                    youtube = cuenta.youtube,
-                    spotify = cuenta.spotify,
-                    diminutivo = cuenta.diminutivo,
-                    idEstado = cuenta.idEstado,
-                    nombre = cuenta.nombre,
-                    password = cuenta.password
-                });
-                await Save();
-                if (cuenta.netflix != account.netflix)
-                {
-                    if(cuenta.netflix < account.netflix) idPlataformasEliminar.Add(1);
-                    else idPlataformasAgregar.Add(1);
-                }
-                if (cuenta.amazon != account.amazon)
-                {
-                    if (cuenta.amazon < account.amazon) idPlataformasEliminar.Add(2);
-                    else idPlataformasAgregar.Add(2);
-                }
-                if (cuenta.disney != account.disney)
-                {
-                    if (cuenta.disney < account.disney) idPlataformasEliminar.Add(3);
-                    else idPlataformasAgregar.Add(3);
-                }
-                if (cuenta.hbo != account.hbo)
-                {
-                    if (cuenta.hbo < account.hbo) idPlataformasEliminar.Add(4);
-                    else idPlataformasAgregar.Add(4);
-                }
-                if (cuenta.youtube != account.youtube)
-                {
-                    if (cuenta.youtube < account.youtube) idPlataformasEliminar.Add(5);
-                    else idPlataformasAgregar.Add(5);
-                }
-                if (cuenta.spotify != account.spotify)
-                {
-                    if (cuenta.spotify < account.spotify) idPlataformasEliminar.Add(6);
-                    else idPlataformasAgregar.Add(6);
-                }
-                foreach (var item in idPlataformasAgregar)
-                {
-                    await _context.PLATAFORMACUENTA.AddAsync(new PlataformaCuenta()
-                    {
-                        idPlataforma = item,
-                        idCuenta = cuenta.idCuenta,
-                        fechaPago = DateTime.Now.ToShortDateString(),
-                        usuariosdisponibles = await (from p in _context.PLATAFORMA where p.idPlataforma == item select p.numeroMaximoUsuarios).FirstOrDefaultAsync()
-                    });
-                    await Save();
-                }
-                foreach (var item in idPlataformasEliminar)
-                {
-                     _context.PLATAFORMACUENTA.Remove(new PlataformaCuenta()
-                    {
-                        idCuenta = cuenta.idCuenta,
-                        idPlataforma = item
-                     });
-                    await Save();
-                }
+            string mensaje = string.Empty;
 
-                return "ACTUALIZACION DE CUENTA EXITOSA";
-            }
-            catch(Exception ex)
+            mensaje = await _commonRepository_C.UpdateObjeto(new Cuenta()
             {
-                Console.WriteLine(ex.Message);
-                return "ERROR EN LA CREACION DE ACTUALIZACION-SERVER";
+                idCuenta = account.idCuenta,
+                descripcion = account.descripcion,
+                diminutivo = account.diminutivo,
+                nombre = account.nombre,
+                password = account.password,
+                netflix = account.netflix,
+                amazon = account.amazon,
+                disney = account.disney,
+                hbo = account.hbo,
+                youtube = account.youtube,
+                spotify = account.spotify,
+                idEstado = account.idEstado
+            }) + Environment.NewLine;
+            if(mensaje != "0")
+            {
+                try
+                {
+                    if (cuenta.netflix != account.netflix)
+                    {
+                        if (cuenta.netflix < account.netflix) idPlataformasEliminar.Add(1);
+                        else idPlataformasAgregar.Add(1);
+                    }
+                    if (cuenta.amazon != account.amazon)
+                    {
+                        if (cuenta.amazon < account.amazon) idPlataformasEliminar.Add(2);
+                        else idPlataformasAgregar.Add(2);
+                    }
+                    if (cuenta.disney != account.disney)
+                    {
+                        if (cuenta.disney < account.disney) idPlataformasEliminar.Add(3);
+                        else idPlataformasAgregar.Add(3);
+                    }
+                    if (cuenta.hbo != account.hbo)
+                    {
+                        if (cuenta.hbo < account.hbo) idPlataformasEliminar.Add(4);
+                        else idPlataformasAgregar.Add(4);
+                    }
+                    if (cuenta.youtube != account.youtube)
+                    {
+                        if (cuenta.youtube < account.youtube) idPlataformasEliminar.Add(5);
+                        else idPlataformasAgregar.Add(5);
+                    }
+                    if (cuenta.spotify != account.spotify)
+                    {
+                        if (cuenta.spotify < account.spotify) idPlataformasEliminar.Add(6);
+                        else idPlataformasAgregar.Add(6);
+                    }
+                    foreach (var item in idPlataformasAgregar)
+                    {
+                        mensaje += await _commonRepository_PC.InsertObjeto(new PlataformaCuenta()
+                        {
+                            idPlataforma = item,
+                            idCuenta = cuenta.idCuenta,
+                            fechaPago = DateTime.Now.ToShortDateString(),
+                            usuariosdisponibles = await (from p in _context.PLATAFORMA where p.idPlataforma == item select p.numeroMaximoUsuarios).FirstOrDefaultAsync()
+                        });
+                    }
+                    foreach (var item in idPlataformasEliminar)
+                    {
+                        mensaje += await _commonRepository_PC.DeleteObjeto(new PlataformaCuenta()
+                        {
+                            idCuenta = cuenta.idCuenta,
+                            idPlataforma = item
+                        });
+                    }
+
+                    return mensaje;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return "ERROR EN LA ACTUALIZACION DE PLATAFORMAS EN CUENTA-SERVER";
+                }
             }
+            else
+            {
+                return "ERROR EN LA ACTUALIZACION DE CUENTA-SERVER";
+            }
+            
         }
 
         public async Task<bool> CuentaExists(int id)
@@ -245,6 +251,7 @@ namespace Billycock.Repositories.Repositories
                                                        where pc.idCuenta == c.idCuenta
                                                        select new PlataformaCuentaDTO()
                                                        {
+                                                           idPlataformaCuenta = pc.idCuenta + "-" + pc.idPlataforma,
                                                            idCuenta = pc.idCuenta,
                                                            descCuenta = c.descripcion,
                                                            idPlataforma = pc.idPlataforma,
@@ -277,6 +284,7 @@ namespace Billycock.Repositories.Repositories
                                                        where pc.idCuenta == c.idCuenta
                                                        select new PlataformaCuentaDTO()
                                                        {
+                                                           idPlataformaCuenta = pc.idCuenta + "-" + pc.idPlataforma,
                                                            idCuenta = pc.idCuenta,
                                                            descCuenta = c.descripcion,
                                                            idPlataforma = pc.idPlataforma,
@@ -309,6 +317,7 @@ namespace Billycock.Repositories.Repositories
                                                        where pc.idCuenta == c.idCuenta
                                                        select new PlataformaCuentaDTO()
                                                        {
+                                                           idPlataformaCuenta = pc.idCuenta + "-" + pc.idPlataforma,
                                                            idCuenta = pc.idCuenta,
                                                            descCuenta = c.descripcion,
                                                            idPlataforma = pc.idPlataforma,
@@ -323,12 +332,15 @@ namespace Billycock.Repositories.Repositories
         public async Task<PlataformaCuentaDTO> GetCuentaDisponible(int idPlataforma, int? cantidad)
         {
             return await (from pc in _context.PLATAFORMACUENTA
-                          where pc.idPlataforma == idPlataforma && pc.usuariosdisponibles >= cantidad
+                          join c in _context.CUENTA on pc.idCuenta equals c.idCuenta
+                          where pc.idPlataforma == idPlataforma && pc.usuariosdisponibles >= cantidad && c.idEstado != 2
                           select new PlataformaCuentaDTO()
                           {
+                              idPlataformaCuenta = pc.idCuenta.ToString() + "-" + pc.idPlataforma.ToString(),
                               idCuenta = pc.idCuenta,
                               idPlataforma = pc.idPlataforma,
-                              usuariosdisponibles = pc.usuariosdisponibles
+                              usuariosdisponibles = pc.usuariosdisponibles,
+                              fechaPago = pc.fechaPago
                           }).FirstOrDefaultAsync();
         }
     }

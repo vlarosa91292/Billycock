@@ -7,6 +7,7 @@ namespace Billycock.DTO
 {
     public class PlataformaCuentaDTO
     {
+        public string idPlataformaCuenta { get; set; }
         public int idPlataforma { get; set; }
         public string descPlataforma { get; set; }
         public int idCuenta { get; set; }

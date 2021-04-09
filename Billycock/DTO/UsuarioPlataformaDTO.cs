@@ -9,8 +9,8 @@ namespace Billycock.DTO
     {
         public int idUsuario { get; set; }
         public int idPlataforma { get; set; }
-        public string descPlataforma { get; set; }
         public int idCuenta { get; set; }
+        public string descPlataforma { get; set; }
         public Credencial credencial { get; set; }
         public int? cantidad { get; set; }
 

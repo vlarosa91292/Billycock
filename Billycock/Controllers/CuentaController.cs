@@ -31,7 +31,7 @@ namespace Billycock.Controllers
 
         // GET: api/Cuenta/5
         [HttpPost("ViewAccount")]
-        public async Task<ActionResult<CuentaDTO>> GetCuenta([FromBody] CuentaDTO usuario)
+        public async Task<ActionResult<CuentaDTO>> GetCuenta([FromBody] Cuenta usuario)
         {
             var user = new CuentaDTO();
             if (usuario.idCuenta != 0)

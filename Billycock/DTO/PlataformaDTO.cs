@@ -11,6 +11,7 @@ namespace Billycock.DTO
         public string descripcion { get; set; }
         public int? idEstado { get; set; }
         public string descEstado { get; set; }
+        public int? numeroMaximoUsuarios { get; set; }
         public double precio { get; set; }
         public List<UsuarioPlataformaDTO> plataformasxusuario { get; set; }
         public List<PlataformaCuentaDTO> plataformaCuentas { get; set; }

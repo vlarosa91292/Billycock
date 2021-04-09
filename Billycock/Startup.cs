@@ -33,6 +33,11 @@ namespace Billycock
             services.AddDbContext<BillycockServiceContext>(options => options.UseSqlServer(Configuration["Connection:BillycockServiceConnection"]));
             services.AddTransient<IUsuarioRepository, UsuarioRepository>();
             services.AddTransient<ICuentaRepository, CuentaRepository>();
+            services.AddTransient<IEstadoRepository, EstadoRepository>();
+            services.AddTransient<IPlataformaRepository, PlataformaRepository>();
+            services.AddTransient<IPlataformaCuentaRepository, PlataformaCuentaRepository>();
+            services.AddTransient<IUsuarioPlataformaRepository, UsuarioPlataformaRepository>();
+            services.AddTransient<IUsuarioPlataformaRepository, UsuarioPlataformaRepository>();
             services.AddCors(opciones =>
             {
                 opciones.AddPolicy("AllowMyOrigin",

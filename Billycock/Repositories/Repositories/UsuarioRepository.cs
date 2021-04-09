@@ -48,14 +48,16 @@ namespace Billycock.Repositories.Repositories
             UsuarioDTO user = await GetUsuariobyId(usuario.idUsuario);
             try
             {
-                _context.Update(new Usuario()
+                _context.Entry(user).State = EntityState.Detached;
+                _context.Entry(new Usuario()
                 {
                     idUsuario = user.idUsuario,
                     descripcion = user.descripcion,
                     idEstado = 2,
                     fechaInscripcion = user.fechaInscripcion,
-                    facturacion = user.facturacion
-                });
+                    facturacion = user.facturacion,
+                    pago = user.pago
+                }).State = EntityState.Modified;
                 await Save();
                 return "Eliminacion de Usuario Correcta";
             }
@@ -83,17 +85,76 @@ namespace Billycock.Repositories.Repositories
         public async Task<string> InsertUsuario(UsuarioDTO usuario)
         {
             UsuarioDTO user = new UsuarioDTO();
-            PlataformaCuenta platform = new PlataformaCuenta();
+            List<PlataformaCuentaDTO> plataformacuentasTemporal = new List<PlataformaCuentaDTO>();
             List<PlataformaCuentaDTO> plataformacuentas = new List<PlataformaCuentaDTO>();
-            PlataformaCuentaDTO plataformacuenta = new PlataformaCuentaDTO();
+            PlataformaCuentaDTO plataformacuentaDTO = new PlataformaCuentaDTO();
+            PlataformaCuenta plataformacuenta = new PlataformaCuenta();
             List<string> resultadonulo = new List<string>();
             try
             {
                 foreach (var item in usuario.plataformasxusuario)
                 {
-                    plataformacuenta = await _cuentaRepository.GetCuentaDisponible(item.idPlataforma, item.cantidad);
-                    if (plataformacuenta == null) resultadonulo.Add(item.cantidad+"-"+_context.PLATAFORMA.Find(item.idPlataforma).descripcion);
-                    plataformacuentas.Add(plataformacuenta);
+                    plataformacuentas = new List<PlataformaCuentaDTO>();
+                    plataformacuentaDTO = await _cuentaRepository.GetCuentaDisponible(item.idPlataforma, item.cantidad);
+                    if (plataformacuentaDTO == null)
+                    {
+                        for (int i = 0; i < item.cantidad; i++)
+                        {
+                            plataformacuentaDTO = await _cuentaRepository.GetCuentaDisponible(item.idPlataforma, 1);
+                            if (plataformacuentaDTO != null)
+                            {
+                                plataformacuentas.Add(plataformacuentaDTO);
+
+                                plataformacuenta = _context.PLATAFORMACUENTA.Find(plataformacuentaDTO.idCuenta, plataformacuentaDTO.idPlataforma);
+                                _context.Entry(plataformacuenta).State = EntityState.Detached;
+
+                                _context.Entry(new PlataformaCuenta() 
+                                { 
+                                    idCuenta= plataformacuenta.idCuenta,
+                                    idPlataforma = plataformacuenta.idPlataforma,
+                                    fechaPago = plataformacuenta.fechaPago,
+                                    usuariosdisponibles = plataformacuenta.usuariosdisponibles - 1
+                                }).State = EntityState.Modified;
+                                await Save();
+                            }
+                        }
+                        if (item.cantidad > plataformacuentas.Count)
+                        {
+                            resultadonulo.Add(item.cantidad + "-" + _context.PLATAFORMA.Find(item.idPlataforma).descripcion);
+
+                            foreach (var pfc in plataformacuentas)
+                            {
+                                plataformacuenta = _context.PLATAFORMACUENTA.Find(pfc.idCuenta,pfc.idPlataforma);
+
+                                _context.Entry(plataformacuenta).State = EntityState.Detached;
+
+                                _context.Entry(new PlataformaCuenta()
+                                {
+                                    idCuenta = plataformacuenta.idCuenta,
+                                    idPlataforma = plataformacuenta.idPlataforma,
+                                    fechaPago = plataformacuenta.fechaPago,
+                                    usuariosdisponibles = plataformacuenta.usuariosdisponibles + 1
+                                }).State = EntityState.Modified;
+                                await Save();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        plataformacuentas.Add(plataformacuentaDTO);
+
+                        plataformacuenta = _context.PLATAFORMACUENTA.Find(plataformacuentaDTO.idCuenta, plataformacuentaDTO.idPlataforma);
+                        _context.Entry(plataformacuenta).State = EntityState.Detached;
+
+                        _context.Entry(new PlataformaCuenta()
+                        {
+                            idCuenta = plataformacuenta.idCuenta,
+                            idPlataforma = plataformacuenta.idPlataforma,
+                            fechaPago = plataformacuenta.fechaPago,
+                            usuariosdisponibles = plataformacuenta.usuariosdisponibles - item.cantidad
+                        }).State = EntityState.Modified;
+                        await Save();
+                    }
                 }
                 if (resultadonulo.Count != 0)
                 {
@@ -110,29 +171,27 @@ namespace Billycock.Repositories.Repositories
                     descripcion = usuario.descripcion,
                     fechaInscripcion = DateTime.Now,
                     idEstado = 1,
-                    facturacion = DateTime.Now.Day <= 15?"Quincena":"Fin de Mes",
+                    facturacion = ObtenerFechaFacturacion(),
                     pago = ObtenerMontoPago(usuario.plataformasxusuario)
                 });
                 await Save();
-                for(int i= 0;i< plataformacuentas.Count;i++)
+                plataformacuentasTemporal = plataformacuentas.GroupBy(x => x.idPlataformaCuenta)
+                                    .Select(group => group.First()).ToList();
+
+                foreach (var plataformasxusuario in usuario.plataformasxusuario)
                 {
-                    user = await GetUsuariobyName(usuario.descripcion);
-                    await _context.USUARIOPLATAFORMA.AddAsync(new UsuarioPlataforma()
+                    for (int i= 0;i< plataformacuentasTemporal.Count;i++)
                     {
-                        idUsuario = user.idUsuario,
-                        idPlataforma = usuario.plataformasxusuario[i].idPlataforma,
-                        cantidad = usuario.plataformasxusuario[i].cantidad,
-                        idCuenta = plataformacuentas[i].idCuenta
-                    });
-                    await Save();
-
-                    platform = await (from p in _context.PLATAFORMACUENTA
-                                      where p.idPlataforma == plataformacuentas[i].idPlataforma && p.idCuenta == plataformacuentas[i].idCuenta
-                                      select p).FirstOrDefaultAsync();
-                    platform.usuariosdisponibles -= usuario.plataformasxusuario[i].cantidad;
-
-                    _context.PLATAFORMACUENTA.Update(platform);
-                    await Save();
+                        user = await GetUsuariobyName(usuario.descripcion);
+                        await _context.USUARIOPLATAFORMA.AddAsync(new UsuarioPlataforma()
+                        {
+                            idUsuario = user.idUsuario,
+                            idPlataforma = plataformasxusuario.idPlataforma,
+                            cantidad = plataformasxusuario.cantidad,
+                            idCuenta = plataformacuentasTemporal[i].idCuenta
+                        });
+                        await Save();
+                    }
                 }
                 _context.HISTORY.Add(new BillycockHistory() 
                 {
@@ -157,6 +216,35 @@ namespace Billycock.Repositories.Repositories
             }
         }
 
+        private string ObtenerFechaFacturacion()
+        {
+            DateTime fechaHoy = DateTime.Now;
+            bool QuincenaMes = fechaHoy.Day <= 15 ? true : false;
+            DateTime oPrimerDiaDelMes = new DateTime(fechaHoy.Year, fechaHoy.Month, 1);
+            if (fechaHoy.Month < 12)
+            {
+                if (QuincenaMes)
+                {
+                    return new DateTime(fechaHoy.Year, fechaHoy.Month, 15).AddMonths(1).ToShortDateString();
+                }
+                else
+                {
+                    return oPrimerDiaDelMes.AddMonths(2).AddDays(-1).ToShortDateString();
+                }
+            }
+            else
+            {
+                if (QuincenaMes)
+                {
+                    return new DateTime(fechaHoy.Year, fechaHoy.Month, 15).AddMonths(1).ToShortDateString();
+                }
+                else
+                {
+                    return oPrimerDiaDelMes.AddMonths(2).AddDays(-1).ToShortDateString();
+                }
+            }
+        }
+
         private int? ObtenerMontoPago(List<UsuarioPlataformaDTO> usuarioPlataforma)
         {
             int? pago = 0;
@@ -169,8 +257,9 @@ namespace Billycock.Repositories.Repositories
                 
                 if(i == usuarioPlataforma.Count-1)
                 {
-                    if (usuarioPlataforma[i].cantidad == 1 && usuarioPlataforma.Count > 1) { pago = reproceso(1,usuarioPlataforma.Count,acumulado); }
+                    if (usuarioPlataforma[i].cantidad == 1 && usuarioPlataforma.Count > 1) { pago = reproceso(1, usuarioPlataforma.Count, acumulado); }
                     else if (usuarioPlataforma[i].cantidad > 1 && usuarioPlataforma.Count == 1) { pago = reproceso(2, usuarioPlataforma[i].cantidad, acumulado); }
+                    else pago = Convert.ToInt16(acumulado);
                 }
             }
             return pago;

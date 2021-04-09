@@ -9,7 +9,7 @@ namespace Billycock.Models
     {
         public int idUsuario { get; set; }
         public int idPlataforma { get; set; }
-        public int? cantidad { get; set; }
         public int idCuenta { get; set; }
+        public int? cantidad { get; set; }
     }
 }

@@ -9,15 +9,14 @@ namespace Billycock.Repositories.Interfaces
 {
     public interface ICuentaRepository
     {
+        Task<List<CuentaDTO>> GetCuentas();
         Task<CuentaDTO> GetCuentabyId(int? id);
         Task<CuentaDTO> GetCuentabyName(string Name);
         Task<PlataformaCuentaDTO> GetCuentaDisponible(int idPlataforma,int? cantidad);
         //Operaciones Transaccionales
         Task<string> InsertCuenta(Cuenta cuenta);
-        Task<string> UpdateCuenta(Cuenta Cuenta);
+        Task<string> UpdateCuenta(Cuenta cuenta);
         Task<string> DeleteCuenta(Cuenta cuenta);
         Task<bool> CuentaExists(int id);
-        Task<List<CuentaDTO>> GetCuentas();
-        Task Save();
     }
 }

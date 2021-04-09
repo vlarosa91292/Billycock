@@ -9,7 +9,7 @@ namespace Billycock.Repositories.Interfaces
 {
     public interface IUsuarioRepository
     {
-        /*Task<List<PersonaDTO>> GetAllMedicos();*/
+        Task<List<UsuarioDTO>> GetUsuarios();
         Task<UsuarioDTO> GetUsuariobyId(int? id);
         Task<UsuarioDTO> GetUsuariobyName(string name);
         //Operaciones Transaccionales
@@ -17,7 +17,6 @@ namespace Billycock.Repositories.Interfaces
         Task<string> UpdateUsuario(UsuarioDTO usuario);
         Task<string> DeleteUsuario(Usuario usuario);
         Task<bool> UsuarioExists(int id);
-        Task<List<UsuarioDTO>> GetUsuarios();
         Task Save();
     }
 }
