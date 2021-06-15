@@ -1,5 +1,4 @@
 ﻿using Billycock.Data;
-using Billycock.DTO;
 using Billycock.Models;
 using Billycock.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -40,9 +39,9 @@ namespace Billycock.Repositories.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<string> DeletePlataforma(PlataformaDTO plataforma)
+        public async Task<string> DeletePlataforma(Plataforma plataforma)
         {
-            PlataformaDTO account = await GetPlataformabyId(plataforma.idPlataforma);
+            Plataforma account = await GetPlataformabyId(plataforma.idPlataforma);
             try
             {
                 _context.Update(new Plataforma()
@@ -62,22 +61,22 @@ namespace Billycock.Repositories.Repositories
             }
         }
 
-        public async Task<PlataformaDTO> GetPlataformabyId(int? id)
+        public async Task<Plataforma> GetPlataformabyId(int? id)
         {
             return (await ObtenerPlataformas(2, id.ToString()))[0];
         }
 
-        public async Task<PlataformaDTO> GetPlataformabyName(string name)
+        public async Task<Plataforma> GetPlataformabyName(string name)
         {
             return (await ObtenerPlataformas(3, name))[0];
         }
 
-        public async Task<List<PlataformaDTO>> GetPlataformas()
+        public async Task<List<Plataforma>> GetPlataformas()
         {
             return await ObtenerPlataformas(1, "");
         }
 
-        public async Task<string> InsertPlataforma(PlataformaDTO plataforma)
+        public async Task<string> InsertPlataforma(Plataforma plataforma)
         {
             try
             {
@@ -98,9 +97,9 @@ namespace Billycock.Repositories.Repositories
             }
         }
 
-        public async Task<string> UpdatePlataforma(PlataformaDTO plataforma)
+        public async Task<string> UpdatePlataforma(Plataforma plataforma)
         {
-            PlataformaDTO account = await GetPlataformabyId(plataforma.idPlataforma);
+            Plataforma account = await GetPlataformabyId(plataforma.idPlataforma);
             List<int> idPlataformasAgregar = new List<int>();
             List<int> idPlataformasEliminar = new List<int>();
             try
@@ -129,13 +128,13 @@ namespace Billycock.Repositories.Repositories
             return await _context.PLATAFORMA.AnyAsync(e => e.idPlataforma == id);
         }
 
-        public async Task<List<PlataformaDTO>> ObtenerPlataformas(int tipo, string dato)
+        public async Task<List<Plataforma>> ObtenerPlataformas(int tipo, string dato)
         {
             if (tipo == 1)
             {
                 return await (from c in _context.PLATAFORMA
                               where c.idEstado != 2
-                              select new PlataformaDTO()
+                              select new Plataforma()
                               {
                                   idPlataforma = c.idPlataforma,
                                   descripcion = c.descripcion,
@@ -144,7 +143,7 @@ namespace Billycock.Repositories.Repositories
                                   precio = c.precio,  
                                   plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
                                                        where pc.idPlataforma == c.idPlataforma
-                                                       select new PlataformaCuentaDTO()
+                                                       select new PlataformaCuenta()
                                                        {
                                                            idCuenta = pc.idPlataforma,
                                                            descCuenta = c.descripcion,
@@ -159,7 +158,7 @@ namespace Billycock.Repositories.Repositories
             {
                 return await (from c in _context.PLATAFORMA
                               where c.idEstado != 2 && c.idEstado == int.Parse(dato)
-                              select new PlataformaDTO()
+                              select new Plataforma()
                               {
                                   idPlataforma = c.idPlataforma,
                                   descripcion = c.descripcion,
@@ -168,7 +167,7 @@ namespace Billycock.Repositories.Repositories
                                   precio = c.precio,
                                   plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
                                                        where pc.idPlataforma == c.idPlataforma
-                                                       select new PlataformaCuentaDTO()
+                                                       select new PlataformaCuenta()
                                                        {
                                                            idCuenta = pc.idPlataforma,
                                                            descCuenta = c.descripcion,
@@ -183,7 +182,7 @@ namespace Billycock.Repositories.Repositories
             {
                 return await (from c in _context.PLATAFORMA
                               where c.idEstado != 2 && c.descripcion == dato
-                              select new PlataformaDTO()
+                              select new Plataforma()
                               {
                                   idPlataforma = c.idPlataforma,
                                   descripcion = c.descripcion,
@@ -192,7 +191,7 @@ namespace Billycock.Repositories.Repositories
                                   precio = c.precio,
                                   plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
                                                        where pc.idPlataforma == c.idPlataforma
-                                                       select new PlataformaCuentaDTO()
+                                                       select new PlataformaCuenta()
                                                        {
                                                            idCuenta = pc.idPlataforma,
                                                            descCuenta = c.descripcion,

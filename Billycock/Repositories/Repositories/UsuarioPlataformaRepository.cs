@@ -1,4 +1,4 @@
-﻿using Billycock.DTO;
+﻿using Billycock.Models;
 using Billycock.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -9,27 +9,27 @@ namespace Billycock.Repositories.Repositories
 {
     public class UsuarioPlataformaRepository : IUsuarioPlataformaRepository
     {
-        public Task<string> DeleteUsuarioPlataforma(UsuarioPlataformaDTO usuarioPlataforma)
+        public Task<string> DeleteUsuarioPlataforma(UsuarioPlataforma usuarioPlataforma)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UsuarioPlataformaDTO> GetUsuarioPlataformabyId(int? id)
+        public Task<UsuarioPlataforma> GetUsuarioPlataformabyId(int? id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UsuarioPlataformaDTO> GetUsuarioPlataformabyName(string Name)
+        public Task<UsuarioPlataforma> GetUsuarioPlataformabyName(string Name)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<UsuarioPlataformaDTO>> GetUsuarioPlataformas()
+        public Task<List<UsuarioPlataforma>> GetUsuarioPlataformas()
         {
             throw new NotImplementedException();
         }
 
-        public Task<string> InsertUsuarioPlataforma(UsuarioPlataformaDTO usuarioPlataforma)
+        public Task<string> InsertUsuarioPlataforma(UsuarioPlataforma usuarioPlataforma)
         {
             throw new NotImplementedException();
         }
@@ -39,7 +39,7 @@ namespace Billycock.Repositories.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<string> UpdateUsuarioPlataforma(UsuarioPlataformaDTO UsuarioPlataforma)
+        public Task<string> UpdateUsuarioPlataforma(UsuarioPlataforma UsuarioPlataforma)
         {
             throw new NotImplementedException();
         }

@@ -1,93 +1,68 @@
 ﻿using Billycock.Data;
-using Billycock.Repositories.Interfaces;
+using Billycock.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Billycock.Repositories.Repositories
 {
-    public class CommonRepository<T>
+    public class CommonRepository<T> : ICommonRepository<T> where T : class
     {
-        private readonly BillycockServiceContext _context;
-        public CommonRepository(BillycockServiceContext context)
-        {
-            _context = context;
-        }
-
         public CommonRepository()
         {
         }
-
-        private bool disposed = false;
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    _context.Dispose();
-                }
-            }
-            this.disposed = true;
-        }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        public async Task Save()
+        public async Task Save(BillycockServiceContext _context)
         {
             await _context.SaveChangesAsync();
         }
-        public async Task<string> DeleteLogicoObjeto(T t)
+        public async Task<string> DeleteLogicoObjeto(T t, BillycockServiceContext _context)
         {
             try
             {
                 _context.Update(t);
-                await Save();
-                return "Eliminacion Correcta";
+                await Save(_context);
+                return "Eliminacion Correcta de " + t.GetType().Name.ToUpper();
             }
             catch
             {
                 return "0";
             }
         }
-        public async Task<string> DeleteObjeto(T t)
+        public async Task<string> DeleteObjeto(T t, BillycockServiceContext _context)
         {
             try
             {
                 _context.Remove(t);
-                await Save();
-                return "Eliminacion Correcta";
+                await Save(_context);
+                return "Eliminacion Correcta de " + t.GetType().Name.ToUpper();
             }
             catch
             {
                 return "0";
             }
         }
-        public async Task<string> InsertObjeto(T t)
+        public async Task<string> InsertObjeto(T t, BillycockServiceContext _context)
         {
             try
             {
                 await _context.AddAsync(t);
-                await Save();
+                await Save(_context);
 
-                return "CREACION EXITOSA";
+                return "Creacion Correcta de " + t.GetType().Name.ToUpper();
             }
             catch
             {
                 return "0";
             }
         }
-        public async Task<string> UpdateObjeto(T t)
+        public async Task<string> UpdateObjeto(T t, BillycockServiceContext _context)
         {
             try
             {
                 _context.Update(t);
-                await Save();
+                await Save(_context);
 
-                return "ACTUALIZACION EXITOSA";
+                return "Actualizacion correcta de " + t.GetType().Name.ToUpper();
             }
             catch (Exception ex)
             {

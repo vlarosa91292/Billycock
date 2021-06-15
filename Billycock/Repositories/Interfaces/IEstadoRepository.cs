@@ -1,5 +1,4 @@
-﻿using Billycock.DTO;
-using Billycock.Models;
+﻿using Billycock.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +8,13 @@ namespace Billycock.Repositories.Interfaces
 {
     public interface IEstadoRepository
     {
-        Task<List<EstadoDTO>> GetEstados();
-        Task<EstadoDTO> GetEstadobyId(int? id);
-        Task<EstadoDTO> GetEstadobyName(string Name);
+        Task<List<Estado>> GetEstados();
+        Task<Estado> GetEstadobyId(int? id);
+        Task<Estado> GetEstadobyName(string Name);
         //Operaciones Transaccionales
-        Task<string> InsertEstado(EstadoDTO estado);
-        Task<string> UpdateEstado(EstadoDTO estado);
-        Task<string> DeleteEstado(EstadoDTO estado);
+        Task<string> InsertEstado(Estado estado);
+        Task<string> UpdateEstado(Estado estado);
+        Task<string> DeleteEstado(Estado estado);
         Task<bool> EstadoExists(int id);
-        Task Save();
     }
 }

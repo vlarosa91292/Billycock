@@ -1,21 +1,23 @@
 ﻿using Billycock.Data;
-using Billycock.DTO;
 using Billycock.Models;
-using Billycock.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Billycock.Repositories.Interfaces;
+using Billycock.Utils;
 
 namespace Billycock.Repositories.Repositories
 {
     public class EstadoRepository:IEstadoRepository
     {
         private readonly BillycockServiceContext _context;
-        public EstadoRepository(BillycockServiceContext context)
+        private readonly ICommonRepository<Estado> _commonRepository;
+        public EstadoRepository(BillycockServiceContext context, ICommonRepository<Estado> commonRepository)
         {
             _context = context;
+            _commonRepository = commonRepository;
         }
 
         private bool disposed = false;
@@ -35,82 +37,48 @@ namespace Billycock.Repositories.Repositories
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        public async Task Save()
+
+        public async Task<string> DeleteEstado(Estado estado)
         {
-            await _context.SaveChangesAsync();
+            Estado account = await GetEstadobyId(estado.idEstado);
+            return await _commonRepository.DeleteObjeto(new Estado()
+            {
+                idEstado = account.idEstado,
+                descripcion = estado.descripcion
+            },_context);
         }
 
-        public async Task<string> DeleteEstado(EstadoDTO estado)
-        {
-            EstadoDTO account = await GetEstadobyId(estado.idEstado);
-            try
-            {
-                _context.Update(new Estado()
-                {
-                    idEstado = account.idEstado,
-                    descripcion = estado.descripcion
-                });
-                await Save();
-                return "Eliminacion de Estado Correcta";
-            }
-            catch (Exception ex)
-            {
-                return "Error en la eliminacion de Estado";
-            }
-        }
-
-        public async Task<EstadoDTO> GetEstadobyId(int? id)
+        public async Task<Estado> GetEstadobyId(int? id)
         {
             return (await ObtenerEstados(2, id.ToString()))[0];
         }
 
-        public async Task<EstadoDTO> GetEstadobyName(string name)
+        public async Task<Estado> GetEstadobyName(string name)
         {
             return (await ObtenerEstados(3, name))[0];
         }
 
-        public async Task<List<EstadoDTO>> GetEstados()
+        public async Task<List<Estado>> GetEstados()
         {
             return await ObtenerEstados(1, "");
         }
 
-        public async Task<string> InsertEstado(EstadoDTO estado)
+        public async Task<string> InsertEstado(Estado estado)
         {
-            try
+            return await _commonRepository.InsertObjeto(new Estado()
             {
-                await _context.ESTADO.AddAsync(new Estado()
-                {
-                    descripcion = estado.descripcion
-                });
-                await Save();
-
-                return "CREACION DE PLATAFORMA EXITOSA";
-            }
-            catch
-            {
-                return "ERROR EN LA CREACION DE PLATAFORMA-SERVER";
-            }
+                descripcion = estado.descripcion
+            },_context);
         }
 
-        public async Task<string> UpdateEstado(EstadoDTO estado)
+        public async Task<string> UpdateEstado(Estado estado)
         {
-            EstadoDTO account = await GetEstadobyId(estado.idEstado);
-            try
+            Estado account = await GetEstadobyId(estado.idEstado);
+            return await _commonRepository.UpdateObjeto(new Estado()
             {
-                _context.Update(new Estado()
-                {
-                    idEstado = estado.idEstado,
-                    descripcion = account.descripcion
-                });
-                await Save();
-
-                return "ACTUALIZACION DE PLATAFORMA EXITOSA";
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return "ERROR EN LA CREACION DE PLATAFORMA-SERVER";
-            }
+                idEstado = account.idEstado,
+                descripcion = estado.descripcion
+            },_context);
         }
 
         public async Task<bool> EstadoExists(int id)
@@ -118,12 +86,12 @@ namespace Billycock.Repositories.Repositories
             return await _context.ESTADO.AnyAsync(e => e.idEstado == id);
         }
 
-        public async Task<List<EstadoDTO>> ObtenerEstados(int tipo, string dato)
+        public async Task<List<Estado>> ObtenerEstados(int tipo, string dato)
         {
             if (tipo == 1)
             {
                 return await (from c in _context.ESTADO
-                              select new EstadoDTO()
+                              select new Estado()
                               {
                                   idEstado = c.idEstado,
                                   descripcion = c.descripcion
@@ -133,7 +101,7 @@ namespace Billycock.Repositories.Repositories
             {
                 return await (from c in _context.ESTADO
                               where c.idEstado == int.Parse(dato)
-                              select new EstadoDTO()
+                              select new Estado()
                               {
                                   idEstado = c.idEstado,
                                   descripcion = c.descripcion
@@ -143,7 +111,7 @@ namespace Billycock.Repositories.Repositories
             {
                 return await (from c in _context.ESTADO
                               where c.descripcion == dato
-                              select new EstadoDTO()
+                              select new Estado()
                               {
                                   idEstado = c.idEstado,
                                   descripcion = c.descripcion

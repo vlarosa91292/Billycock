@@ -1,17 +1,3 @@
-INSERT [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES (N'20210310000548_Billycock', N'5.0.3')
-GO
-INSERT [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES (N'20210311115958_Billycock2', N'5.0.3')
-GO
-INSERT [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES (N'20210311164540_Billycock3', N'5.0.3')
-GO
-INSERT [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES (N'20210311180552_Billycock4', N'5.0.3')
-GO
-INSERT [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES (N'20210311221516_Billycock1', N'5.0.3')
-GO
-INSERT [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES (N'20210311224750_Billycock2', N'5.0.3')
-GO
-INSERT [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES (N'20210317123742_Bc1', N'5.0.3')
-GO
 SET IDENTITY_INSERT [dbo].[CUENTA] ON 
 GO
 INSERT [dbo].[CUENTA] ([idCuenta], [nombre], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [descripcion], [password], [idEstado]) VALUES (1, N'Billycock1', N'BC1', 1, 1, 1, 1, 1, 0, N'billycocknetflix1@gmail.com', N'Nayjuw+29', 1)

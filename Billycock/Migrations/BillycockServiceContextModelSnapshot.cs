@@ -132,6 +132,12 @@ namespace Billycock.Migrations
                     b.Property<int>("idPlataforma")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CuentaidCuenta")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PlataformaidPlataforma")
+                        .HasColumnType("int");
+
                     b.Property<string>("fechaPago")
                         .HasColumnType("nvarchar(max)");
 
@@ -139,6 +145,10 @@ namespace Billycock.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("idCuenta", "idPlataforma");
+
+                    b.HasIndex("CuentaidCuenta");
+
+                    b.HasIndex("PlataformaidPlataforma");
 
                     b.ToTable("PLATAFORMACUENTA");
                 });
@@ -181,12 +191,72 @@ namespace Billycock.Migrations
                     b.Property<int>("idCuenta")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CuentaidCuenta")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PlataformaidPlataforma")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UsuarioidUsuario")
+                        .HasColumnType("int");
+
                     b.Property<int?>("cantidad")
                         .HasColumnType("int");
 
                     b.HasKey("idUsuario", "idPlataforma", "idCuenta");
 
+                    b.HasIndex("CuentaidCuenta");
+
+                    b.HasIndex("PlataformaidPlataforma");
+
+                    b.HasIndex("UsuarioidUsuario");
+
                     b.ToTable("USUARIOPLATAFORMA");
+                });
+
+            modelBuilder.Entity("Billycock.Models.PlataformaCuenta", b =>
+                {
+                    b.HasOne("Billycock.Models.Cuenta", null)
+                        .WithMany("plataformaCuentas")
+                        .HasForeignKey("CuentaidCuenta");
+
+                    b.HasOne("Billycock.Models.Plataforma", null)
+                        .WithMany("plataformaCuentas")
+                        .HasForeignKey("PlataformaidPlataforma");
+                });
+
+            modelBuilder.Entity("Billycock.Models.UsuarioPlataforma", b =>
+                {
+                    b.HasOne("Billycock.Models.Cuenta", null)
+                        .WithMany("usuarioPlataformas")
+                        .HasForeignKey("CuentaidCuenta");
+
+                    b.HasOne("Billycock.Models.Plataforma", null)
+                        .WithMany("usuarioPlataformas")
+                        .HasForeignKey("PlataformaidPlataforma");
+
+                    b.HasOne("Billycock.Models.Usuario", null)
+                        .WithMany("usuarioPlataformas")
+                        .HasForeignKey("UsuarioidUsuario");
+                });
+
+            modelBuilder.Entity("Billycock.Models.Cuenta", b =>
+                {
+                    b.Navigation("plataformaCuentas");
+
+                    b.Navigation("usuarioPlataformas");
+                });
+
+            modelBuilder.Entity("Billycock.Models.Plataforma", b =>
+                {
+                    b.Navigation("plataformaCuentas");
+
+                    b.Navigation("usuarioPlataformas");
+                });
+
+            modelBuilder.Entity("Billycock.Models.Usuario", b =>
+                {
+                    b.Navigation("usuarioPlataformas");
                 });
 #pragma warning restore 612, 618
         }

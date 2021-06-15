@@ -1,5 +1,4 @@
-﻿using Billycock.DTO;
-using Billycock.Models;
+﻿using Billycock.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +8,13 @@ namespace Billycock.Repositories.Interfaces
 {
     public interface IUsuarioRepository
     {
-        Task<List<UsuarioDTO>> GetUsuarios();
-        Task<UsuarioDTO> GetUsuariobyId(int? id);
-        Task<UsuarioDTO> GetUsuariobyName(string name);
+        Task<List<Usuario>> GetUsuarios(string tipoSalida);
+        Task<Usuario> GetUsuariobyId(int? id, string tipoSalida);
+        Task<Usuario> GetUsuariobyName(string name, string tipoSalida);
         //Operaciones Transaccionales
-        Task<string> InsertUsuario(UsuarioDTO usuario);    
-        Task<string> UpdateUsuario(UsuarioDTO usuario);
-        Task<string> DeleteUsuario(Usuario usuario);
+        Task<string> InsertUsuario(Usuario usuario);    
+        Task<string> UpdateUsuario(Usuario usuario, string tipoSalida);
+        Task<string> DeleteUsuario(Usuario usuario, string tipoSalida);
         Task<bool> UsuarioExists(int id);
-        Task Save();
     }
 }

@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Billycock.Data;
 using Billycock.Repositories.Interfaces;
 using Billycock.Repositories.Repositories;
+using Billycock.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -14,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 
 namespace Billycock
 {
@@ -29,20 +33,15 @@ namespace Billycock
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             services.AddDbContext<BillycockServiceContext>(options => options.UseSqlServer(Configuration["Connection:BillycockServiceConnection"]));
-            services.AddTransient<IUsuarioRepository, UsuarioRepository>();
-            services.AddTransient<ICuentaRepository, CuentaRepository>();
-            services.AddTransient<IEstadoRepository, EstadoRepository>();
-            services.AddTransient<IPlataformaRepository, PlataformaRepository>();
-            services.AddTransient<IPlataformaCuentaRepository, PlataformaCuentaRepository>();
-            services.AddTransient<IUsuarioPlataformaRepository, UsuarioPlataformaRepository>();
-            services.AddTransient<IUsuarioPlataformaRepository, UsuarioPlataformaRepository>();
-            services.AddCors(opciones =>
-            {
-                opciones.AddPolicy("AllowMyOrigin",
-                constructor => constructor.AllowAnyOrigin().AllowAnyHeader());
-            });
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped<ICuentaRepository, CuentaRepository>();
+            services.AddScoped<IEstadoRepository, EstadoRepository>();
+            services.AddScoped(typeof(ICommonRepository<>), typeof(CommonRepository<>));
+            services.AddScoped(typeof(IHistoryRepository<>), typeof(HistoryRepository<>));
+            services.AddScoped<IPlataformaRepository, PlataformaRepository>();
+            services.AddScoped<IPlataformaCuentaRepository, PlataformaCuentaRepository>();
+            services.AddScoped<IUsuarioPlataformaRepository, UsuarioPlataformaRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,13 +55,6 @@ namespace Billycock
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
         }
     }
 }

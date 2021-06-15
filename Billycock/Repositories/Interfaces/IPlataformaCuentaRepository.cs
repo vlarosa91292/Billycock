@@ -1,5 +1,4 @@
-﻿using Billycock.DTO;
-using Billycock.Models;
+﻿using Billycock.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +8,13 @@ namespace Billycock.Repositories.Interfaces
 {
     public interface IPlataformaCuentaRepository
     {
-        Task<List<PlataformaCuentaDTO>> GetPlataformaCuentas();
-        Task<PlataformaCuentaDTO> GetPlataformaCuentabyId(int? id);
-        Task<PlataformaCuentaDTO> GetPlataformaCuentabyName(string Name);
+        Task<List<PlataformaCuenta>> GetPlataformaCuentas();
+        Task<PlataformaCuenta> GetPlataformaCuentabyId(int? id);
+        Task<PlataformaCuenta> GetPlataformaCuentabyName(string Name);
         //Operaciones Transaccionales
-        Task<string> InsertPlataformaCuenta(PlataformaCuentaDTO plataformaCuenta);
-        Task<string> UpdatePlataformaCuenta(PlataformaCuentaDTO plataformaCuenta);
-        Task<string> DeletePlataformaCuenta(PlataformaCuentaDTO plataformaCuenta);
+        Task<string> InsertPlataformaCuenta(PlataformaCuenta plataformaCuenta);
+        Task<string> UpdatePlataformaCuenta(PlataformaCuenta plataformaCuenta);
+        Task<string> DeletePlataformaCuenta(PlataformaCuenta plataformaCuenta);
         Task<bool> PlataformaCuentaExists(int id);
         Task Save();
     }

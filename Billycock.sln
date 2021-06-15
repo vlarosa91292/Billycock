@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Billycock", "Billycock\Billycock.csproj", "{2E4D5E37-E618-4F2B-BE50-5100C3A3C953}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Billycock", "Billycock\Billycock.csproj", "{2E4D5E37-E618-4F2B-BE50-5100C3A3C953}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web_Billycock", "Web_Billycock\Web_Billycock.csproj", "{C71DC18B-F3E9-4724-845F-0048361823B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api_Billycock", "Api_Billycock\Api_Billycock.csproj", "{8FBF9256-DD13-4EB9-8F2B-F87C610C92A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{2E4D5E37-E618-4F2B-BE50-5100C3A3C953}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E4D5E37-E618-4F2B-BE50-5100C3A3C953}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E4D5E37-E618-4F2B-BE50-5100C3A3C953}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C71DC18B-F3E9-4724-845F-0048361823B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C71DC18B-F3E9-4724-845F-0048361823B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C71DC18B-F3E9-4724-845F-0048361823B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C71DC18B-F3E9-4724-845F-0048361823B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FBF9256-DD13-4EB9-8F2B-F87C610C92A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FBF9256-DD13-4EB9-8F2B-F87C610C92A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FBF9256-DD13-4EB9-8F2B-F87C610C92A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FBF9256-DD13-4EB9-8F2B-F87C610C92A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

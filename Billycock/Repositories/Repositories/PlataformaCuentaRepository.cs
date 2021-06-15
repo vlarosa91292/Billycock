@@ -1,4 +1,4 @@
-﻿using Billycock.DTO;
+﻿using Billycock.Models;
 using Billycock.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -9,27 +9,27 @@ namespace Billycock.Repositories.Repositories
 {
     public class PlataformaCuentaRepository : IPlataformaCuentaRepository
     {
-        public Task<string> DeletePlataformaCuenta(PlataformaCuentaDTO plataformaCuenta)
+        public Task<string> DeletePlataformaCuenta(PlataformaCuenta plataformaCuenta)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PlataformaCuentaDTO> GetPlataformaCuentabyId(int? id)
+        public Task<PlataformaCuenta> GetPlataformaCuentabyId(int? id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PlataformaCuentaDTO> GetPlataformaCuentabyName(string Name)
+        public Task<PlataformaCuenta> GetPlataformaCuentabyName(string Name)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<PlataformaCuentaDTO>> GetPlataformaCuentas()
+        public Task<List<PlataformaCuenta>> GetPlataformaCuentas()
         {
             throw new NotImplementedException();
         }
 
-        public Task<string> InsertPlataformaCuenta(PlataformaCuentaDTO plataformaCuenta)
+        public Task<string> InsertPlataformaCuenta(PlataformaCuenta plataformaCuenta)
         {
             throw new NotImplementedException();
         }
@@ -44,7 +44,7 @@ namespace Billycock.Repositories.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<string> UpdatePlataformaCuenta(PlataformaCuentaDTO plataformaCuenta)
+        public Task<string> UpdatePlataformaCuenta(PlataformaCuenta plataformaCuenta)
         {
             throw new NotImplementedException();
         }

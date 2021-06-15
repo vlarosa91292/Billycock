@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Billycock.Models
 {
@@ -21,5 +22,10 @@ namespace Billycock.Models
         public string descripcion { get; set; }
         public string password { get; set; }
         public int? idEstado { get; set; }
+        [NotMapped]
+        public string descEstado { get; set; }
+
+        public List<UsuarioPlataforma> usuarioPlataformas { get; set; }
+        public List<PlataformaCuenta> plataformaCuentas { get; set; }
     }
 }
