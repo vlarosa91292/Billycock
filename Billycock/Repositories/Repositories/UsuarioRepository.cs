@@ -17,7 +17,6 @@ namespace Billycock.Repositories.Repositories
         private readonly ICuentaRepository _cuentaRepository;
         private readonly ICommonRepository<Usuario> _commonRepository;
         private readonly IHistoryRepository<Usuario> _historyRepository;
-        //private readonly ICommonRepository<BillycockHistory> _commonRepository_H;
         public UsuarioRepository(BillycockServiceContext context, ICuentaRepository cuentaRepository, ICommonRepository<Usuario> commonRepository,
             IHistoryRepository<Usuario> historyRepository)
         {
@@ -67,6 +66,7 @@ namespace Billycock.Repositories.Repositories
         public async Task<string> InsertUsuario(Usuario usuario)
         {
             Usuario user = new Usuario();
+            string response = string.Empty;
             //List<PlataformaCuenta> plataformacuentasTemporal = new List<PlataformaCuenta>();
             //List<PlataformaCuenta> plataformacuentas = new List<PlataformaCuenta>();
             //PlataformaCuenta plataformacuenta = new PlataformaCuenta();
@@ -148,7 +148,7 @@ namespace Billycock.Repositories.Repositories
                 //    }
                 //    return mensaje;
                 //}
-                await _commonRepository.InsertObjeto(new Usuario()
+                response = await _commonRepository.InsertObjeto(new Usuario()
                 {
                     descripcion = usuario.descripcion,
                     fechaInscripcion = DateTime.Now,
@@ -175,7 +175,7 @@ namespace Billycock.Repositories.Repositories
                 //        await Save();
                 //    }
                 //}
-                await _historyRepository.InsertHistory(usuario);
+                await _historyRepository.InsertHistory(usuario, response);
                 return "CREACION DE USUARIO EXITOSA";
             }
             catch (Exception ex)

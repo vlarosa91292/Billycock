@@ -17,57 +17,60 @@ namespace Billycock.Repositories.Repositories
         }
         public async Task<string> DeleteLogicoObjeto(T t, BillycockServiceContext _context)
         {
+            string mensaje = "Eliminacion XXX de " + t.GetType().Name.ToUpper();
             try
             {
                 _context.Update(t);
                 await Save(_context);
-                return "Eliminacion Correcta de " + t.GetType().Name.ToUpper();
+                return mensaje.Replace("XXX","Correcta");
             }
             catch
             {
-                return "0";
+                return mensaje.Replace("XXX", "Incorrecta");
             }
         }
         public async Task<string> DeleteObjeto(T t, BillycockServiceContext _context)
         {
+            string mensaje = "Eliminacion XXX de " + t.GetType().Name.ToUpper();
             try
             {
                 _context.Remove(t);
                 await Save(_context);
-                return "Eliminacion Correcta de " + t.GetType().Name.ToUpper();
+                return mensaje.Replace("XXX", "Correcta");
             }
             catch
             {
-                return "0";
+                return mensaje.Replace("XXX", "Incorrecta");
             }
         }
         public async Task<string> InsertObjeto(T t, BillycockServiceContext _context)
         {
+            string mensaje = "Creacion XXX de " + t.GetType().Name.ToUpper();
             try
             {
                 await _context.AddAsync(t);
                 await Save(_context);
 
-                return "Creacion Correcta de " + t.GetType().Name.ToUpper();
+                return mensaje.Replace("XXX", "Correcta");
             }
             catch
             {
-                return "0";
+                return mensaje.Replace("XXX", "Incorrecta");
             }
         }
         public async Task<string> UpdateObjeto(T t, BillycockServiceContext _context)
         {
+            string mensaje = "Actualizacion XXX de " + t.GetType().Name.ToUpper();
             try
             {
                 _context.Update(t);
                 await Save(_context);
 
-                return "Actualizacion correcta de " + t.GetType().Name.ToUpper();
+                return mensaje.Replace("XXX", "Correcta");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return "0";
+                return mensaje.Replace("XXX", "Incorrecta");
             }
         }
     }

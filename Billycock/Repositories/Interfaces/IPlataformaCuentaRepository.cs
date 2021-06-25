@@ -15,7 +15,6 @@ namespace Billycock.Repositories.Interfaces
         Task<string> InsertPlataformaCuenta(PlataformaCuenta plataformaCuenta);
         Task<string> UpdatePlataformaCuenta(PlataformaCuenta plataformaCuenta);
         Task<string> DeletePlataformaCuenta(PlataformaCuenta plataformaCuenta);
-        Task<bool> PlataformaCuentaExists(int id);
-        Task Save();
+        Task<bool> PlataformaCuentaExists(string idPlataformaCuenta);
     }
 }

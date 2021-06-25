@@ -8,6 +8,6 @@ namespace Billycock.Repositories.Interfaces
 {
     public interface IHistoryRepository<T>
     {
-        Task<string> InsertHistory(T model);
+        Task<string> InsertHistory(T model,string response);
     }
 }

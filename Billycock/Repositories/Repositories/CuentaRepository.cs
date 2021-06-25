@@ -62,7 +62,7 @@ namespace Billycock.Repositories.Repositories
                     spotify = account.spotify,
                     idEstado = 2
                 },_context);
-                if(mensaje != "0")
+                if(mensaje.Contains("Incorrecta"))
                 {
                     try
                     {
@@ -121,7 +121,7 @@ namespace Billycock.Repositories.Repositories
                 spotify = cuenta.spotify,
                 idEstado = 1
             },_context);
-            if(mensaje != "0")
+            if (mensaje.Contains("Incorrecta"))
             {
                 mensaje += Environment.NewLine;
                 try
@@ -173,7 +173,7 @@ namespace Billycock.Repositories.Repositories
                 spotify = cuenta.spotify==account.spotify?account.spotify:cuenta.spotify,
                 idEstado = cuenta.idEstado==account.idEstado?account.idEstado:cuenta.idEstado
             },_context);
-            if(mensaje != "0")
+            if (mensaje.Contains("Incorrecta"))
             {
                 try
                 {

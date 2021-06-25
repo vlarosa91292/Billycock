@@ -1,5 +1,8 @@
-﻿using Billycock.Models;
+﻿using Billycock.Data;
+using Billycock.Models;
 using Billycock.Repositories.Interfaces;
+using Billycock.Utils;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +12,16 @@ namespace Billycock.Repositories.Repositories
 {
     public class PlataformaCuentaRepository : IPlataformaCuentaRepository
     {
-        public Task<string> DeletePlataformaCuenta(PlataformaCuenta plataformaCuenta)
+        private readonly BillycockServiceContext _context;
+        private readonly ICommonRepository<PlataformaCuenta> _commonRepository;
+        public PlataformaCuentaRepository(BillycockServiceContext context, ICommonRepository<PlataformaCuenta> commonRepository)
         {
-            throw new NotImplementedException();
+            _context = context;
+            _commonRepository = commonRepository;
+        }
+        public async Task<string> DeletePlataformaCuenta(PlataformaCuenta plataformaCuenta)
+        {
+            return await _commonRepository.DeleteObjeto(plataformaCuenta, _context);
         }
 
         public Task<PlataformaCuenta> GetPlataformaCuentabyId(int? id)
@@ -29,24 +39,22 @@ namespace Billycock.Repositories.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<string> InsertPlataformaCuenta(PlataformaCuenta plataformaCuenta)
+        public async Task<string> InsertPlataformaCuenta(PlataformaCuenta plataformaCuenta)
         {
-            throw new NotImplementedException();
+            return await _commonRepository.InsertObjeto(plataformaCuenta, _context);
         }
 
-        public Task<bool> PlataformaCuentaExists(int id)
+        public async Task<bool> PlataformaCuentaExists(string idPlataformaCuenta)
         {
-            throw new NotImplementedException();
+            int idPlataforma = int.Parse(idPlataformaCuenta.Split("-")[0]);
+            int idCuenta = int.Parse(idPlataformaCuenta.Split("-")[1]);
+            return await _context.PLATAFORMACUENTA.AnyAsync(e => e.idPlataforma == idPlataforma 
+                                                                && e.idCuenta == idCuenta);
         }
 
-        public Task Save()
+        public async Task<string> UpdatePlataformaCuenta(PlataformaCuenta plataformaCuenta)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<string> UpdatePlataformaCuenta(PlataformaCuenta plataformaCuenta)
-        {
-            throw new NotImplementedException();
+            return await _commonRepository.UpdateObjeto(plataformaCuenta, _context);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Billycock.Data
         public DbSet<Cuenta> CUENTA { get; set; }
         public DbSet<UsuarioPlataforma> USUARIOPLATAFORMA { get; set; }
         public DbSet<PlataformaCuenta> PLATAFORMACUENTA { get; set; }
-        public DbSet<BillycockHistory> HISTORY { get; set; }
+        public DbSet<Historia> HISTORIA { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

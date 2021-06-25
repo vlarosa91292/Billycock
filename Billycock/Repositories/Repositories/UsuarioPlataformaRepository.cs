@@ -1,5 +1,7 @@
-﻿using Billycock.Models;
+﻿using Billycock.Data;
+using Billycock.Models;
 using Billycock.Repositories.Interfaces;
+using Billycock.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,8 @@ namespace Billycock.Repositories.Repositories
 {
     public class UsuarioPlataformaRepository : IUsuarioPlataformaRepository
     {
+        private readonly BillycockServiceContext _context;
+        private readonly ICommonRepository<Historia> _commonRepository;
         public Task<string> DeleteUsuarioPlataforma(UsuarioPlataforma usuarioPlataforma)
         {
             throw new NotImplementedException();

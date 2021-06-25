@@ -13,23 +13,20 @@ namespace Billycock.Repositories.Repositories
     public class HistoryRepository<T> : IHistoryRepository<T> where T:class
     {
         private readonly BillycockServiceContext _context;
-        private readonly ICommonRepository<BillycockHistory> _commonRepository;
-        public HistoryRepository(BillycockServiceContext context, ICommonRepository<BillycockHistory> commonRepository)
+        private readonly ICommonRepository<Historia> _commonRepository;
+        public HistoryRepository(BillycockServiceContext context, ICommonRepository<Historia> commonRepository)
         {
             _context = context;
             _commonRepository = commonRepository;
         }
-        public async Task<string> InsertHistory(T model)
+        public async Task<string> InsertHistory(T model,string response)
         {
-            string mensaje = string.Empty;
-
-            mensaje = await _commonRepository.InsertObjeto(new BillycockHistory()
+            return await _commonRepository.InsertObjeto(new Historia()
             {
                 Request = JsonConvert.SerializeObject(model),
-                Response = "CREACION DE "+ model.GetType().Name.ToUpper()+" EXITOSA",
+                Response = response,
                 fecha = DateTime.Now
             }, _context);
-            return mensaje;
         }
     }
 }
