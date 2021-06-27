@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace Billycock.Models.Hilario
 {
     public class Oferta
     {
+        [Key]
         public int idOferta { get; set; }
         public int codigoBarra { get; set; }
         [NotMapped]
@@ -15,5 +17,8 @@ namespace Billycock.Models.Hilario
         public string descripcion { get; set; }
         public double precioOferta { get; set; }
         public int cantidad { get; set; }
+        public int idEstado { get; set; }
+        [NotMapped]
+        public string descEstado { get; set; }
     }
 }

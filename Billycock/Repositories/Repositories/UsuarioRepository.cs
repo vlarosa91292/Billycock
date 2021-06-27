@@ -181,7 +181,7 @@ namespace Billycock.Repositories.Repositories
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                _context.HISTORY.Add(new BillycockHistory()
+                _context.HISTORIA.Add(new Historia()
                 {
                     Request = JsonConvert.SerializeObject(usuario),
                     Response = ex.Message,

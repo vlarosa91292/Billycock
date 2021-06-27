@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Billycock.Migrations
+namespace Billycock.Migrations.BillycockService
 {
-    public partial class MigracionInicial : Migration
+    public partial class Billycock : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -44,18 +44,19 @@ namespace Billycock.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "HISTORY",
+                name: "HISTORIA",
                 columns: table => new
                 {
                     idHistory = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Request = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Response = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    integracion = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HISTORY", x => x.idHistory);
+                    table.PrimaryKey("PK_HISTORIA", x => x.idHistory);
                 });
 
             migrationBuilder.CreateTable(
@@ -65,9 +66,9 @@ namespace Billycock.Migrations
                     idPlataforma = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    idEstado = table.Column<int>(type: "int", nullable: true),
                     numeroMaximoUsuarios = table.Column<int>(type: "int", nullable: true),
-                    precio = table.Column<double>(type: "float", nullable: false)
+                    precio = table.Column<double>(type: "float", nullable: false),
+                    idEstado = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -106,13 +107,13 @@ namespace Billycock.Migrations
                 {
                     table.PrimaryKey("PK_PLATAFORMACUENTA", x => new { x.idCuenta, x.idPlataforma });
                     table.ForeignKey(
-                        name: "FK_PLATAFORMACUENTA_CUENTA_idCuenta",
+                        name: "FK_PLATAFORMACUENTA_CUENTA_CuentaidCuenta",
                         column: x => x.CuentaidCuenta,
                         principalTable: "CUENTA",
                         principalColumn: "idCuenta",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_PLATAFORMACUENTA_PLATAFORMA_idPlataforma",
+                        name: "FK_PLATAFORMACUENTA_PLATAFORMA_PlataformaidPlataforma",
                         column: x => x.PlataformaidPlataforma,
                         principalTable: "PLATAFORMA",
                         principalColumn: "idPlataforma",
@@ -135,19 +136,19 @@ namespace Billycock.Migrations
                 {
                     table.PrimaryKey("PK_USUARIOPLATAFORMA", x => new { x.idUsuario, x.idPlataforma, x.idCuenta });
                     table.ForeignKey(
-                        name: "FK_USUARIOPLATAFORMA_CUENTA_idCuenta",
+                        name: "FK_USUARIOPLATAFORMA_CUENTA_CuentaidCuenta",
                         column: x => x.CuentaidCuenta,
                         principalTable: "CUENTA",
                         principalColumn: "idCuenta",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_USUARIOPLATAFORMA_PLATAFORMA_idPlataforma",
+                        name: "FK_USUARIOPLATAFORMA_PLATAFORMA_PlataformaidPlataforma",
                         column: x => x.PlataformaidPlataforma,
                         principalTable: "PLATAFORMA",
                         principalColumn: "idPlataforma",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_USUARIOPLATAFORMA_USUARIO_idUsuario",
+                        name: "FK_USUARIOPLATAFORMA_USUARIO_UsuarioidUsuario",
                         column: x => x.UsuarioidUsuario,
                         principalTable: "USUARIO",
                         principalColumn: "idUsuario",
@@ -155,27 +156,27 @@ namespace Billycock.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_PLATAFORMACUENTA_idCuenta",
+                name: "IX_PLATAFORMACUENTA_CuentaidCuenta",
                 table: "PLATAFORMACUENTA",
                 column: "CuentaidCuenta");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PLATAFORMACUENTA_idPlataforma",
+                name: "IX_PLATAFORMACUENTA_PlataformaidPlataforma",
                 table: "PLATAFORMACUENTA",
                 column: "PlataformaidPlataforma");
 
             migrationBuilder.CreateIndex(
-                name: "IX_USUARIOPLATAFORMA_idCuenta",
+                name: "IX_USUARIOPLATAFORMA_CuentaidCuenta",
                 table: "USUARIOPLATAFORMA",
                 column: "CuentaidCuenta");
 
             migrationBuilder.CreateIndex(
-                name: "IX_USUARIOPLATAFORMA_idPlataforma",
+                name: "IX_USUARIOPLATAFORMA_PlataformaidPlataforma",
                 table: "USUARIOPLATAFORMA",
                 column: "PlataformaidPlataforma");
 
             migrationBuilder.CreateIndex(
-                name: "IX_USUARIOPLATAFORMA_idUsuario",
+                name: "IX_USUARIOPLATAFORMA_UsuarioidUsuario",
                 table: "USUARIOPLATAFORMA",
                 column: "UsuarioidUsuario");
         }
@@ -186,7 +187,7 @@ namespace Billycock.Migrations
                 name: "ESTADO");
 
             migrationBuilder.DropTable(
-                name: "HISTORY");
+                name: "HISTORIA");
 
             migrationBuilder.DropTable(
                 name: "PLATAFORMACUENTA");

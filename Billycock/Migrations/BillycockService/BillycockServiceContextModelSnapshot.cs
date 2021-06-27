@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Billycock.Migrations
+namespace Billycock.Migrations.BillycockService
 {
     [DbContext(typeof(BillycockServiceContext))]
     partial class BillycockServiceContextModelSnapshot : ModelSnapshot
@@ -18,27 +18,6 @@ namespace Billycock.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.3")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("Billycock.Models.BillycockHistory", b =>
-                {
-                    b.Property<int>("idHistory")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Request")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Response")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("fecha")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("idHistory");
-
-                    b.ToTable("HISTORY");
-                });
 
             modelBuilder.Entity("Billycock.Models.Cuenta", b =>
                 {
@@ -98,6 +77,30 @@ namespace Billycock.Migrations
                     b.HasKey("idEstado");
 
                     b.ToTable("ESTADO");
+                });
+
+            modelBuilder.Entity("Billycock.Models.Historia", b =>
+                {
+                    b.Property<int>("idHistory")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Request")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Response")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("integracion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("idHistory");
+
+                    b.ToTable("HISTORIA");
                 });
 
             modelBuilder.Entity("Billycock.Models.Plataforma", b =>
