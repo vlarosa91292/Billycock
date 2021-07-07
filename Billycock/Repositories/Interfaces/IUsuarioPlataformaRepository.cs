@@ -8,13 +8,13 @@ namespace Billycock.Repositories.Interfaces
 {
     public interface IUsuarioPlataformaRepository
     {
-        Task<List<UsuarioPlataforma>> GetUsuarioPlataformas();
-        Task<UsuarioPlataforma> GetUsuarioPlataformabyId(int? id);
-        Task<UsuarioPlataforma> GetUsuarioPlataformabyName(string Name);
+        Task<List<UsuarioPlataformaCuenta>> GetUsuarioPlataformas();
+        Task<UsuarioPlataformaCuenta> GetUsuarioPlataformabyId(int? id);
+        Task<UsuarioPlataformaCuenta> GetUsuarioPlataformabyName(string Name);
         //Operaciones Transaccionales
-        Task<string> InsertUsuarioPlataforma(UsuarioPlataforma usuarioPlataforma);
-        Task<string> UpdateUsuarioPlataforma(UsuarioPlataforma UsuarioPlataforma);
-        Task<string> DeleteUsuarioPlataforma(UsuarioPlataforma usuarioPlataforma);
+        Task<string> InsertUsuarioPlataforma(UsuarioPlataformaCuenta usuarioPlataforma);
+        Task<string> UpdateUsuarioPlataforma(UsuarioPlataformaCuenta UsuarioPlataforma);
+        Task<string> DeleteUsuarioPlataforma(UsuarioPlataformaCuenta usuarioPlataforma);
         Task<bool> UsuarioPlataformaExists(int id);
         Task Save();
     }

@@ -24,8 +24,9 @@ namespace Billycock.Repositories.Repositories
                 await Save(_context);
                 return mensaje.Replace("XXX","Correcta");
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return mensaje.Replace("XXX", "Incorrecta");
             }
         }
@@ -38,8 +39,9 @@ namespace Billycock.Repositories.Repositories
                 await Save(_context);
                 return mensaje.Replace("XXX", "Correcta");
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return mensaje.Replace("XXX", "Incorrecta");
             }
         }
@@ -53,8 +55,9 @@ namespace Billycock.Repositories.Repositories
 
                 return mensaje.Replace("XXX", "Correcta");
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return mensaje.Replace("XXX", "Incorrecta");
             }
         }
@@ -70,6 +73,7 @@ namespace Billycock.Repositories.Repositories
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return mensaje.Replace("XXX", "Incorrecta");
             }
         }

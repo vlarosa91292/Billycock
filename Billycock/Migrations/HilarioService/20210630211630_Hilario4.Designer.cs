@@ -4,14 +4,16 @@ using Billycock.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Billycock.Migrations
 {
     [DbContext(typeof(HilarioServiceContext))]
-    partial class HilarioServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20210630211630_Hilario4")]
+    partial class Hilario4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,8 +43,8 @@ namespace Billycock.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("descripcion")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("descripcion")
+                        .HasColumnType("int");
 
                     b.HasKey("idLinea");
 
@@ -62,8 +64,8 @@ namespace Billycock.Migrations
                     b.Property<int>("cantidad")
                         .HasColumnType("int");
 
-                    b.Property<string>("codigoBarra")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("codigoBarra")
+                        .HasColumnType("int");
 
                     b.Property<string>("descripcion")
                         .HasColumnType("nvarchar(max)");
@@ -131,8 +133,8 @@ namespace Billycock.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("descripcion")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("descripcion")
+                        .HasColumnType("int");
 
                     b.HasKey("idProveedor");
 

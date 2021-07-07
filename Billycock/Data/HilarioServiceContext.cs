@@ -22,6 +22,7 @@ namespace Billycock.Data
         //public DbSet<Venta.Detalle> VENTA_DETALLE { get; set; }
 
         public DbSet<Historia> HISTORIA { get; set; }
+        public DbSet<Estado> ESTADO { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

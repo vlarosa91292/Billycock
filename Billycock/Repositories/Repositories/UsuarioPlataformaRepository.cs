@@ -13,27 +13,27 @@ namespace Billycock.Repositories.Repositories
     {
         private readonly BillycockServiceContext _context;
         private readonly ICommonRepository<Historia> _commonRepository;
-        public Task<string> DeleteUsuarioPlataforma(UsuarioPlataforma usuarioPlataforma)
+        public Task<string> DeleteUsuarioPlataforma(UsuarioPlataformaCuenta usuarioPlataforma)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UsuarioPlataforma> GetUsuarioPlataformabyId(int? id)
+        public Task<UsuarioPlataformaCuenta> GetUsuarioPlataformabyId(int? id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UsuarioPlataforma> GetUsuarioPlataformabyName(string Name)
+        public Task<UsuarioPlataformaCuenta> GetUsuarioPlataformabyName(string Name)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<UsuarioPlataforma>> GetUsuarioPlataformas()
+        public Task<List<UsuarioPlataformaCuenta>> GetUsuarioPlataformas()
         {
             throw new NotImplementedException();
         }
 
-        public Task<string> InsertUsuarioPlataforma(UsuarioPlataforma usuarioPlataforma)
+        public Task<string> InsertUsuarioPlataforma(UsuarioPlataformaCuenta usuarioPlataforma)
         {
             throw new NotImplementedException();
         }
@@ -43,7 +43,7 @@ namespace Billycock.Repositories.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<string> UpdateUsuarioPlataforma(UsuarioPlataforma UsuarioPlataforma)
+        public Task<string> UpdateUsuarioPlataforma(UsuarioPlataformaCuenta UsuarioPlataforma)
         {
             throw new NotImplementedException();
         }

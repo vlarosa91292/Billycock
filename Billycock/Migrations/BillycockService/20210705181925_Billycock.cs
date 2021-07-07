@@ -99,22 +99,20 @@ namespace Billycock.Migrations.BillycockService
                     idPlataforma = table.Column<int>(type: "int", nullable: false),
                     idCuenta = table.Column<int>(type: "int", nullable: false),
                     usuariosdisponibles = table.Column<int>(type: "int", nullable: true),
-                    fechaPago = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CuentaidCuenta = table.Column<int>(type: "int", nullable: true),
-                    PlataformaidPlataforma = table.Column<int>(type: "int", nullable: true)
+                    fechaPago = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PLATAFORMACUENTA", x => new { x.idCuenta, x.idPlataforma });
                     table.ForeignKey(
-                        name: "FK_PLATAFORMACUENTA_CUENTA_CuentaidCuenta",
-                        column: x => x.CuentaidCuenta,
+                        name: "FK_PLATAFORMACUENTA_CUENTA_idCuenta",
+                        column: x => x.idCuenta,
                         principalTable: "CUENTA",
                         principalColumn: "idCuenta",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_PLATAFORMACUENTA_PLATAFORMA_PlataformaidPlataforma",
-                        column: x => x.PlataformaidPlataforma,
+                        name: "FK_PLATAFORMACUENTA_PLATAFORMA_idPlataforma",
+                        column: x => x.idPlataforma,
                         principalTable: "PLATAFORMA",
                         principalColumn: "idPlataforma",
                         onDelete: ReferentialAction.Restrict);
@@ -127,58 +125,55 @@ namespace Billycock.Migrations.BillycockService
                     idUsuario = table.Column<int>(type: "int", nullable: false),
                     idPlataforma = table.Column<int>(type: "int", nullable: false),
                     idCuenta = table.Column<int>(type: "int", nullable: false),
-                    cantidad = table.Column<int>(type: "int", nullable: true),
-                    CuentaidCuenta = table.Column<int>(type: "int", nullable: true),
-                    PlataformaidPlataforma = table.Column<int>(type: "int", nullable: true),
-                    UsuarioidUsuario = table.Column<int>(type: "int", nullable: true)
+                    cantidad = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_USUARIOPLATAFORMA", x => new { x.idUsuario, x.idPlataforma, x.idCuenta });
                     table.ForeignKey(
-                        name: "FK_USUARIOPLATAFORMA_CUENTA_CuentaidCuenta",
-                        column: x => x.CuentaidCuenta,
+                        name: "FK_USUARIOPLATAFORMA_CUENTA_idCuenta",
+                        column: x => x.idCuenta,
                         principalTable: "CUENTA",
                         principalColumn: "idCuenta",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_USUARIOPLATAFORMA_PLATAFORMA_PlataformaidPlataforma",
-                        column: x => x.PlataformaidPlataforma,
+                        name: "FK_USUARIOPLATAFORMA_PLATAFORMA_idPlataforma",
+                        column: x => x.idPlataforma,
                         principalTable: "PLATAFORMA",
                         principalColumn: "idPlataforma",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_USUARIOPLATAFORMA_USUARIO_UsuarioidUsuario",
-                        column: x => x.UsuarioidUsuario,
+                        name: "FK_USUARIOPLATAFORMA_USUARIO_idUsuario",
+                        column: x => x.idUsuario,
                         principalTable: "USUARIO",
                         principalColumn: "idUsuario",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_PLATAFORMACUENTA_CuentaidCuenta",
+                name: "IX_PLATAFORMACUENTA_idCuenta",
                 table: "PLATAFORMACUENTA",
-                column: "CuentaidCuenta");
+                column: "idCuenta");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PLATAFORMACUENTA_PlataformaidPlataforma",
+                name: "IX_PLATAFORMACUENTA_idPlataforma",
                 table: "PLATAFORMACUENTA",
-                column: "PlataformaidPlataforma");
+                column: "idPlataforma");
 
             migrationBuilder.CreateIndex(
-                name: "IX_USUARIOPLATAFORMA_CuentaidCuenta",
+                name: "IX_USUARIOPLATAFORMA_idCuenta",
                 table: "USUARIOPLATAFORMA",
-                column: "CuentaidCuenta");
+                column: "idCuenta");
 
             migrationBuilder.CreateIndex(
-                name: "IX_USUARIOPLATAFORMA_PlataformaidPlataforma",
+                name: "IX_USUARIOPLATAFORMA_idPlataforma",
                 table: "USUARIOPLATAFORMA",
-                column: "PlataformaidPlataforma");
+                column: "idPlataforma");
 
             migrationBuilder.CreateIndex(
-                name: "IX_USUARIOPLATAFORMA_UsuarioidUsuario",
+                name: "IX_USUARIOPLATAFORMA_idUsuario",
                 table: "USUARIOPLATAFORMA",
-                column: "UsuarioidUsuario");
+                column: "idUsuario");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -4,14 +4,16 @@ using Billycock.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Billycock.Migrations
 {
     [DbContext(typeof(HilarioServiceContext))]
-    partial class HilarioServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20210630210824_Hilario3")]
+    partial class Hilario3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,8 +43,8 @@ namespace Billycock.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("descripcion")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("descripcion")
+                        .HasColumnType("int");
 
                     b.HasKey("idLinea");
 
@@ -56,14 +58,11 @@ namespace Billycock.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ProductoidProducto")
-                        .HasColumnType("int");
-
                     b.Property<int>("cantidad")
                         .HasColumnType("int");
 
-                    b.Property<string>("codigoBarra")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("codigoBarra")
+                        .HasColumnType("int");
 
                     b.Property<string>("descripcion")
                         .HasColumnType("nvarchar(max)");
@@ -75,8 +74,6 @@ namespace Billycock.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("idOferta");
-
-                    b.HasIndex("ProductoidProducto");
 
                     b.ToTable("OFERTA");
                 });
@@ -131,8 +128,8 @@ namespace Billycock.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("descripcion")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("descripcion")
+                        .HasColumnType("int");
 
                     b.HasKey("idProveedor");
 
@@ -163,13 +160,6 @@ namespace Billycock.Migrations
                     b.ToTable("HISTORIA");
                 });
 
-            modelBuilder.Entity("Billycock.Models.Hilario.Oferta", b =>
-                {
-                    b.HasOne("Billycock.Models.Hilario.Producto", null)
-                        .WithMany("ofertas")
-                        .HasForeignKey("ProductoidProducto");
-                });
-
             modelBuilder.Entity("Billycock.Models.Hilario.Producto", b =>
                 {
                     b.HasOne("Billycock.Models.Hilario.Linea", null)
@@ -184,11 +174,6 @@ namespace Billycock.Migrations
             modelBuilder.Entity("Billycock.Models.Hilario.Linea", b =>
                 {
                     b.Navigation("productos");
-                });
-
-            modelBuilder.Entity("Billycock.Models.Hilario.Producto", b =>
-                {
-                    b.Navigation("ofertas");
                 });
 
             modelBuilder.Entity("Billycock.Models.Hilario.Proveedor", b =>

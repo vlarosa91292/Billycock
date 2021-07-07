@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Billycock", "Billycock\Billycock.csproj", "{2E4D5E37-E618-4F2B-BE50-5100C3A3C953}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web_Billycock", "Web_Billycock\Web_Billycock.csproj", "{C71DC18B-F3E9-4724-845F-0048361823B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web_Billycock", "Web_Billycock\Web_Billycock.csproj", "{C71DC18B-F3E9-4724-845F-0048361823B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api_Billycock", "Api_Billycock\Api_Billycock.csproj", "{8FBF9256-DD13-4EB9-8F2B-F87C610C92A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api_Billycock", "Api_Billycock\Api_Billycock.csproj", "{8FBF9256-DD13-4EB9-8F2B-F87C610C92A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

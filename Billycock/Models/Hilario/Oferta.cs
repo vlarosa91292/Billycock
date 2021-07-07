@@ -11,7 +11,7 @@ namespace Billycock.Models.Hilario
     {
         [Key]
         public int idOferta { get; set; }
-        public int codigoBarra { get; set; }
+        public string codigoBarra { get; set; }
         [NotMapped]
         public string descProducto { get; set; }
         public string descripcion { get; set; }

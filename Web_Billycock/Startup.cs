@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Billycock.Data;
 using Billycock.Repositories.Interfaces;
 using Billycock.Repositories.Repositories;
 using Billycock.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,8 +24,8 @@ namespace Web_Billycock
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            //services.AddDbContext<BillycockServiceContext>(options => options.UseSqlServer(Configuration["Connection:BillycockServiceConnection"]));
-            //services.AddDbContext<HilarioServiceContext>(options => options.UseSqlServer(Configuration["Connection:HilarioServiceConnection"]));
+            services.AddDbContext<BillycockServiceContext>(options => options.UseSqlServer(Configuration["Connection:BillycockServiceConnection"],providerOptions => providerOptions.EnableRetryOnFailure()));
+            services.AddDbContext<HilarioServiceContext>(options => options.UseSqlServer(Configuration["Connection:HilarioServiceConnection"], providerOptions => providerOptions.EnableRetryOnFailure()));
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<ICuentaRepository, CuentaRepository>();
             services.AddScoped<IEstadoRepository, EstadoRepository>();

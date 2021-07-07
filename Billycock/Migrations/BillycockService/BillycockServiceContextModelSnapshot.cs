@@ -16,7 +16,7 @@ namespace Billycock.Migrations.BillycockService
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.3")
+                .HasAnnotation("ProductVersion", "5.0.7")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Billycock.Models.Cuenta", b =>
@@ -135,10 +135,10 @@ namespace Billycock.Migrations.BillycockService
                     b.Property<int>("idPlataforma")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CuentaidCuenta")
+                    b.Property<int?>("idCuenta")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PlataformaidPlataforma")
+                    b.Property<int?>("idPlataforma")
                         .HasColumnType("int");
 
                     b.Property<string>("fechaPago")
@@ -149,9 +149,9 @@ namespace Billycock.Migrations.BillycockService
 
                     b.HasKey("idCuenta", "idPlataforma");
 
-                    b.HasIndex("CuentaidCuenta");
+                    b.HasIndex("idCuenta");
 
-                    b.HasIndex("PlataformaidPlataforma");
+                    b.HasIndex("idPlataforma");
 
                     b.ToTable("PLATAFORMACUENTA");
                 });
@@ -194,13 +194,13 @@ namespace Billycock.Migrations.BillycockService
                     b.Property<int>("idCuenta")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CuentaidCuenta")
+                    b.Property<int?>("idCuenta")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PlataformaidPlataforma")
+                    b.Property<int?>("idPlataforma")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UsuarioidUsuario")
+                    b.Property<int?>("idUsuario")
                         .HasColumnType("int");
 
                     b.Property<int?>("cantidad")
@@ -208,11 +208,11 @@ namespace Billycock.Migrations.BillycockService
 
                     b.HasKey("idUsuario", "idPlataforma", "idCuenta");
 
-                    b.HasIndex("CuentaidCuenta");
+                    b.HasIndex("idCuenta");
 
-                    b.HasIndex("PlataformaidPlataforma");
+                    b.HasIndex("idPlataforma");
 
-                    b.HasIndex("UsuarioidUsuario");
+                    b.HasIndex("idUsuario");
 
                     b.ToTable("USUARIOPLATAFORMA");
                 });
@@ -221,26 +221,26 @@ namespace Billycock.Migrations.BillycockService
                 {
                     b.HasOne("Billycock.Models.Cuenta", null)
                         .WithMany("plataformaCuentas")
-                        .HasForeignKey("CuentaidCuenta");
+                        .HasForeignKey("idCuenta");
 
                     b.HasOne("Billycock.Models.Plataforma", null)
                         .WithMany("plataformaCuentas")
-                        .HasForeignKey("PlataformaidPlataforma");
+                        .HasForeignKey("idPlataforma");
                 });
 
             modelBuilder.Entity("Billycock.Models.UsuarioPlataforma", b =>
                 {
                     b.HasOne("Billycock.Models.Cuenta", null)
                         .WithMany("usuarioPlataformas")
-                        .HasForeignKey("CuentaidCuenta");
+                        .HasForeignKey("idCuenta");
 
                     b.HasOne("Billycock.Models.Plataforma", null)
                         .WithMany("usuarioPlataformas")
-                        .HasForeignKey("PlataformaidPlataforma");
+                        .HasForeignKey("idPlataforma");
 
                     b.HasOne("Billycock.Models.Usuario", null)
                         .WithMany("usuarioPlataformas")
-                        .HasForeignKey("UsuarioidUsuario");
+                        .HasForeignKey("idUsuario");
                 });
 
             modelBuilder.Entity("Billycock.Models.Cuenta", b =>

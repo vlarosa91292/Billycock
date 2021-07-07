@@ -165,7 +165,7 @@ namespace Billycock.Repositories.Repositories
                 //    for (int i = 0; i < plataformacuentasTemporal.Count; i++)
                 //    {
                 //        user = await GetUsuariobyName(usuario.descripcion);
-                //        await _context.USUARIOPLATAFORMA.AddAsync(new UsuarioPlataforma()
+                //        await _context.UsuarioPlataformaCuenta.AddAsync(new UsuarioPlataformaCuenta()
                 //        {
                 //            idUsuario = user.idUsuario,
                 //            idPlataforma = plataformasxusuario.idPlataforma,
@@ -220,20 +220,20 @@ namespace Billycock.Repositories.Repositories
             }
         }
 
-        private int? ObtenerMontoPago(List<UsuarioPlataforma> usuarioPlataforma)
+        private int? ObtenerMontoPago(List<UsuarioPlataformaCuenta> UsuarioPlataformaCuenta)
         {
             int? pago = 0;
             double? acumulado = 0;
-            for (int i = 0; i < usuarioPlataforma.Count; i++)
+            for (int i = 0; i < UsuarioPlataformaCuenta.Count; i++)
             {
                 acumulado += ((from p in _context.PLATAFORMA
-                               where p.idPlataforma == usuarioPlataforma[i].idPlataforma
-                               select p.precio).FirstOrDefault()) * usuarioPlataforma[i].cantidad;
+                               where p.idPlataforma == UsuarioPlataformaCuenta[i].idPlataforma
+                               select p.precio).FirstOrDefault()) * UsuarioPlataformaCuenta[i].cantidad;
 
-                if (i == usuarioPlataforma.Count - 1)
+                if (i == UsuarioPlataformaCuenta.Count - 1)
                 {
-                    if (usuarioPlataforma[i].cantidad == 1 && usuarioPlataforma.Count > 1) { pago = reproceso(1, usuarioPlataforma.Count, acumulado); }
-                    else if (usuarioPlataforma[i].cantidad > 1 && usuarioPlataforma.Count == 1) { pago = reproceso(2, usuarioPlataforma[i].cantidad, acumulado); }
+                    if (UsuarioPlataformaCuenta[i].cantidad == 1 && UsuarioPlataformaCuenta.Count > 1) { pago = reproceso(1, UsuarioPlataformaCuenta.Count, acumulado); }
+                    else if (UsuarioPlataformaCuenta[i].cantidad > 1 && UsuarioPlataformaCuenta.Count == 1) { pago = reproceso(2, UsuarioPlataformaCuenta[i].cantidad, acumulado); }
                     else pago = Convert.ToInt16(acumulado);
                 }
             }
@@ -298,10 +298,10 @@ namespace Billycock.Repositories.Repositories
                                               idEstado = u.idEstado,
                                               descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
                                               facturacion = u.facturacion,
-                                              usuarioPlataformas = (from up in _context.USUARIOPLATAFORMA
-                                                                    where up.idUsuario == u.idUsuario
+                                              usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
+                                                                          where up.idUsuario == u.idUsuario
                                                                     orderby up.idUsuario
-                                                                    select new UsuarioPlataforma()
+                                                                    select new UsuarioPlataformaCuenta()
                                                                     {
                                                                         idUsuario = up.idUsuario,
                                                                         idPlataforma = up.idPlataforma,
@@ -312,7 +312,7 @@ namespace Billycock.Repositories.Repositories
                                                                         idCuenta = up.idCuenta,
                                                                         credencial = (from c in _context.CUENTA
                                                                                       where c.idCuenta == up.idCuenta
-                                                                                      select new UsuarioPlataforma.Credencial()
+                                                                                      select new UsuarioPlataformaCuenta.Credencial()
                                                                                       {
                                                                                           usuario = c.descripcion,
                                                                                           clave = c.password
@@ -333,10 +333,10 @@ namespace Billycock.Repositories.Repositories
                                           idEstado = u.idEstado,
                                           descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
                                           facturacion = u.facturacion,
-                                          usuarioPlataformas = (from up in _context.USUARIOPLATAFORMA
+                                          usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
                                                                  where up.idUsuario == u.idUsuario
                                                                  orderby up.idUsuario
-                                                                 select new UsuarioPlataforma()
+                                                                 select new UsuarioPlataformaCuenta()
                                                                  {
                                                                      idUsuario = up.idUsuario,
                                                                      idPlataforma = up.idPlataforma,
@@ -347,7 +347,7 @@ namespace Billycock.Repositories.Repositories
                                                                      idCuenta = up.idCuenta,
                                                                      credencial = (from c in _context.CUENTA
                                                                                    where c.idCuenta == up.idCuenta
-                                                                                   select new UsuarioPlataforma.Credencial()
+                                                                                   select new UsuarioPlataformaCuenta.Credencial()
                                                                                    {
                                                                                        usuario = c.descripcion,
                                                                                        clave = c.password
@@ -371,10 +371,10 @@ namespace Billycock.Repositories.Repositories
                                               idEstado = u.idEstado,
                                               descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
                                               facturacion = u.facturacion,
-                                              usuarioPlataformas = (from up in _context.USUARIOPLATAFORMA
+                                              usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
                                                                     where up.idUsuario == u.idUsuario
                                                                     orderby up.idUsuario
-                                                                    select new UsuarioPlataforma()
+                                                                    select new UsuarioPlataformaCuenta()
                                                                     {
                                                                         idUsuario = up.idUsuario,
                                                                         idPlataforma = up.idPlataforma,
@@ -385,7 +385,7 @@ namespace Billycock.Repositories.Repositories
                                                                         idCuenta = up.idCuenta,
                                                                         credencial = (from c in _context.CUENTA
                                                                                       where c.idCuenta == up.idCuenta
-                                                                                      select new UsuarioPlataforma.Credencial()
+                                                                                      select new UsuarioPlataformaCuenta.Credencial()
                                                                                       {
                                                                                           usuario = c.descripcion,
                                                                                           clave = c.password
@@ -406,10 +406,10 @@ namespace Billycock.Repositories.Repositories
                                       idEstado = u.idEstado,
                                       descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
                                       facturacion = u.facturacion,
-                                      usuarioPlataformas = (from up in _context.USUARIOPLATAFORMA
+                                      usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
                                                              where up.idUsuario == u.idUsuario
                                                              orderby up.idUsuario
-                                                             select new UsuarioPlataforma()
+                                                             select new UsuarioPlataformaCuenta()
                                                              {
                                                                  idUsuario = up.idUsuario,
                                                                  idPlataforma = up.idPlataforma,
@@ -420,7 +420,7 @@ namespace Billycock.Repositories.Repositories
                                                                  idCuenta = up.idCuenta,
                                                                  credencial = (from c in _context.CUENTA
                                                                                where c.idCuenta == up.idCuenta
-                                                                               select new UsuarioPlataforma.Credencial()
+                                                                               select new UsuarioPlataformaCuenta.Credencial()
                                                                                {
                                                                                    usuario = c.descripcion,
                                                                                    clave = c.password
@@ -444,10 +444,10 @@ namespace Billycock.Repositories.Repositories
                                               idEstado = u.idEstado,
                                               descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
                                               facturacion = u.facturacion,
-                                              usuarioPlataformas = (from up in _context.USUARIOPLATAFORMA
+                                              usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
                                                                     where up.idUsuario == u.idUsuario
                                                                     orderby up.idUsuario
-                                                                    select new UsuarioPlataforma()
+                                                                    select new UsuarioPlataformaCuenta()
                                                                     {
                                                                         idUsuario = up.idUsuario,
                                                                         idPlataforma = up.idPlataforma,
@@ -458,7 +458,7 @@ namespace Billycock.Repositories.Repositories
                                                                         idCuenta = up.idCuenta,
                                                                         credencial = (from c in _context.CUENTA
                                                                                       where c.idCuenta == up.idCuenta
-                                                                                      select new UsuarioPlataforma.Credencial()
+                                                                                      select new UsuarioPlataformaCuenta.Credencial()
                                                                                       {
                                                                                           usuario = c.descripcion,
                                                                                           clave = c.password
@@ -479,10 +479,10 @@ namespace Billycock.Repositories.Repositories
                                       idEstado = u.idEstado,
                                       descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
                                       facturacion = u.facturacion,
-                                      usuarioPlataformas = (from up in _context.USUARIOPLATAFORMA
+                                      usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
                                                              where up.idUsuario == u.idUsuario
                                                              orderby up.idUsuario
-                                                             select new UsuarioPlataforma()
+                                                             select new UsuarioPlataformaCuenta()
                                                              {
                                                                  idUsuario = up.idUsuario,
                                                                  idPlataforma = up.idPlataforma,
@@ -493,7 +493,7 @@ namespace Billycock.Repositories.Repositories
                                                                  idCuenta = up.idCuenta,
                                                                  credencial = (from c in _context.CUENTA
                                                                                where c.idCuenta == up.idCuenta
-                                                                               select new UsuarioPlataforma.Credencial()
+                                                                               select new UsuarioPlataformaCuenta.Credencial()
                                                                                {
                                                                                    usuario = c.descripcion,
                                                                                    clave = c.password

@@ -4,14 +4,16 @@ using Billycock.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Billycock.Migrations
 {
     [DbContext(typeof(HilarioServiceContext))]
-    partial class HilarioServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20210704153326_Hilario5")]
+    partial class Hilario5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

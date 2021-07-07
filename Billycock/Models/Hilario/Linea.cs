@@ -10,7 +10,7 @@ namespace Billycock.Models.Hilario
     {
         [Key]
         public int idLinea { get; set; }
-        public int descripcion { get; set; }
+        public string descripcion { get; set; }
         public List<Producto> productos { get; set; }
     }
 }

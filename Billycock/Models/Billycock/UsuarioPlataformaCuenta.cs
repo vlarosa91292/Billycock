@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Billycock.Models
 {
-    public class UsuarioPlataforma
+    public class UsuarioPlataformaCuenta
     {
         public int? cantidad { get; set; }
         [NotMapped]
@@ -14,6 +14,8 @@ namespace Billycock.Models
 
         //Usuario
         public int idUsuario { get; set; }
+        [NotMapped]
+        public string descUsuario { get; set; }
 
         //PLATAFORMA
         public int idPlataforma { get; set; }

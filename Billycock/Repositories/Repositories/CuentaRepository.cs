@@ -62,7 +62,7 @@ namespace Billycock.Repositories.Repositories
                     spotify = account.spotify,
                     idEstado = 2
                 },_context);
-                if(mensaje.Contains("Incorrecta"))
+                if(mensaje.Contains("Correcta"))
                 {
                     try
                     {
@@ -106,6 +106,7 @@ namespace Billycock.Repositories.Repositories
             Cuenta account;
             List<int> idPlataformas=new List<int>();
             string mensaje=string.Empty;
+            int contador = 0;
 
             mensaje = await _commonRepository.InsertObjeto(new Cuenta()
             {
@@ -121,7 +122,7 @@ namespace Billycock.Repositories.Repositories
                 spotify = cuenta.spotify,
                 idEstado = 1
             },_context);
-            if (mensaje.Contains("Incorrecta"))
+            if (mensaje.Contains("Correcta"))
             {
                 mensaje += Environment.NewLine;
                 try
@@ -135,6 +136,7 @@ namespace Billycock.Repositories.Repositories
                     account = await GetCuentabyName(cuenta.nombre);
                     foreach (var item in idPlataformas)
                     {
+                        if(contador>=1)mensaje += Environment.NewLine;
                         mensaje += await _plataformaCuentaRepository.InsertPlataformaCuenta(new PlataformaCuenta()
                         {
                             idCuenta = account.idCuenta,
@@ -142,6 +144,7 @@ namespace Billycock.Repositories.Repositories
                             fechaPago = DateTime.Now.ToShortDateString(),
                             usuariosdisponibles = await (from p in _context.PLATAFORMA where p.idPlataforma == item select p.numeroMaximoUsuarios).FirstOrDefaultAsync()
                         });
+                        contador++;
                     }
                 }
                 catch 
@@ -173,7 +176,7 @@ namespace Billycock.Repositories.Repositories
                 spotify = cuenta.spotify==account.spotify?account.spotify:cuenta.spotify,
                 idEstado = cuenta.idEstado==account.idEstado?account.idEstado:cuenta.idEstado
             },_context);
-            if (mensaje.Contains("Incorrecta"))
+            if (mensaje.Contains("Correcta"))
             {
                 try
                 {
