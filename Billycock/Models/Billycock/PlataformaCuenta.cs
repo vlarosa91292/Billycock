@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Billycock.Models
@@ -15,13 +16,15 @@ namespace Billycock.Models
         public string fechaPago { get; set; }
 
         //PLATAFORMA
+        [ForeignKey("Plataforma")]
         public int idPlataforma { get; set; }
-        [NotMapped]
-        public string descPlataforma { get;set;}
+        [JsonIgnore]
+        public Plataforma Plataforma { get; set; }
 
         //CUENTA
+        [ForeignKey("Cuenta")]
         public int idCuenta { get; set; }
-        [NotMapped]
-        public string descCuenta { get;set;}
+        [JsonIgnore]
+        public Cuenta Cuenta { get; set; }
     }
 }

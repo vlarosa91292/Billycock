@@ -25,13 +25,14 @@ namespace Billycock.Repositories.Repositories
             _commonRepository= commonRepository;
             _historyRepository = historyRepository;
         }
-
+        #region Metodos Principales
         public async Task<string> DeleteUsuario(Usuario usuario, string tipoSalida)
         {
             Usuario user = await GetUsuariobyId(usuario.idUsuario, tipoSalida);
+            string response = string.Empty;
             try
             {
-                await _commonRepository.DeleteLogicoObjeto(new Usuario()
+                response = await _commonRepository.DeleteLogicoObjeto(new Usuario()
                 {
                     idUsuario = user.idUsuario,
                     descripcion = user.descripcion,
@@ -40,29 +41,16 @@ namespace Billycock.Repositories.Repositories
                     facturacion = user.facturacion,
                     pago = user.pago
                 },_context);
-                return "Eliminacion de Usuario Correcta";
+                await _historyRepository.InsertHistory(usuario, response);
+                return response;
             }
-            catch
+            catch (Exception ex)
             {
-                return "Error en la eliminacion de Usuario";
+                Console.WriteLine(ex.Message);
+                await _historyRepository.InsertHistory(usuario, ex.Message);
+                return _commonRepository.ExceptionMessage(usuario, "D");
             }
         }
-
-        public async Task<Usuario> GetUsuariobyId(int? id,string tipoSalida)
-        {
-            return (await ObtenerUsuarios(2, id.ToString(), tipoSalida))[0];
-        }
-
-        public async Task<Usuario> GetUsuariobyName(string name, string tipoSalida)
-        {
-            return (await ObtenerUsuarios(3, name, tipoSalida))[0];
-        }
-
-        public async Task<List<Usuario>> GetUsuarios(string tipoSalida)
-        {
-            return await ObtenerUsuarios(1, "", tipoSalida);
-        }
-
         public async Task<string> InsertUsuario(Usuario usuario)
         {
             Usuario user = new Usuario();
@@ -153,7 +141,7 @@ namespace Billycock.Repositories.Repositories
                     descripcion = usuario.descripcion,
                     fechaInscripcion = DateTime.Now,
                     idEstado = 1,
-                    facturacion = usuario.facturacion == "" ? ObtenerFechaFacturacion():usuario.facturacion,
+                    facturacion = ObtenerFechaFacturacion(),
                     //pago = ObtenerMontoPago(usuario.plataformasxusuario)
                     pago = usuario.pago
                 },_context);
@@ -176,21 +164,290 @@ namespace Billycock.Repositories.Repositories
                 //    }
                 //}
                 await _historyRepository.InsertHistory(usuario, response);
-                return "CREACION DE USUARIO EXITOSA";
+                return response;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                _context.HISTORIA.Add(new Historia()
-                {
-                    Request = JsonConvert.SerializeObject(usuario),
-                    Response = ex.Message,
-                    fecha = DateTime.Now
-                });
-                return "ERROR EN LA CREACION DE USUARIO-SERVER";
+                await _historyRepository.InsertHistory(usuario, ex.Message);
+                return _commonRepository.ExceptionMessage(usuario, "C");
             }
         }
+        public async Task<string> UpdateUsuario(Usuario usuario, string tipoSalida)
+        {
+            Usuario user = await GetUsuariobyId(usuario.idUsuario, tipoSalida);
+            string response = string.Empty;
+            try
+            {
+                response = await _commonRepository.UpdateObjeto(new Usuario()
+                {
+                    idUsuario = user.idUsuario,
+                    descripcion = usuario.descripcion,
+                    idEstado = usuario.idEstado,
+                    fechaInscripcion = user.fechaInscripcion,
+                    facturacion = usuario.facturacion,
+                    pago = usuario.pago
+                },_context);
+                await _historyRepository.InsertHistory(usuario, response);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                await _historyRepository.InsertHistory(usuario, ex.Message);
+                return _commonRepository.ExceptionMessage(usuario,"U");
+            }
+        }
+        public async Task<List<Usuario>> GetUsuarios(string tipoSalida)
+        {
+            return await ObtenerUsuarios(1, "", tipoSalida);
+        }
+        public async Task<Usuario> GetUsuariobyId(int? id,string tipoSalida)
+        {
+            return (await ObtenerUsuarios(2, id.ToString(), tipoSalida))[0];
+        }
+        public async Task<Usuario> GetUsuariobyName(string name, string tipoSalida)
+        {
+            return (await ObtenerUsuarios(3, name, tipoSalida))[0];
+        }
+        public async Task<bool> UsuarioExists(int id)
+        {
+            return await _context.USUARIO.AnyAsync(e => e.idUsuario == id);
+        }
+        public async Task<List<Usuario>> ObtenerUsuarios(int tipo, string dato,string tipoSalida)
+        {
+            List<Usuario> usuarios = new List<Usuario>();
+            try
+            {
+                if (tipo == 1)
+                {
+                    if(tipoSalida == "WEB")
+                    {
+                        usuarios = await (from u in _context.USUARIO
+                                          select new Usuario()
+                                          {
+                                              idUsuario = u.idUsuario,
+                                              descripcion = u.descripcion,
+                                              fechaInscripcion = u.fechaInscripcion,
+                                              idEstado = u.idEstado,
+                                              descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
+                                              facturacion = u.facturacion,
+                                              //usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
+                                              //                            where up.idUsuario == u.idUsuario
+                                              //                      orderby up.idUsuario
+                                              //                      select new UsuarioPlataformaCuenta()
+                                              //                      {
+                                              //                          idUsuario = up.idUsuario,
+                                              //                          idPlataforma = up.idPlataforma,
+                                              //                          descPlataforma = (from p in _context.PLATAFORMA
+                                              //                                            where p.idPlataforma == up.idPlataforma
+                                              //                                            select p.descripcion).FirstOrDefault(),
+                                              //                          cantidad = up.cantidad,
+                                              //                          idCuenta = up.idCuenta,
+                                              //                          credencial = (from c in _context.CUENTA
+                                              //                                        where c.idCuenta == up.idCuenta
+                                              //                                        select new UsuarioPlataformaCuenta.Credencial()
+                                              //                                        {
+                                              //                                            usuario = c.descripcion,
+                                              //                                            clave = c.password
+                                              //                                        }).FirstOrDefault()
+                                              //                      }).ToList(),
+                                              pago = u.pago
+                                          }).ToListAsync();
+                    }
+                    else
+                    {
+                        usuarios = await (from u in _context.USUARIO
+                                      where u.idEstado != 2
+                                      select new Usuario()
+                                      {
+                                          idUsuario = u.idUsuario,
+                                          descripcion = u.descripcion,
+                                          fechaInscripcion = u.fechaInscripcion,
+                                          idEstado = u.idEstado,
+                                          descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
+                                          facturacion = u.facturacion,
+                                          //usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
+                                          //                       where up.idUsuario == u.idUsuario
+                                          //                       orderby up.idUsuario
+                                          //                       select new UsuarioPlataformaCuenta()
+                                          //                       {
+                                          //                           idUsuario = up.idUsuario,
+                                          //                           idPlataforma = up.idPlataforma,
+                                          //                           descPlataforma = (from p in _context.PLATAFORMA
+                                          //                                             where p.idPlataforma == up.idPlataforma
+                                          //                                             select p.descripcion).FirstOrDefault(),
+                                          //                           cantidad = up.cantidad,
+                                          //                           idCuenta = up.idCuenta,
+                                          //                           credencial = (from c in _context.CUENTA
+                                          //                                         where c.idCuenta == up.idCuenta
+                                          //                                         select new UsuarioPlataformaCuenta.Credencial()
+                                          //                                         {
+                                          //                                             usuario = c.descripcion,
+                                          //                                             clave = c.password
+                                          //                                         }).FirstOrDefault()
+                                          //                       }).ToList(),
+                                          pago = u.pago
+                                      }).ToListAsync();
+                    }
+                }
+                else if (tipo == 2)
+                {
+                    if (tipoSalida == "WEB")
+                    {
+                        usuarios = await (from u in _context.USUARIO
+                                          where u.idUsuario == int.Parse(dato)
+                                          select new Usuario()
+                                          {
+                                              idUsuario = u.idUsuario,
+                                              descripcion = u.descripcion,
+                                              fechaInscripcion = u.fechaInscripcion,
+                                              idEstado = u.idEstado,
+                                              descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
+                                              facturacion = u.facturacion,
+                                              //usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
+                                              //                      where up.idUsuario == u.idUsuario
+                                              //                      orderby up.idUsuario
+                                              //                      select new UsuarioPlataformaCuenta()
+                                              //                      {
+                                              //                          idUsuario = up.idUsuario,
+                                              //                          idPlataforma = up.idPlataforma,
+                                              //                          descPlataforma = (from p in _context.PLATAFORMA
+                                              //                                            where p.idPlataforma == up.idPlataforma
+                                              //                                            select p.descripcion).FirstOrDefault(),
+                                              //                          cantidad = up.cantidad,
+                                              //                          idCuenta = up.idCuenta,
+                                              //                          credencial = (from c in _context.CUENTA
+                                              //                                        where c.idCuenta == up.idCuenta
+                                              //                                        select new UsuarioPlataformaCuenta.Credencial()
+                                              //                                        {
+                                              //                                            usuario = c.descripcion,
+                                              //                                            clave = c.password
+                                              //                                        }).FirstOrDefault()
+                                              //                      }).ToList(),
+                                              pago = u.pago
+                                          }).ToListAsync();
+                    }
+                    else
+                    {
+                        usuarios = await (from u in _context.USUARIO
+                                  where u.idEstado != 2 && u.idUsuario == int.Parse(dato)
+                                  select new Usuario()
+                                  {
+                                      idUsuario = u.idUsuario,
+                                      descripcion = u.descripcion,
+                                      fechaInscripcion = u.fechaInscripcion,
+                                      idEstado = u.idEstado,
+                                      descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
+                                      facturacion = u.facturacion,
+                                      //usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
+                                      //                       where up.idUsuario == u.idUsuario
+                                      //                       orderby up.idUsuario
+                                      //                       select new UsuarioPlataformaCuenta()
+                                      //                       {
+                                      //                           idUsuario = up.idUsuario,
+                                      //                           idPlataforma = up.idPlataforma,
+                                      //                           descPlataforma = (from p in _context.PLATAFORMA
+                                      //                                             where p.idPlataforma == up.idPlataforma
+                                      //                                             select p.descripcion).FirstOrDefault(),
+                                      //                           cantidad = up.cantidad,
+                                      //                           idCuenta = up.idCuenta,
+                                      //                           credencial = (from c in _context.CUENTA
+                                      //                                         where c.idCuenta == up.idCuenta
+                                      //                                         select new UsuarioPlataformaCuenta.Credencial()
+                                      //                                         {
+                                      //                                             usuario = c.descripcion,
+                                      //                                             clave = c.password
+                                      //                                         }).FirstOrDefault()
+                                      //                       }).ToList(),
+                                      pago = u.pago
+                                  }).ToListAsync();
+                    }
+                }
+                else
+                {
+                    if (tipoSalida == "WEB")
+                    {
+                        usuarios = await (from u in _context.USUARIO
+                                          where u.descripcion == dato
+                                          select new Usuario()
+                                          {
+                                              idUsuario = u.idUsuario,
+                                              descripcion = u.descripcion,
+                                              fechaInscripcion = u.fechaInscripcion,
+                                              idEstado = u.idEstado,
+                                              descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
+                                              facturacion = u.facturacion,
+                                              //usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
+                                              //                      where up.idUsuario == u.idUsuario
+                                              //                      orderby up.idUsuario
+                                              //                      select new UsuarioPlataformaCuenta()
+                                              //                      {
+                                              //                          idUsuario = up.idUsuario,
+                                              //                          idPlataforma = up.idPlataforma,
+                                              //                          descPlataforma = (from p in _context.PLATAFORMA
+                                              //                                            where p.idPlataforma == up.idPlataforma
+                                              //                                            select p.descripcion).FirstOrDefault(),
+                                              //                          cantidad = up.cantidad,
+                                              //                          idCuenta = up.idCuenta,
+                                              //                          credencial = (from c in _context.CUENTA
+                                              //                                        where c.idCuenta == up.idCuenta
+                                              //                                        select new UsuarioPlataformaCuenta.Credencial()
+                                              //                                        {
+                                              //                                            usuario = c.descripcion,
+                                              //                                            clave = c.password
+                                              //                                        }).FirstOrDefault()
+                                              //                      }).ToList(),
+                                              pago = u.pago
+                                          }).ToListAsync();
+                    }
+                    else
+                    {
+                        usuarios = await (from u in _context.USUARIO
+                                  where u.idEstado != 2 && u.descripcion == dato
+                                  select new Usuario()
+                                  {
+                                      idUsuario = u.idUsuario,
+                                      descripcion = u.descripcion,
+                                      fechaInscripcion = u.fechaInscripcion,
+                                      idEstado = u.idEstado,
+                                      descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
+                                      facturacion = u.facturacion,
+                                      //usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
+                                      //                       where up.idUsuario == u.idUsuario
+                                      //                       orderby up.idUsuario
+                                      //                       select new UsuarioPlataformaCuenta()
+                                      //                       {
+                                      //                           idUsuario = up.idUsuario,
+                                      //                           idPlataforma = up.idPlataforma,
+                                      //                           descPlataforma = (from p in _context.PLATAFORMA
+                                      //                                             where p.idPlataforma == up.idPlataforma
+                                      //                                             select p.descripcion).FirstOrDefault(),
+                                      //                           cantidad = up.cantidad,
+                                      //                           idCuenta = up.idCuenta,
+                                      //                           credencial = (from c in _context.CUENTA
+                                      //                                         where c.idCuenta == up.idCuenta
+                                      //                                         select new UsuarioPlataformaCuenta.Credencial()
+                                      //                                         {
+                                      //                                             usuario = c.descripcion,
+                                      //                                             clave = c.password
+                                      //                                         }).FirstOrDefault()
+                                      //                       }).ToList(),
+                                      pago = u.pago
+                                  }).ToListAsync();
 
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return usuarios;
+        }
+        #endregion
+        #region Metodos secundarios
         private string ObtenerFechaFacturacion()
         {
             DateTime fechaHoy = DateTime.Now;
@@ -219,27 +476,25 @@ namespace Billycock.Repositories.Repositories
                 }
             }
         }
-
-        private int? ObtenerMontoPago(List<UsuarioPlataformaCuenta> UsuarioPlataformaCuenta)
+        private int? ObtenerMontoPago(List<UsuarioPlataformaCuenta> UsuarioPlataformaCuentas)
         {
             int? pago = 0;
             double? acumulado = 0;
-            for (int i = 0; i < UsuarioPlataformaCuenta.Count; i++)
+            for (int i = 0; i < UsuarioPlataformaCuentas.Count; i++)
             {
                 acumulado += ((from p in _context.PLATAFORMA
-                               where p.idPlataforma == UsuarioPlataformaCuenta[i].idPlataforma
-                               select p.precio).FirstOrDefault()) * UsuarioPlataformaCuenta[i].cantidad;
+                               where p.idPlataforma == UsuarioPlataformaCuentas[i].idPlataforma
+                               select p.precio).FirstOrDefault()) * UsuarioPlataformaCuentas[i].cantidad;
 
-                if (i == UsuarioPlataformaCuenta.Count - 1)
+                if (i == UsuarioPlataformaCuentas.Count - 1)
                 {
-                    if (UsuarioPlataformaCuenta[i].cantidad == 1 && UsuarioPlataformaCuenta.Count > 1) { pago = reproceso(1, UsuarioPlataformaCuenta.Count, acumulado); }
-                    else if (UsuarioPlataformaCuenta[i].cantidad > 1 && UsuarioPlataformaCuenta.Count == 1) { pago = reproceso(2, UsuarioPlataformaCuenta[i].cantidad, acumulado); }
+                    if (UsuarioPlataformaCuentas[i].cantidad == 1 && UsuarioPlataformaCuentas.Count > 1) { pago = reproceso(1, UsuarioPlataformaCuentas.Count, acumulado); }
+                    else if (UsuarioPlataformaCuentas[i].cantidad > 1 && UsuarioPlataformaCuentas.Count == 1) { pago = reproceso(2, UsuarioPlataformaCuentas[i].cantidad, acumulado); }
                     else pago = Convert.ToInt16(acumulado);
                 }
             }
             return pago;
         }
-
         private int reproceso(int tipo, int? cuenta, double? monto)
         {
             if (tipo == 1)
@@ -251,266 +506,6 @@ namespace Billycock.Repositories.Repositories
                 return (int)(monto * 0.85);
             }
         }
-
-        public async Task<string> UpdateUsuario(Usuario usuario, string tipoSalida)
-        {
-            Usuario user = await GetUsuariobyId(usuario.idUsuario, tipoSalida);
-            try
-            {
-                await _commonRepository.UpdateObjeto(new Usuario()
-                {
-                    idUsuario = user.idUsuario,
-                    descripcion = usuario.descripcion,
-                    idEstado = usuario.idEstado,
-                    fechaInscripcion = user.fechaInscripcion,
-                    facturacion = usuario.facturacion,
-                    pago = usuario.pago
-                },_context);
-                return "Actualizacion de Usuario Correcta";
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return "Error en la actualizacion de Usuario";
-            }
-        }
-
-        public async Task<bool> UsuarioExists(int id)
-        {
-            return await _context.USUARIO.AnyAsync(e => e.idUsuario == id);
-        }
-
-        public async Task<List<Usuario>> ObtenerUsuarios(int tipo, string dato,string tipoSalida)
-        {
-            List<Usuario> usuarios = new List<Usuario>();
-            try
-            {
-                if (tipo == 1)
-                {
-                    if(tipoSalida == "WEB")
-                    {
-                        usuarios = await (from u in _context.USUARIO
-                                          select new Usuario()
-                                          {
-                                              idUsuario = u.idUsuario,
-                                              descripcion = u.descripcion,
-                                              fechaInscripcion = u.fechaInscripcion,
-                                              idEstado = u.idEstado,
-                                              descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
-                                              facturacion = u.facturacion,
-                                              usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
-                                                                          where up.idUsuario == u.idUsuario
-                                                                    orderby up.idUsuario
-                                                                    select new UsuarioPlataformaCuenta()
-                                                                    {
-                                                                        idUsuario = up.idUsuario,
-                                                                        idPlataforma = up.idPlataforma,
-                                                                        descPlataforma = (from p in _context.PLATAFORMA
-                                                                                          where p.idPlataforma == up.idPlataforma
-                                                                                          select p.descripcion).FirstOrDefault(),
-                                                                        cantidad = up.cantidad,
-                                                                        idCuenta = up.idCuenta,
-                                                                        credencial = (from c in _context.CUENTA
-                                                                                      where c.idCuenta == up.idCuenta
-                                                                                      select new UsuarioPlataformaCuenta.Credencial()
-                                                                                      {
-                                                                                          usuario = c.descripcion,
-                                                                                          clave = c.password
-                                                                                      }).FirstOrDefault()
-                                                                    }).ToList(),
-                                              pago = u.pago
-                                          }).ToListAsync();
-                    }
-                    else
-                    {
-                        usuarios = await (from u in _context.USUARIO
-                                      where u.idEstado != 2
-                                      select new Usuario()
-                                      {
-                                          idUsuario = u.idUsuario,
-                                          descripcion = u.descripcion,
-                                          fechaInscripcion = u.fechaInscripcion,
-                                          idEstado = u.idEstado,
-                                          descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
-                                          facturacion = u.facturacion,
-                                          usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
-                                                                 where up.idUsuario == u.idUsuario
-                                                                 orderby up.idUsuario
-                                                                 select new UsuarioPlataformaCuenta()
-                                                                 {
-                                                                     idUsuario = up.idUsuario,
-                                                                     idPlataforma = up.idPlataforma,
-                                                                     descPlataforma = (from p in _context.PLATAFORMA
-                                                                                       where p.idPlataforma == up.idPlataforma
-                                                                                       select p.descripcion).FirstOrDefault(),
-                                                                     cantidad = up.cantidad,
-                                                                     idCuenta = up.idCuenta,
-                                                                     credencial = (from c in _context.CUENTA
-                                                                                   where c.idCuenta == up.idCuenta
-                                                                                   select new UsuarioPlataformaCuenta.Credencial()
-                                                                                   {
-                                                                                       usuario = c.descripcion,
-                                                                                       clave = c.password
-                                                                                   }).FirstOrDefault()
-                                                                 }).ToList(),
-                                          pago = u.pago
-                                      }).ToListAsync();
-                    }
-                }
-                else if (tipo == 2)
-                {
-                    if (tipoSalida == "WEB")
-                    {
-                        usuarios = await (from u in _context.USUARIO
-                                          where u.idUsuario == int.Parse(dato)
-                                          select new Usuario()
-                                          {
-                                              idUsuario = u.idUsuario,
-                                              descripcion = u.descripcion,
-                                              fechaInscripcion = u.fechaInscripcion,
-                                              idEstado = u.idEstado,
-                                              descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
-                                              facturacion = u.facturacion,
-                                              usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
-                                                                    where up.idUsuario == u.idUsuario
-                                                                    orderby up.idUsuario
-                                                                    select new UsuarioPlataformaCuenta()
-                                                                    {
-                                                                        idUsuario = up.idUsuario,
-                                                                        idPlataforma = up.idPlataforma,
-                                                                        descPlataforma = (from p in _context.PLATAFORMA
-                                                                                          where p.idPlataforma == up.idPlataforma
-                                                                                          select p.descripcion).FirstOrDefault(),
-                                                                        cantidad = up.cantidad,
-                                                                        idCuenta = up.idCuenta,
-                                                                        credencial = (from c in _context.CUENTA
-                                                                                      where c.idCuenta == up.idCuenta
-                                                                                      select new UsuarioPlataformaCuenta.Credencial()
-                                                                                      {
-                                                                                          usuario = c.descripcion,
-                                                                                          clave = c.password
-                                                                                      }).FirstOrDefault()
-                                                                    }).ToList(),
-                                              pago = u.pago
-                                          }).ToListAsync();
-                    }
-                    else
-                    {
-                        usuarios = await (from u in _context.USUARIO
-                                  where u.idEstado != 2 && u.idUsuario == int.Parse(dato)
-                                  select new Usuario()
-                                  {
-                                      idUsuario = u.idUsuario,
-                                      descripcion = u.descripcion,
-                                      fechaInscripcion = u.fechaInscripcion,
-                                      idEstado = u.idEstado,
-                                      descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
-                                      facturacion = u.facturacion,
-                                      usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
-                                                             where up.idUsuario == u.idUsuario
-                                                             orderby up.idUsuario
-                                                             select new UsuarioPlataformaCuenta()
-                                                             {
-                                                                 idUsuario = up.idUsuario,
-                                                                 idPlataforma = up.idPlataforma,
-                                                                 descPlataforma = (from p in _context.PLATAFORMA
-                                                                                   where p.idPlataforma == up.idPlataforma
-                                                                                   select p.descripcion).FirstOrDefault(),
-                                                                 cantidad = up.cantidad,
-                                                                 idCuenta = up.idCuenta,
-                                                                 credencial = (from c in _context.CUENTA
-                                                                               where c.idCuenta == up.idCuenta
-                                                                               select new UsuarioPlataformaCuenta.Credencial()
-                                                                               {
-                                                                                   usuario = c.descripcion,
-                                                                                   clave = c.password
-                                                                               }).FirstOrDefault()
-                                                             }).ToList(),
-                                      pago = u.pago
-                                  }).ToListAsync();
-                    }
-                }
-                else
-                {
-                    if (tipoSalida == "WEB")
-                    {
-                        usuarios = await (from u in _context.USUARIO
-                                          where u.descripcion == dato
-                                          select new Usuario()
-                                          {
-                                              idUsuario = u.idUsuario,
-                                              descripcion = u.descripcion,
-                                              fechaInscripcion = u.fechaInscripcion,
-                                              idEstado = u.idEstado,
-                                              descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
-                                              facturacion = u.facturacion,
-                                              usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
-                                                                    where up.idUsuario == u.idUsuario
-                                                                    orderby up.idUsuario
-                                                                    select new UsuarioPlataformaCuenta()
-                                                                    {
-                                                                        idUsuario = up.idUsuario,
-                                                                        idPlataforma = up.idPlataforma,
-                                                                        descPlataforma = (from p in _context.PLATAFORMA
-                                                                                          where p.idPlataforma == up.idPlataforma
-                                                                                          select p.descripcion).FirstOrDefault(),
-                                                                        cantidad = up.cantidad,
-                                                                        idCuenta = up.idCuenta,
-                                                                        credencial = (from c in _context.CUENTA
-                                                                                      where c.idCuenta == up.idCuenta
-                                                                                      select new UsuarioPlataformaCuenta.Credencial()
-                                                                                      {
-                                                                                          usuario = c.descripcion,
-                                                                                          clave = c.password
-                                                                                      }).FirstOrDefault()
-                                                                    }).ToList(),
-                                              pago = u.pago
-                                          }).ToListAsync();
-                    }
-                    else
-                    {
-                        usuarios = await (from u in _context.USUARIO
-                                  where u.idEstado != 2 && u.descripcion == dato
-                                  select new Usuario()
-                                  {
-                                      idUsuario = u.idUsuario,
-                                      descripcion = u.descripcion,
-                                      fechaInscripcion = u.fechaInscripcion,
-                                      idEstado = u.idEstado,
-                                      descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
-                                      facturacion = u.facturacion,
-                                      usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
-                                                             where up.idUsuario == u.idUsuario
-                                                             orderby up.idUsuario
-                                                             select new UsuarioPlataformaCuenta()
-                                                             {
-                                                                 idUsuario = up.idUsuario,
-                                                                 idPlataforma = up.idPlataforma,
-                                                                 descPlataforma = (from p in _context.PLATAFORMA
-                                                                                   where p.idPlataforma == up.idPlataforma
-                                                                                   select p.descripcion).FirstOrDefault(),
-                                                                 cantidad = up.cantidad,
-                                                                 idCuenta = up.idCuenta,
-                                                                 credencial = (from c in _context.CUENTA
-                                                                               where c.idCuenta == up.idCuenta
-                                                                               select new UsuarioPlataformaCuenta.Credencial()
-                                                                               {
-                                                                                   usuario = c.descripcion,
-                                                                                   clave = c.password
-                                                                               }).FirstOrDefault()
-                                                             }).ToList(),
-                                      pago = u.pago
-                                  }).ToListAsync();
-
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw;
-            }
-            return usuarios;
-        }
+        #endregion
     }
 }

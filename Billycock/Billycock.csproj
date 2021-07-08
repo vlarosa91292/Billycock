@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\BillycockService\20210707173702_Billycock.cs" />
+    <Compile Remove="Migrations\BillycockService\20210707173702_Billycock.Designer.cs" />
+    <Compile Remove="Migrations\BillycockService\20210707174607_Billycock.cs" />
+    <Compile Remove="Migrations\BillycockService\20210707174607_Billycock.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.7">
       <PrivateAssets>all</PrivateAssets>

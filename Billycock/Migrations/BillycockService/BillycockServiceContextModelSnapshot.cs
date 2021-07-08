@@ -135,12 +135,6 @@ namespace Billycock.Migrations.BillycockService
                     b.Property<int>("idPlataforma")
                         .HasColumnType("int");
 
-                    b.Property<int?>("idCuenta")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("idPlataforma")
-                        .HasColumnType("int");
-
                     b.Property<string>("fechaPago")
                         .HasColumnType("nvarchar(max)");
 
@@ -148,8 +142,6 @@ namespace Billycock.Migrations.BillycockService
                         .HasColumnType("int");
 
                     b.HasKey("idCuenta", "idPlataforma");
-
-                    b.HasIndex("idCuenta");
 
                     b.HasIndex("idPlataforma");
 
@@ -183,7 +175,7 @@ namespace Billycock.Migrations.BillycockService
                     b.ToTable("USUARIO");
                 });
 
-            modelBuilder.Entity("Billycock.Models.UsuarioPlataforma", b =>
+            modelBuilder.Entity("Billycock.Models.UsuarioPlataformaCuenta", b =>
                 {
                     b.Property<int>("idUsuario")
                         .HasColumnType("int");
@@ -192,15 +184,6 @@ namespace Billycock.Migrations.BillycockService
                         .HasColumnType("int");
 
                     b.Property<int>("idCuenta")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("idCuenta")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("idPlataforma")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("idUsuario")
                         .HasColumnType("int");
 
                     b.Property<int?>("cantidad")
@@ -212,54 +195,72 @@ namespace Billycock.Migrations.BillycockService
 
                     b.HasIndex("idPlataforma");
 
-                    b.HasIndex("idUsuario");
-
-                    b.ToTable("USUARIOPLATAFORMA");
+                    b.ToTable("USUARIOPLATAFORMACUENTA");
                 });
 
             modelBuilder.Entity("Billycock.Models.PlataformaCuenta", b =>
                 {
-                    b.HasOne("Billycock.Models.Cuenta", null)
+                    b.HasOne("Billycock.Models.Cuenta", "Cuenta")
                         .WithMany("plataformaCuentas")
-                        .HasForeignKey("idCuenta");
+                        .HasForeignKey("idCuenta")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Billycock.Models.Plataforma", null)
+                    b.HasOne("Billycock.Models.Plataforma", "Plataforma")
                         .WithMany("plataformaCuentas")
-                        .HasForeignKey("idPlataforma");
+                        .HasForeignKey("idPlataforma")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cuenta");
+
+                    b.Navigation("Plataforma");
                 });
 
-            modelBuilder.Entity("Billycock.Models.UsuarioPlataforma", b =>
+            modelBuilder.Entity("Billycock.Models.UsuarioPlataformaCuenta", b =>
                 {
-                    b.HasOne("Billycock.Models.Cuenta", null)
-                        .WithMany("usuarioPlataformas")
-                        .HasForeignKey("idCuenta");
+                    b.HasOne("Billycock.Models.Cuenta", "Cuenta")
+                        .WithMany("usuarioPlataformacuentas")
+                        .HasForeignKey("idCuenta")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Billycock.Models.Plataforma", null)
-                        .WithMany("usuarioPlataformas")
-                        .HasForeignKey("idPlataforma");
+                    b.HasOne("Billycock.Models.Plataforma", "Plataforma")
+                        .WithMany("usuarioPlataformacuentas")
+                        .HasForeignKey("idPlataforma")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Billycock.Models.Usuario", null)
-                        .WithMany("usuarioPlataformas")
-                        .HasForeignKey("idUsuario");
+                    b.HasOne("Billycock.Models.Usuario", "Usuario")
+                        .WithMany("usuarioPlataformacuentas")
+                        .HasForeignKey("idUsuario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cuenta");
+
+                    b.Navigation("Plataforma");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Billycock.Models.Cuenta", b =>
                 {
                     b.Navigation("plataformaCuentas");
 
-                    b.Navigation("usuarioPlataformas");
+                    b.Navigation("usuarioPlataformacuentas");
                 });
 
             modelBuilder.Entity("Billycock.Models.Plataforma", b =>
                 {
                     b.Navigation("plataformaCuentas");
 
-                    b.Navigation("usuarioPlataformas");
+                    b.Navigation("usuarioPlataformacuentas");
                 });
 
             modelBuilder.Entity("Billycock.Models.Usuario", b =>
                 {
-                    b.Navigation("usuarioPlataformas");
+                    b.Navigation("usuarioPlataformacuentas");
                 });
 #pragma warning restore 612, 618
         }

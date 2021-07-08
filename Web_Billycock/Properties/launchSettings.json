@@ -12,7 +12,9 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "BillycockServiceConnection": "Server=tcp:billycockplatform.database.windows.net,1433;Initial Catalog=Billycock_Produccion;Persist Security Info=False;User ID=vlarosa;Password=Nayjuw+29;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;",
+        "HilarioServiceConnection": "Server=tcp:billycockplatform.database.windows.net,1433;Initial Catalog=Hilario_Produccion;Persist Security Info=False;User ID=vlarosa;Password=Nayjuw+29;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;"
       }
     },
     "Web_Billycock": {

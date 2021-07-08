@@ -109,17 +109,17 @@ namespace Billycock.Migrations.BillycockService
                         column: x => x.idCuenta,
                         principalTable: "CUENTA",
                         principalColumn: "idCuenta",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PLATAFORMACUENTA_PLATAFORMA_idPlataforma",
                         column: x => x.idPlataforma,
                         principalTable: "PLATAFORMA",
                         principalColumn: "idPlataforma",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "USUARIOPLATAFORMA",
+                name: "USUARIOPLATAFORMACUENTA",
                 columns: table => new
                 {
                     idUsuario = table.Column<int>(type: "int", nullable: false),
@@ -129,31 +129,26 @@ namespace Billycock.Migrations.BillycockService
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_USUARIOPLATAFORMA", x => new { x.idUsuario, x.idPlataforma, x.idCuenta });
+                    table.PrimaryKey("PK_USUARIOPLATAFORMACUENTA", x => new { x.idUsuario, x.idPlataforma, x.idCuenta });
                     table.ForeignKey(
-                        name: "FK_USUARIOPLATAFORMA_CUENTA_idCuenta",
+                        name: "FK_USUARIOPLATAFORMACUENTA_CUENTA_idCuenta",
                         column: x => x.idCuenta,
                         principalTable: "CUENTA",
                         principalColumn: "idCuenta",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_USUARIOPLATAFORMA_PLATAFORMA_idPlataforma",
+                        name: "FK_USUARIOPLATAFORMACUENTA_PLATAFORMA_idPlataforma",
                         column: x => x.idPlataforma,
                         principalTable: "PLATAFORMA",
                         principalColumn: "idPlataforma",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_USUARIOPLATAFORMA_USUARIO_idUsuario",
+                        name: "FK_USUARIOPLATAFORMACUENTA_USUARIO_idUsuario",
                         column: x => x.idUsuario,
                         principalTable: "USUARIO",
                         principalColumn: "idUsuario",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PLATAFORMACUENTA_idCuenta",
-                table: "PLATAFORMACUENTA",
-                column: "idCuenta");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PLATAFORMACUENTA_idPlataforma",
@@ -161,19 +156,14 @@ namespace Billycock.Migrations.BillycockService
                 column: "idPlataforma");
 
             migrationBuilder.CreateIndex(
-                name: "IX_USUARIOPLATAFORMA_idCuenta",
-                table: "USUARIOPLATAFORMA",
+                name: "IX_USUARIOPLATAFORMACUENTA_idCuenta",
+                table: "USUARIOPLATAFORMACUENTA",
                 column: "idCuenta");
 
             migrationBuilder.CreateIndex(
-                name: "IX_USUARIOPLATAFORMA_idPlataforma",
-                table: "USUARIOPLATAFORMA",
+                name: "IX_USUARIOPLATAFORMACUENTA_idPlataforma",
+                table: "USUARIOPLATAFORMACUENTA",
                 column: "idPlataforma");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_USUARIOPLATAFORMA_idUsuario",
-                table: "USUARIOPLATAFORMA",
-                column: "idUsuario");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -188,7 +178,7 @@ namespace Billycock.Migrations.BillycockService
                 name: "PLATAFORMACUENTA");
 
             migrationBuilder.DropTable(
-                name: "USUARIOPLATAFORMA");
+                name: "USUARIOPLATAFORMACUENTA");
 
             migrationBuilder.DropTable(
                 name: "CUENTA");

@@ -66,17 +66,17 @@ namespace Billycock.Repositories.Repositories
                 {
                     try
                     {
-                        foreach (var item in account.plataformaCuentas)
-                        {
-                            mensaje += Environment.NewLine;
-                            mensaje += await _plataformaCuentaRepository.DeletePlataformaCuenta(new PlataformaCuenta()
-                            {
-                                idPlataforma = item.idPlataforma,
-                                idCuenta = item.idCuenta,
-                                fechaPago = item.fechaPago,
-                                usuariosdisponibles = item.usuariosdisponibles
-                            });
-                        }
+                        //foreach (var item in account.plataformaCuentas)
+                        //{
+                        //    mensaje += Environment.NewLine;
+                        //    mensaje += await _plataformaCuentaRepository.DeletePlataformaCuenta(new PlataformaCuenta()
+                        //    {
+                        //        idPlataforma = item.idPlataforma,
+                        //        idCuenta = item.idCuenta,
+                        //        fechaPago = item.fechaPago,
+                        //        usuariosdisponibles = item.usuariosdisponibles
+                        //    });
+                        //}
                     }
                     catch
                     {
@@ -265,18 +265,18 @@ namespace Billycock.Repositories.Repositories
                                   nombre = c.nombre,
                                   diminutivo = c.diminutivo,
                                   password = c.password,
-                                  plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
-                                                       where pc.idCuenta == c.idCuenta
-                                                       select new PlataformaCuenta()
-                                                       {
-                                                           idPlataformaCuenta = pc.idCuenta + "-" + pc.idPlataforma,
-                                                           idCuenta = pc.idCuenta,
-                                                           descCuenta = c.descripcion,
-                                                           idPlataforma = pc.idPlataforma,
-                                                           descPlataforma = (from p in _context.PLATAFORMA where p.idPlataforma == pc.idPlataforma select p.descripcion).FirstOrDefault(),
-                                                           fechaPago = pc.fechaPago,
-                                                           usuariosdisponibles = pc.usuariosdisponibles
-                                                       }).ToList()
+                                  //plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
+                                  //                     where pc.idCuenta == c.idCuenta
+                                  //                     select new PlataformaCuenta()
+                                  //                     {
+                                  //                         idPlataformaCuenta = pc.idCuenta + "-" + pc.idPlataforma,
+                                  //                         idCuenta = pc.idCuenta,
+                                  //                         descCuenta = c.descripcion,
+                                  //                         idPlataforma = pc.idPlataforma,
+                                  //                         descPlataforma = (from p in _context.PLATAFORMA where p.idPlataforma == pc.idPlataforma select p.descripcion).FirstOrDefault(),
+                                  //                         fechaPago = pc.fechaPago,
+                                  //                         usuariosdisponibles = pc.usuariosdisponibles
+                                  //                     }).ToList()
                               }).ToListAsync();
             }
             else if (tipo == 2)
@@ -298,18 +298,18 @@ namespace Billycock.Repositories.Repositories
                                   nombre = c.nombre,
                                   diminutivo = c.diminutivo,
                                   password = c.password,
-                                  plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
-                                                       where pc.idCuenta == c.idCuenta
-                                                       select new PlataformaCuenta()
-                                                       {
-                                                           idPlataformaCuenta = pc.idCuenta + "-" + pc.idPlataforma,
-                                                           idCuenta = pc.idCuenta,
-                                                           descCuenta = c.descripcion,
-                                                           idPlataforma = pc.idPlataforma,
-                                                           descPlataforma = (from p in _context.PLATAFORMA where p.idPlataforma == pc.idPlataforma select p.descripcion).FirstOrDefault(),
-                                                           fechaPago = pc.fechaPago,
-                                                           usuariosdisponibles = pc.usuariosdisponibles
-                                                       }).ToList()
+                                  //plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
+                                  //                     where pc.idCuenta == c.idCuenta
+                                  //                     select new PlataformaCuenta()
+                                  //                     {
+                                  //                         idPlataformaCuenta = pc.idCuenta + "-" + pc.idPlataforma,
+                                  //                         idCuenta = pc.idCuenta,
+                                  //                         descCuenta = c.descripcion,
+                                  //                         idPlataforma = pc.idPlataforma,
+                                  //                         descPlataforma = (from p in _context.PLATAFORMA where p.idPlataforma == pc.idPlataforma select p.descripcion).FirstOrDefault(),
+                                  //                         fechaPago = pc.fechaPago,
+                                  //                         usuariosdisponibles = pc.usuariosdisponibles
+                                  //                     }).ToList()
                               }).ToListAsync();
             }
             else
@@ -331,18 +331,18 @@ namespace Billycock.Repositories.Repositories
                                   nombre = c.nombre,
                                   diminutivo = c.diminutivo,
                                   password = c.password,
-                                  plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
-                                                       where pc.idCuenta == c.idCuenta
-                                                       select new PlataformaCuenta()
-                                                       {
-                                                           idPlataformaCuenta = pc.idCuenta + "-" + pc.idPlataforma,
-                                                           idCuenta = pc.idCuenta,
-                                                           descCuenta = c.descripcion,
-                                                           idPlataforma = pc.idPlataforma,
-                                                           descPlataforma = (from p in _context.PLATAFORMA where p.idPlataforma == pc.idPlataforma select p.descripcion).FirstOrDefault(),
-                                                           fechaPago = pc.fechaPago,
-                                                           usuariosdisponibles = pc.usuariosdisponibles
-                                                       }).ToList()
+                                  //plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
+                                  //                     where pc.idCuenta == c.idCuenta
+                                  //                     select new PlataformaCuenta()
+                                  //                     {
+                                  //                         idPlataformaCuenta = pc.idCuenta + "-" + pc.idPlataforma,
+                                  //                         idCuenta = pc.idCuenta,
+                                  //                         descCuenta = c.descripcion,
+                                  //                         idPlataforma = pc.idPlataforma,
+                                  //                         descPlataforma = (from p in _context.PLATAFORMA where p.idPlataforma == pc.idPlataforma select p.descripcion).FirstOrDefault(),
+                                  //                         fechaPago = pc.fechaPago,
+                                  //                         usuariosdisponibles = pc.usuariosdisponibles
+                                  //                     }).ToList()
                               }).ToListAsync();
             }
             return cuentas;

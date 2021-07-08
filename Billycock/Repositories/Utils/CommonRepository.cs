@@ -17,7 +17,7 @@ namespace Billycock.Repositories.Repositories
         }
         public async Task<string> DeleteLogicoObjeto(T t, BillycockServiceContext _context)
         {
-            string mensaje = "Eliminacion XXX de " + t.GetType().Name.ToUpper();
+            string mensaje = ("Eliminacion XXX de " + t.GetType().Name).ToUpper();
             try
             {
                 _context.Update(t);
@@ -32,7 +32,7 @@ namespace Billycock.Repositories.Repositories
         }
         public async Task<string> DeleteObjeto(T t, BillycockServiceContext _context)
         {
-            string mensaje = "Eliminacion XXX de " + t.GetType().Name.ToUpper();
+            string mensaje = ("Eliminacion XXX de " + t.GetType().Name).ToUpper();
             try
             {
                 _context.Remove(t);
@@ -47,7 +47,7 @@ namespace Billycock.Repositories.Repositories
         }
         public async Task<string> InsertObjeto(T t, BillycockServiceContext _context)
         {
-            string mensaje = "Creacion XXX de " + t.GetType().Name.ToUpper();
+            string mensaje = ("Creacion XXX de " + t.GetType().Name).ToUpper();
             try
             {
                 await _context.AddAsync(t);
@@ -63,7 +63,7 @@ namespace Billycock.Repositories.Repositories
         }
         public async Task<string> UpdateObjeto(T t, BillycockServiceContext _context)
         {
-            string mensaje = "Actualizacion XXX de " + t.GetType().Name.ToUpper();
+            string mensaje = ("Actualizacion XXX de " + t.GetType().Name).ToUpper();
             try
             {
                 _context.Update(t);
@@ -76,6 +76,23 @@ namespace Billycock.Repositories.Repositories
                 Console.WriteLine(ex.Message);
                 return mensaje.Replace("XXX", "Incorrecta");
             }
+        }
+        public string ExceptionMessage(T t, string MessageType)
+        {
+            string message = "ERROR EN @PROCESO@ DE "+ t.GetType().Name.ToUpper() + "-SERVER";
+            if (MessageType == "C")
+            {
+                message = message.Replace("@PROCESO@", "CREACION");
+            }
+            else if (MessageType == "U")
+            {
+                message = message.Replace("@PROCESO@", "ACTUALIZACION");
+            }
+            else if (MessageType == "D")
+            {
+                message = message.Replace("@PROCESO@", "ELIMINACION");
+            }
+            return message;
         }
     }
 }
