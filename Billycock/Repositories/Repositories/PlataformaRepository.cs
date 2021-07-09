@@ -1,6 +1,7 @@
 ﻿using Billycock.Data;
 using Billycock.Models;
 using Billycock.Repositories.Interfaces;
+using Billycock.Utils;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,11 @@ namespace Billycock.Repositories.Repositories
     public class PlataformaRepository : IPlataformaRepository
     {
         private readonly BillycockServiceContext _context;
-        public PlataformaRepository(BillycockServiceContext context)
+        private readonly ICommonRepository<Plataforma> _commonRepository;
+        public PlataformaRepository(BillycockServiceContext context, ICommonRepository<Plataforma> commonRepository)
         {
             _context = context;
+            _commonRepository = commonRepository;
         }
 
         private bool disposed = false;
@@ -44,20 +47,19 @@ namespace Billycock.Repositories.Repositories
             Plataforma account = await GetPlataformabyId(plataforma.idPlataforma);
             try
             {
-                _context.Update(new Plataforma()
+                return await _commonRepository.DeleteLogicoObjeto(new Plataforma()
                 {
                     idPlataforma = account.idPlataforma,
                     descripcion = plataforma.descripcion,
                     idEstado = 2,
                     numeroMaximoUsuarios = account.numeroMaximoUsuarios,
                     precio = account.precio
-                });
-                await Save();
-                return "Eliminacion de Plataforma Correcta";
+                },_context);
             }
             catch (Exception ex)
             {
-                return "Error en la eliminacion de Plataforma";
+                Console.WriteLine(ex.Message);
+                return _commonRepository.ExceptionMessage(plataforma, "D");
             }
         }
 
@@ -80,21 +82,20 @@ namespace Billycock.Repositories.Repositories
         {
             try
             {
-                await _context.PLATAFORMA.AddAsync(new Plataforma()
+                return await _commonRepository.InsertObjeto(new Plataforma()
                 {
                     descripcion = plataforma.descripcion,
                     idEstado = 1,
                     numeroMaximoUsuarios = plataforma.numeroMaximoUsuarios,
                     precio = plataforma.precio
-                });
-                await Save();
-
-                return "CREACION DE PLATAFORMA EXITOSA";
+                },_context);
             }
-            catch
+            catch (Exception ex)
             {
-                return "ERROR EN LA CREACION DE PLATAFORMA-SERVER";
+                Console.WriteLine(ex.Message);
+                return _commonRepository.ExceptionMessage(plataforma, "C");
             }
+
         }
 
         public async Task<string> UpdatePlataforma(Plataforma plataforma)
@@ -104,22 +105,19 @@ namespace Billycock.Repositories.Repositories
             List<int> idPlataformasEliminar = new List<int>();
             try
             {
-                _context.Update(new Plataforma()
+                return await _commonRepository.UpdateObjeto(new Plataforma()
                 {
                     idPlataforma = plataforma.idPlataforma,
                     descripcion = account.descripcion,
                     idEstado = plataforma.idEstado,
                     numeroMaximoUsuarios = plataforma.numeroMaximoUsuarios,
                     precio = account.precio
-                });
-                await Save();
-
-                return "ACTUALIZACION DE PLATAFORMA EXITOSA";
+                },_context);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return "ERROR EN LA CREACION DE PLATAFORMA-SERVER";
+                return _commonRepository.ExceptionMessage(plataforma, "U");
             }
         }
 

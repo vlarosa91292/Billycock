@@ -16,23 +16,19 @@ namespace Billycock.Repositories.Repositories
         private readonly BillycockServiceContext _context;
         private readonly ICuentaRepository _cuentaRepository;
         private readonly ICommonRepository<Usuario> _commonRepository;
-        private readonly IHistoryRepository<Usuario> _historyRepository;
-        public UsuarioRepository(BillycockServiceContext context, ICuentaRepository cuentaRepository, ICommonRepository<Usuario> commonRepository,
-            IHistoryRepository<Usuario> historyRepository)
+        public UsuarioRepository(BillycockServiceContext context, ICuentaRepository cuentaRepository, ICommonRepository<Usuario> commonRepository)
         {
             _context = context;
             _cuentaRepository = cuentaRepository;
             _commonRepository= commonRepository;
-            _historyRepository = historyRepository;
         }
         #region Metodos Principales
         public async Task<string> DeleteUsuario(Usuario usuario, string tipoSalida)
         {
             Usuario user = await GetUsuariobyId(usuario.idUsuario, tipoSalida);
-            string response = string.Empty;
             try
             {
-                response = await _commonRepository.DeleteLogicoObjeto(new Usuario()
+                return await _commonRepository.DeleteLogicoObjeto(new Usuario()
                 {
                     idUsuario = user.idUsuario,
                     descripcion = user.descripcion,
@@ -41,20 +37,15 @@ namespace Billycock.Repositories.Repositories
                     facturacion = user.facturacion,
                     pago = user.pago
                 },_context);
-                await _historyRepository.InsertHistory(usuario, response);
-                return response;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                await _historyRepository.InsertHistory(usuario, ex.Message);
                 return _commonRepository.ExceptionMessage(usuario, "D");
             }
         }
         public async Task<string> InsertUsuario(Usuario usuario)
         {
-            Usuario user = new Usuario();
-            string response = string.Empty;
             //List<PlataformaCuenta> plataformacuentasTemporal = new List<PlataformaCuenta>();
             //List<PlataformaCuenta> plataformacuentas = new List<PlataformaCuenta>();
             //PlataformaCuenta plataformacuenta = new PlataformaCuenta();
@@ -136,7 +127,7 @@ namespace Billycock.Repositories.Repositories
                 //    }
                 //    return mensaje;
                 //}
-                response = await _commonRepository.InsertObjeto(new Usuario()
+                return await _commonRepository.InsertObjeto(new Usuario()
                 {
                     descripcion = usuario.descripcion,
                     fechaInscripcion = DateTime.Now,
@@ -163,23 +154,19 @@ namespace Billycock.Repositories.Repositories
                 //        await Save();
                 //    }
                 //}
-                await _historyRepository.InsertHistory(usuario, response);
-                return response;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                await _historyRepository.InsertHistory(usuario, ex.Message);
                 return _commonRepository.ExceptionMessage(usuario, "C");
             }
         }
         public async Task<string> UpdateUsuario(Usuario usuario, string tipoSalida)
         {
             Usuario user = await GetUsuariobyId(usuario.idUsuario, tipoSalida);
-            string response = string.Empty;
             try
             {
-                response = await _commonRepository.UpdateObjeto(new Usuario()
+                return await _commonRepository.UpdateObjeto(new Usuario()
                 {
                     idUsuario = user.idUsuario,
                     descripcion = usuario.descripcion,
@@ -188,13 +175,10 @@ namespace Billycock.Repositories.Repositories
                     facturacion = usuario.facturacion,
                     pago = usuario.pago
                 },_context);
-                await _historyRepository.InsertHistory(usuario, response);
-                return response;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                await _historyRepository.InsertHistory(usuario, ex.Message);
                 return _commonRepository.ExceptionMessage(usuario,"U");
             }
         }

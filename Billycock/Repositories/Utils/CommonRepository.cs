@@ -1,4 +1,5 @@
 ﻿using Billycock.Data;
+using Billycock.Repositories.Interfaces;
 using Billycock.Utils;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,10 @@ namespace Billycock.Repositories.Repositories
 {
     public class CommonRepository<T> : ICommonRepository<T> where T : class
     {
-        public CommonRepository()
+        private readonly IHistoryRepository<T> _historyRepository;
+        public CommonRepository(IHistoryRepository<T> historyRepository)
         {
+            _historyRepository = historyRepository;
         }
         public async Task Save(BillycockServiceContext _context)
         {
@@ -17,49 +20,55 @@ namespace Billycock.Repositories.Repositories
         }
         public async Task<string> DeleteLogicoObjeto(T t, BillycockServiceContext _context)
         {
-            string mensaje = ("Eliminacion XXX de " + t.GetType().Name).ToUpper();
+            string mensaje = "Eliminacion XXX de " + t.GetType().Name;
             try
             {
                 _context.Update(t);
                 await Save(_context);
-                return mensaje.Replace("XXX","Correcta");
+                mensaje = mensaje.Replace("XXX","Correcta").ToUpper();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return mensaje.Replace("XXX", "Incorrecta");
+                mensaje = mensaje.Replace("XXX", "Incorrecta").ToUpper();
             }
+            await _historyRepository.InsertHistory(t, mensaje);
+            return mensaje;
         }
         public async Task<string> DeleteObjeto(T t, BillycockServiceContext _context)
         {
-            string mensaje = ("Eliminacion XXX de " + t.GetType().Name).ToUpper();
+            string mensaje = "Eliminacion XXX de " + t.GetType().Name;
             try
             {
                 _context.Remove(t);
                 await Save(_context);
-                return mensaje.Replace("XXX", "Correcta");
+                mensaje = mensaje.Replace("XXX", "Correcta").ToUpper();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return mensaje.Replace("XXX", "Incorrecta");
+                mensaje = mensaje.Replace("XXX", "Incorrecta").ToUpper();
             }
+            await _historyRepository.InsertHistory(t, mensaje);
+            return mensaje;
         }
         public async Task<string> InsertObjeto(T t, BillycockServiceContext _context)
         {
-            string mensaje = ("Creacion XXX de " + t.GetType().Name).ToUpper();
+            string mensaje = "Creacion XXX de " + t.GetType().Name;
             try
             {
                 await _context.AddAsync(t);
                 await Save(_context);
 
-                return mensaje.Replace("XXX", "Correcta");
+                mensaje = mensaje.Replace("XXX", "Correcta").ToUpper();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return mensaje.Replace("XXX", "Incorrecta");
+                mensaje = mensaje.Replace("XXX", "Incorrecta").ToUpper();
             }
+            await _historyRepository.InsertHistory(t, mensaje);
+            return mensaje;
         }
         public async Task<string> UpdateObjeto(T t, BillycockServiceContext _context)
         {
@@ -69,13 +78,15 @@ namespace Billycock.Repositories.Repositories
                 _context.Update(t);
                 await Save(_context);
 
-                return mensaje.Replace("XXX", "Correcta");
+                mensaje = mensaje.Replace("XXX", "Correcta").ToUpper();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return mensaje.Replace("XXX", "Incorrecta");
+                mensaje = mensaje.Replace("XXX", "Incorrecta").ToUpper();
             }
+            await _historyRepository.InsertHistory(t, mensaje);
+            return mensaje;
         }
         public string ExceptionMessage(T t, string MessageType)
         {

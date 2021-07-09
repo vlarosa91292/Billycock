@@ -20,32 +20,22 @@ namespace Billycock.Repositories.Repositories
             _commonRepository = commonRepository;
         }
 
-        private bool disposed = false;
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    _context.Dispose();
-                }
-            }
-            this.disposed = true;
-        }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         public async Task<string> DeleteEstado(Estado estado)
         {
-            Estado account = await GetEstadobyId(estado.idEstado);
-            return await _commonRepository.DeleteObjeto(new Estado()
+            Estado state = await GetEstadobyId(estado.idEstado);
+            try
             {
-                idEstado = account.idEstado,
-                descripcion = estado.descripcion
-            },_context);
+                return await _commonRepository.DeleteObjeto(new Estado()
+                {
+                    idEstado = state.idEstado,
+                    descripcion = estado.descripcion
+                },_context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return _commonRepository.ExceptionMessage(estado, "D");
+            }
         }
 
         public async Task<Estado> GetEstadobyId(int? id)
@@ -65,20 +55,36 @@ namespace Billycock.Repositories.Repositories
 
         public async Task<string> InsertEstado(Estado estado)
         {
-            return await _commonRepository.InsertObjeto(new Estado()
+            try
             {
-                descripcion = estado.descripcion
-            },_context);
+                return await _commonRepository.InsertObjeto(new Estado()
+                {
+                    descripcion = estado.descripcion
+                },_context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return _commonRepository.ExceptionMessage(estado, "C");
+            }
         }
 
         public async Task<string> UpdateEstado(Estado estado)
         {
             Estado account = await GetEstadobyId(estado.idEstado);
-            return await _commonRepository.UpdateObjeto(new Estado()
+            try
             {
-                idEstado = account.idEstado,
-                descripcion = estado.descripcion
-            },_context);
+                return await _commonRepository.UpdateObjeto(new Estado()
+                {
+                    idEstado = account.idEstado,
+                    descripcion = estado.descripcion
+                },_context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return _commonRepository.ExceptionMessage(estado, "U");
+            }
         }
 
         public async Task<bool> EstadoExists(int id)
