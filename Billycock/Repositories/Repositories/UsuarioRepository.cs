@@ -14,12 +14,10 @@ namespace Billycock.Repositories.Repositories
     public class UsuarioRepository : IUsuarioRepository
     {
         private readonly BillycockServiceContext _context;
-        private readonly ICuentaRepository _cuentaRepository;
         private readonly ICommonRepository<Usuario> _commonRepository;
-        public UsuarioRepository(BillycockServiceContext context, ICuentaRepository cuentaRepository, ICommonRepository<Usuario> commonRepository)
+        public UsuarioRepository(BillycockServiceContext context, ICommonRepository<Usuario> commonRepository)
         {
             _context = context;
-            _cuentaRepository = cuentaRepository;
             _commonRepository= commonRepository;
         }
         #region Metodos Principales

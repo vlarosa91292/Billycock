@@ -40,7 +40,6 @@ namespace Api_Billycock
             services.AddScoped<ICuentaRepository, CuentaRepository>();
             services.AddScoped<IEstadoRepository, EstadoRepository>();
             services.AddScoped(typeof(ICommonRepository<>), typeof(CommonRepository<>));
-            services.AddScoped(typeof(IHistoryRepository<>), typeof(HistoryRepository<>));
             services.AddScoped<IPlataformaRepository, PlataformaRepository>();
             services.AddScoped<IPlataformaCuentaRepository, PlataformaCuentaRepository>();
             services.AddScoped<IUsuarioPlataformaRepository, UsuarioPlataformaRepository>();

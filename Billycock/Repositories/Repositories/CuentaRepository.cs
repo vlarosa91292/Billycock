@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Billycock.Repositories.Interfaces;
-using Billycock.Repositories.Repositories;
 using Billycock.Utils;
 
 namespace Billycock.Repositories.Repositories
@@ -15,32 +14,12 @@ namespace Billycock.Repositories.Repositories
     {
         private readonly BillycockServiceContext _context;
         private readonly ICommonRepository<Cuenta> _commonRepository;
-        private readonly IPlataformaCuentaRepository _plataformaCuentaRepository;
-        public CuentaRepository(BillycockServiceContext context, ICommonRepository<Cuenta> commonRepository, IPlataformaCuentaRepository plataformaCuentaRepository)
+        public CuentaRepository(BillycockServiceContext context, ICommonRepository<Cuenta> commonRepository)
         {
             _context = context;
             _commonRepository = commonRepository;
-            _plataformaCuentaRepository = plataformaCuentaRepository;
         }
-
-        private bool disposed = false;
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    _context.Dispose();
-                }
-            }
-            this.disposed = true;
-        }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
+        #region Metodos Principales
         public async Task<string> DeleteCuenta(Cuenta cuenta)
         {
             Cuenta account = await GetCuentabyId(cuenta.idCuenta);
@@ -88,20 +67,6 @@ namespace Billycock.Repositories.Repositories
                 Console.WriteLine(ex.Message);
                 return _commonRepository.ExceptionMessage(cuenta, "D");
             }
-        }
-        public async Task<Cuenta> GetCuentabyId(int? id)
-        {
-            if (await CuentaExists((int)id, null)) return (await ObtenerCuentas(2, id.ToString()))[0];
-            else return null;
-        }
-        public async Task<Cuenta> GetCuentabyName(string name)
-        {
-            if (await CuentaExists(0, name)) return (await ObtenerCuentas(3, name))[0];
-            else return null;
-        }
-        public async Task<List<Cuenta>> GetCuentas()
-        {
-            return await ObtenerCuentas(1, "");
         }
         public async Task<string> InsertCuenta(Cuenta cuenta)
         {
@@ -253,6 +218,20 @@ namespace Billycock.Repositories.Repositories
             //    }
             //}
         }
+        public async Task<List<Cuenta>> GetCuentas()
+        {
+            return await ObtenerCuentas(1, "");
+        }
+        public async Task<Cuenta> GetCuentabyId(int? id)
+        {
+            if (await CuentaExists((int)id, null)) return (await ObtenerCuentas(2, id.ToString()))[0];
+            else return null;
+        }
+        public async Task<Cuenta> GetCuentabyName(string name)
+        {
+            if (await CuentaExists(0, name)) return (await ObtenerCuentas(3, name))[0];
+            else return null;
+        }
         public async Task<bool> CuentaExists(int id,string nombre)
         {
             if(nombre == null) return await _context.CUENTA.AnyAsync(e => e.idCuenta == id && e.idEstado == 1);
@@ -362,6 +341,9 @@ namespace Billycock.Repositories.Repositories
             }
             return cuentas;
         }
+        #endregion
+        #region Metodos secundarios
+        #endregion
         //public async Task<PlataformaCuenta> GetCuentaDisponible(int idPlataforma, int? cantidad)
         //{
         //    return await (from pc in _context.PLATAFORMACUENTA

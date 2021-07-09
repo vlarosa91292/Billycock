@@ -19,7 +19,7 @@ namespace Billycock.Repositories.Repositories
             _context = context;
             _commonRepository = commonRepository;
         }
-
+        #region Metodos Principales
         public async Task<string> DeleteEstado(Estado estado)
         {
             Estado state = await GetEstadobyId(estado.idEstado);
@@ -37,22 +37,6 @@ namespace Billycock.Repositories.Repositories
                 return _commonRepository.ExceptionMessage(estado, "D");
             }
         }
-
-        public async Task<Estado> GetEstadobyId(int? id)
-        {
-            return (await ObtenerEstados(2, id.ToString()))[0];
-        }
-
-        public async Task<Estado> GetEstadobyName(string name)
-        {
-            return (await ObtenerEstados(3, name))[0];
-        }
-
-        public async Task<List<Estado>> GetEstados()
-        {
-            return await ObtenerEstados(1, "");
-        }
-
         public async Task<string> InsertEstado(Estado estado)
         {
             try
@@ -68,7 +52,6 @@ namespace Billycock.Repositories.Repositories
                 return _commonRepository.ExceptionMessage(estado, "C");
             }
         }
-
         public async Task<string> UpdateEstado(Estado estado)
         {
             Estado account = await GetEstadobyId(estado.idEstado);
@@ -86,12 +69,22 @@ namespace Billycock.Repositories.Repositories
                 return _commonRepository.ExceptionMessage(estado, "U");
             }
         }
-
+        public async Task<List<Estado>> GetEstados()
+        {
+            return await ObtenerEstados(1, "");
+        }
+        public async Task<Estado> GetEstadobyId(int? id)
+        {
+            return (await ObtenerEstados(2, id.ToString()))[0];
+        }
+        public async Task<Estado> GetEstadobyName(string name)
+        {
+            return (await ObtenerEstados(3, name))[0];
+        }
         public async Task<bool> EstadoExists(int id)
         {
             return await _context.ESTADO.AnyAsync(e => e.idEstado == id);
         }
-
         public async Task<List<Estado>> ObtenerEstados(int tipo, string dato)
         {
             if (tipo == 1)
@@ -124,5 +117,8 @@ namespace Billycock.Repositories.Repositories
                               }).ToListAsync();
             }
         }
+        #endregion
+        #region Metodos Secundarios
+        #endregion
     }
 }

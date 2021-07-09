@@ -1,6 +1,8 @@
 ﻿using Billycock.Data;
+using Billycock.Models;
 using Billycock.Repositories.Interfaces;
 using Billycock.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,10 +11,8 @@ namespace Billycock.Repositories.Repositories
 {
     public class CommonRepository<T> : ICommonRepository<T> where T : class
     {
-        private readonly IHistoryRepository<T> _historyRepository;
-        public CommonRepository(IHistoryRepository<T> historyRepository)
+        public CommonRepository()
         {
-            _historyRepository = historyRepository;
         }
         public async Task Save(BillycockServiceContext _context)
         {
@@ -32,7 +32,7 @@ namespace Billycock.Repositories.Repositories
                 Console.WriteLine(ex.Message);
                 mensaje = mensaje.Replace("XXX", "Incorrecta").ToUpper();
             }
-            await _historyRepository.InsertHistory(t, mensaje);
+            await InsertHistory(t, mensaje,_context);
             return mensaje;
         }
         public async Task<string> DeleteObjeto(T t, BillycockServiceContext _context)
@@ -49,7 +49,7 @@ namespace Billycock.Repositories.Repositories
                 Console.WriteLine(ex.Message);
                 mensaje = mensaje.Replace("XXX", "Incorrecta").ToUpper();
             }
-            await _historyRepository.InsertHistory(t, mensaje);
+            await InsertHistory(t, mensaje, _context);
             return mensaje;
         }
         public async Task<string> InsertObjeto(T t, BillycockServiceContext _context)
@@ -67,7 +67,7 @@ namespace Billycock.Repositories.Repositories
                 Console.WriteLine(ex.Message);
                 mensaje = mensaje.Replace("XXX", "Incorrecta").ToUpper();
             }
-            await _historyRepository.InsertHistory(t, mensaje);
+            await InsertHistory(t, mensaje, _context);
             return mensaje;
         }
         public async Task<string> UpdateObjeto(T t, BillycockServiceContext _context)
@@ -85,7 +85,7 @@ namespace Billycock.Repositories.Repositories
                 Console.WriteLine(ex.Message);
                 mensaje = mensaje.Replace("XXX", "Incorrecta").ToUpper();
             }
-            await _historyRepository.InsertHistory(t, mensaje);
+            await InsertHistory(t, mensaje, _context);
             return mensaje;
         }
         public string ExceptionMessage(T t, string MessageType)
@@ -104,6 +104,23 @@ namespace Billycock.Repositories.Repositories
                 message = message.Replace("@PROCESO@", "ELIMINACION");
             }
             return message;
+        }
+        public async Task InsertHistory(T t, string response, BillycockServiceContext _context)
+        {
+            try
+            {
+                await _context.AddAsync(new Historia()
+                {
+                    Request = JsonConvert.SerializeObject(t),
+                    Response = response,
+                    fecha = DateTime.Now
+                });
+                await Save(_context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

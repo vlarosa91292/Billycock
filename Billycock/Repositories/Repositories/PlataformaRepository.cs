@@ -19,29 +19,7 @@ namespace Billycock.Repositories.Repositories
             _context = context;
             _commonRepository = commonRepository;
         }
-
-        private bool disposed = false;
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    _context.Dispose();
-                }
-            }
-            this.disposed = true;
-        }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        public async Task Save()
-        {
-            await _context.SaveChangesAsync();
-        }
-
+        #region Metodos Principales
         public async Task<string> DeletePlataforma(Plataforma plataforma)
         {
             Plataforma account = await GetPlataformabyId(plataforma.idPlataforma);
@@ -62,22 +40,6 @@ namespace Billycock.Repositories.Repositories
                 return _commonRepository.ExceptionMessage(plataforma, "D");
             }
         }
-
-        public async Task<Plataforma> GetPlataformabyId(int? id)
-        {
-            return (await ObtenerPlataformas(2, id.ToString()))[0];
-        }
-
-        public async Task<Plataforma> GetPlataformabyName(string name)
-        {
-            return (await ObtenerPlataformas(3, name))[0];
-        }
-
-        public async Task<List<Plataforma>> GetPlataformas()
-        {
-            return await ObtenerPlataformas(1, "");
-        }
-
         public async Task<string> InsertPlataforma(Plataforma plataforma)
         {
             try
@@ -97,7 +59,6 @@ namespace Billycock.Repositories.Repositories
             }
 
         }
-
         public async Task<string> UpdatePlataforma(Plataforma plataforma)
         {
             Plataforma account = await GetPlataformabyId(plataforma.idPlataforma);
@@ -120,12 +81,22 @@ namespace Billycock.Repositories.Repositories
                 return _commonRepository.ExceptionMessage(plataforma, "U");
             }
         }
-
+        public async Task<List<Plataforma>> GetPlataformas()
+        {
+            return await ObtenerPlataformas(1, "");
+        }
+        public async Task<Plataforma> GetPlataformabyId(int? id)
+        {
+            return (await ObtenerPlataformas(2, id.ToString()))[0];
+        }
+        public async Task<Plataforma> GetPlataformabyName(string name)
+        {
+            return (await ObtenerPlataformas(3, name))[0];
+        }
         public async Task<bool> PlataformaExists(int id)
         {
             return await _context.PLATAFORMA.AnyAsync(e => e.idPlataforma == id);
         }
-
         public async Task<List<Plataforma>> ObtenerPlataformas(int tipo, string dato)
         {
             if (tipo == 1)
@@ -201,5 +172,8 @@ namespace Billycock.Repositories.Repositories
                               }).ToListAsync();
             }
         }
+        #endregion
+        #region Metodos Secundarios
+        #endregion
     }
 }

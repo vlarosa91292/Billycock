@@ -92,7 +92,7 @@ namespace Api_Billycock.Controllers
         [HttpPost("DeleteAccount")]
         public async Task<ActionResult<string>> DeleteCuenta([FromBody] Cuenta cuenta)
         {
-            return await _context.DeleteCuenta(cuenta.idCuenta);
+            return await _context.DeleteCuenta(cuenta);
         }
     }
 }
