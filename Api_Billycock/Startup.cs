@@ -28,14 +28,14 @@ namespace Api_Billycock
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
             services.AddDbContext<BillycockServiceContext>(options => options.UseSqlServer(Configuration["BillycockServiceConnection"], providerOptions => providerOptions.EnableRetryOnFailure()));
-            services.AddDbContext<HilarioServiceContext>(options => options.UseSqlServer(Configuration["HilarioServiceConnection"], providerOptions => providerOptions.EnableRetryOnFailure()));
+            services.AddDbContext<HilarioServiceContext>(options => options.UseSqlServer(Configuration["HilarioServiceConnection"], providerOptions => providerOptions.EnableRetryOnFailure())); 
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<ICuentaRepository, CuentaRepository>();
             services.AddScoped<IEstadoRepository, EstadoRepository>();

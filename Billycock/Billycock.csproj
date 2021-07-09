@@ -12,6 +12,8 @@
     <Compile Remove="Migrations\BillycockService\20210707173702_Billycock.Designer.cs" />
     <Compile Remove="Migrations\BillycockService\20210707174607_Billycock.cs" />
     <Compile Remove="Migrations\BillycockService\20210707174607_Billycock.Designer.cs" />
+    <Compile Remove="Migrations\BillycockService\20210709204126_Billycock2.cs" />
+    <Compile Remove="Migrations\BillycockService\20210709204126_Billycock2.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
