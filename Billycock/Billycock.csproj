@@ -14,6 +14,10 @@
     <Compile Remove="Migrations\BillycockService\20210707174607_Billycock.Designer.cs" />
     <Compile Remove="Migrations\BillycockService\20210709204126_Billycock2.cs" />
     <Compile Remove="Migrations\BillycockService\20210709204126_Billycock2.Designer.cs" />
+    <Compile Remove="Migrations\BillycockService\20210709223511_Billycock3.cs" />
+    <Compile Remove="Migrations\BillycockService\20210709223511_Billycock3.Designer.cs" />
+    <Compile Remove="Migrations\HilarioService\20210709223613_Hilario6.cs" />
+    <Compile Remove="Migrations\HilarioService\20210709223613_Hilario6.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,7 +26,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.15">
       <PrivateAssets>all</PrivateAssets>
