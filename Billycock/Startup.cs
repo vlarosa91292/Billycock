@@ -32,7 +32,7 @@ namespace Billycock
             services.AddScoped(typeof(ICommonRepository<>), typeof(CommonRepository<>));
             services.AddScoped<IPlataformaRepository, PlataformaRepository>();
             services.AddScoped<IPlataformaCuentaRepository, PlataformaCuentaRepository>();
-            services.AddScoped<IUsuarioPlataformaRepository, UsuarioPlataformaRepository>();
+            services.AddScoped<IUsuarioPlataformaCuentaRepository, UsuarioPlataformaCuentaRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -13,7 +13,7 @@ namespace Billycock.Models
         [Key]
         [JsonIgnore]
         public int idCuenta { get; set; }
-        public string nombre { get; set; }
+        public string correo { get; set; }
         public string diminutivo { get; set; }
         public bool netflix { get; set; }
         public bool amazon { get; set; }
@@ -21,15 +21,14 @@ namespace Billycock.Models
         public bool hbo { get; set; }
         public bool youtube { get; set; }
         public bool spotify { get; set; }
-        public string descripcion { get; set; }
-        public string password { get; set; }
+
         [JsonIgnore]
         public int? idEstado { get; set; }
         [NotMapped]
         [JsonIgnore]
         public string descEstado { get; set; }
         [JsonIgnore]
-        public List<UsuarioPlataformaCuenta> usuarioPlataformacuentas { get; set; }
+        public List<UsuarioPlataformaCuenta> usuarioPlataformaCuentas { get; set; }
         [JsonIgnore]
         public List<PlataformaCuenta> plataformaCuentas { get; set; }
     }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Billycock.Models;
 using Billycock.Repositories.Interfaces;
+using Billycock.DTO;
 
 namespace Api_Billycock.Controllers
 {
@@ -83,7 +84,7 @@ namespace Api_Billycock.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost("AddUser")]
-        public async Task<ActionResult<string>> PostUsuario([FromBody] Usuario usuario)
+        public async Task<ActionResult<string>> PostUsuario([FromBody] UsuarioDTO usuario)
         {
             return await _context.InsertUsuario(usuario);
         }

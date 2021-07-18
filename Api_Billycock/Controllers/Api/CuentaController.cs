@@ -32,19 +32,15 @@ namespace Api_Billycock.Controllers
         [HttpPost("ViewAccount")]
         public async Task<ActionResult<Cuenta>> GetCuenta([FromBody] Cuenta cuenta)
         {
-            Cuenta account;
+            Cuenta account=null;
             if (cuenta.idCuenta != 0)
             {
                 account = await _context.GetCuentabyId(cuenta.idCuenta);
             }
-            else
-            {
-                account = await _context.GetCuentabyName(cuenta.descripcion);
-            }
 
             if (account == null)
             {
-                return new Cuenta() { idCuenta = cuenta.idCuenta ,descripcion = cuenta.descripcion };
+                return NotFound();
             }
 
             return account;

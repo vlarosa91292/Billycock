@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Billycock.Repositories.Interfaces;
 using Billycock.Utils;
+using Billycock.DTO;
 
 namespace Billycock.Repositories.Repositories
 {
@@ -15,10 +16,15 @@ namespace Billycock.Repositories.Repositories
     {
         private readonly BillycockServiceContext _context;
         private readonly ICommonRepository<Usuario> _commonRepository;
-        public UsuarioRepository(BillycockServiceContext context, ICommonRepository<Usuario> commonRepository)
+        private readonly IPlataformaCuentaRepository _plataformaCuentaRepository;
+        private readonly IPlataformaRepository _plataformaRepository;
+        public UsuarioRepository(BillycockServiceContext context, ICommonRepository<Usuario> commonRepository,
+            IPlataformaCuentaRepository plataformaCuentaRepository, IPlataformaRepository plataformaRepository)
         {
             _context = context;
             _commonRepository= commonRepository;
+            _plataformaCuentaRepository = plataformaCuentaRepository;
+            _plataformaRepository = plataformaRepository;
         }
         #region Metodos Principales
         public async Task<string> DeleteUsuario(Usuario usuario, string tipoSalida)
@@ -26,7 +32,7 @@ namespace Billycock.Repositories.Repositories
             Usuario user = await GetUsuariobyId(usuario.idUsuario, tipoSalida);
             try
             {
-                return await _commonRepository.DeleteLogicoObjeto(new Usuario()
+                return await _commonRepository.DeleteLogicoObjeto(usuario,new Usuario()
                 {
                     idUsuario = user.idUsuario,
                     descripcion = user.descripcion,
@@ -42,97 +48,95 @@ namespace Billycock.Repositories.Repositories
                 return _commonRepository.ExceptionMessage(usuario, "D");
             }
         }
-        public async Task<string> InsertUsuario(Usuario usuario)
+        public async Task<string> InsertUsuario(UsuarioDTO usuario)
         {
-            //List<PlataformaCuenta> plataformacuentasTemporal = new List<PlataformaCuenta>();
-            //List<PlataformaCuenta> plataformacuentas = new List<PlataformaCuenta>();
-            //PlataformaCuenta plataformacuenta = new PlataformaCuenta();
-            //PlataformaCuenta plataformacuenta = new PlataformaCuenta();
-            //List<string> resultadonulo = new List<string>();
+            List<UsuarioPlataformaCuenta> plataformasxusuario=new List<UsuarioPlataformaCuenta>();
+            List<PlataformaCuenta> plataformacuentasTemporal = new List<PlataformaCuenta>();
+            List<PlataformaCuenta> plataformacuentas = new List<PlataformaCuenta>();
+            PlataformaCuenta plataformacuenta = new PlataformaCuenta();
+            List<string> resultadonulo = new List<string>();
             try
             {
-                //foreach (var item in usuario.plataformasxusuario)
-                //{
-                //    plataformacuentas = new List<PlataformaCuenta>();
-                //    plataformacuenta = await _cuentaRepository.GetCuentaDisponible(item.idPlataforma, item.cantidad);
-                //    if (plataformacuenta == null)
-                //    {
-                //        for (int i = 0; i < item.cantidad; i++)
-                //        {
-                //            plataformacuenta = await _cuentaRepository.GetCuentaDisponible(item.idPlataforma, 1);
-                //            if (plataformacuenta != null)
-                //            {
-                //                plataformacuentas.Add(plataformacuenta);
+                if (usuario.netflix > 0)plataformasxusuario.Add(new UsuarioPlataformaCuenta() {idPlataforma = 1,cantidad = usuario.netflix });
+                if (usuario.amazon > 0) plataformasxusuario.Add(new UsuarioPlataformaCuenta() { idPlataforma = 2, cantidad = usuario.amazon });
+                if (usuario.disney > 0) plataformasxusuario.Add(new UsuarioPlataformaCuenta() { idPlataforma = 3, cantidad = usuario.disney });
+                if (usuario.hbo > 0) plataformasxusuario.Add(new UsuarioPlataformaCuenta() { idPlataforma = 4, cantidad = usuario.hbo });
+                if (usuario.youtube > 0) plataformasxusuario.Add(new UsuarioPlataformaCuenta() { idPlataforma = 5, cantidad = usuario.youtube });
+                if (usuario.spotify > 0) plataformasxusuario.Add(new UsuarioPlataformaCuenta() { idPlataforma = 6, cantidad = usuario.spotify });
+                foreach (var item in plataformasxusuario)
+                {
+                    plataformacuentas = new List<PlataformaCuenta>();
+                    plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentaDisponible(item.idPlataforma, item.cantidad);
+                    if (plataformacuenta == null)
+                    {
+                        for (int i = 0; i < item.cantidad; i++)
+                        {
+                            plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentaDisponible(item.idPlataforma, 1);
+                            if (plataformacuenta != null)
+                            {
+                                plataformacuentas.Add(plataformacuenta);
 
-                //                plataformacuenta = _context.PLATAFORMACUENTA.Find(plataformacuenta.idCuenta, plataformacuenta.idPlataforma);
-                //                _context.Entry(plataformacuenta).State = EntityState.Detached;
+                                plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentabyId(new string[] { plataformacuenta.idCuenta.ToString(), plataformacuenta.idPlataforma.ToString() });
 
-                //                _context.Entry(new PlataformaCuenta()
-                //                {
-                //                    idCuenta = plataformacuenta.idCuenta,
-                //                    idPlataforma = plataformacuenta.idPlataforma,
-                //                    fechaPago = plataformacuenta.fechaPago,
-                //                    usuariosdisponibles = plataformacuenta.usuariosdisponibles - 1
-                //                }).State = EntityState.Modified;
-                //                await Save();
-                //            }
-                //        }
-                //        if (item.cantidad > plataformacuentas.Count)
-                //        {
-                //            resultadonulo.Add(item.cantidad + "-" + _context.PLATAFORMA.Find(item.idPlataforma).descripcion);
+                                await _plataformaCuentaRepository.UpdatePlataformaCuenta(new PlataformaCuenta()
+                                {
+                                    idCuenta = plataformacuenta.idCuenta,
+                                    idPlataforma = plataformacuenta.idPlataforma,
+                                    fechaPago = plataformacuenta.fechaPago,
+                                    usuariosdisponibles = plataformacuenta.usuariosdisponibles - 1
+                                });
+                            }
+                        }
+                        if (item.cantidad > plataformacuentas.Count)
+                        {
+                            resultadonulo.Add(item.cantidad + "-" + (_plataformaRepository.GetPlataformabyId(item.idPlataforma)).Result.descripcion);
 
-                //            foreach (var pfc in plataformacuentas)
-                //            {
-                //                plataformacuenta = _context.PLATAFORMACUENTA.Find(pfc.idCuenta, pfc.idPlataforma);
+                            foreach (var pfc in plataformacuentas)
+                            {
+                                plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentabyId(new string[] { pfc.idCuenta.ToString(), pfc.idPlataforma.ToString() });
 
-                //                _context.Entry(plataformacuenta).State = EntityState.Detached;
+                                await _plataformaCuentaRepository.InsertPlataformaCuenta(new PlataformaCuenta()
+                                {
+                                    idCuenta = plataformacuenta.idCuenta,
+                                    idPlataforma = plataformacuenta.idPlataforma,
+                                    fechaPago = plataformacuenta.fechaPago,
+                                    usuariosdisponibles = plataformacuenta.usuariosdisponibles + 1
+                                });
+                            }
+                        }
+                    }
+                    else
+                    {
+                        plataformacuentas.Add(plataformacuenta);
 
-                //                _context.Entry(new PlataformaCuenta()
-                //                {
-                //                    idCuenta = plataformacuenta.idCuenta,
-                //                    idPlataforma = plataformacuenta.idPlataforma,
-                //                    fechaPago = plataformacuenta.fechaPago,
-                //                    usuariosdisponibles = plataformacuenta.usuariosdisponibles + 1
-                //                }).State = EntityState.Modified;
-                //                await Save();
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        plataformacuentas.Add(plataformacuenta);
+                        plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentabyId(new string[] { plataformacuenta.idCuenta.ToString(), plataformacuenta.idPlataforma.ToString() });
 
-                //        plataformacuenta = _context.PLATAFORMACUENTA.Find(plataformacuenta.idCuenta, plataformacuenta.idPlataforma);
-                //        _context.Entry(plataformacuenta).State = EntityState.Detached;
-
-                //        _context.Entry(new PlataformaCuenta()
-                //        {
-                //            idCuenta = plataformacuenta.idCuenta,
-                //            idPlataforma = plataformacuenta.idPlataforma,
-                //            fechaPago = plataformacuenta.fechaPago,
-                //            usuariosdisponibles = plataformacuenta.usuariosdisponibles - item.cantidad
-                //        }).State = EntityState.Modified;
-                //        await Save();
-                //    }
-                //}
-                //if (resultadonulo.Count != 0)
-                //{
-                //    string mensaje = "NO HAY SUFICIENTES USUARIOS DISPONIBLES: " + Environment.NewLine;
-                //    for (int i = 0; i < resultadonulo.Count; i++)
-                //    {
-                //        mensaje += resultadonulo[i];
-                //        if (i < resultadonulo.Count - 1) mensaje += Environment.NewLine;
-                //    }
-                //    return mensaje;
-                //}
-                return await _commonRepository.InsertObjeto(new Usuario()
+                        await _plataformaCuentaRepository.InsertPlataformaCuenta(new PlataformaCuenta()
+                        {
+                            idCuenta = plataformacuenta.idCuenta,
+                            idPlataforma = plataformacuenta.idPlataforma,
+                            fechaPago = plataformacuenta.fechaPago,
+                            usuariosdisponibles = plataformacuenta.usuariosdisponibles - item.cantidad
+                        });
+                    }
+                }
+                if (resultadonulo.Count != 0)
+                {
+                    string mensaje = "NO HAY SUFICIENTES USUARIOS DISPONIBLES: " + Environment.NewLine;
+                    for (int i = 0; i < resultadonulo.Count; i++)
+                    {
+                        mensaje += resultadonulo[i];
+                        if (i < resultadonulo.Count - 1) mensaje += Environment.NewLine;
+                    }
+                    return mensaje;
+                }
+                return await _commonRepository.InsertObjeto(usuario,new Usuario()
                 {
                     descripcion = usuario.descripcion,
                     fechaInscripcion = DateTime.Now,
                     idEstado = 1,
                     facturacion = ObtenerFechaFacturacion(),
-                    //pago = ObtenerMontoPago(usuario.plataformasxusuario)
-                    pago = usuario.pago
+                    pago = await ObtenerMontoPagoAsync(plataformasxusuario)
                 },_context);
                 //plataformacuentasTemporal = plataformacuentas.GroupBy(x => x.idPlataformaCuenta)
                 //                    .Select(group => group.First()).ToList();
@@ -164,7 +168,7 @@ namespace Billycock.Repositories.Repositories
             Usuario user = await GetUsuariobyId(usuario.idUsuario, tipoSalida);
             try
             {
-                return await _commonRepository.UpdateObjeto(new Usuario()
+                return await _commonRepository.UpdateObjeto(usuario,new Usuario()
                 {
                     idUsuario = user.idUsuario,
                     descripcion = usuario.descripcion,
@@ -458,15 +462,13 @@ namespace Billycock.Repositories.Repositories
                 }
             }
         }
-        private int? ObtenerMontoPago(List<UsuarioPlataformaCuenta> UsuarioPlataformaCuentas)
+        private async Task<int?> ObtenerMontoPagoAsync(List<UsuarioPlataformaCuenta> UsuarioPlataformaCuentas)
         {
             int? pago = 0;
             double? acumulado = 0;
             for (int i = 0; i < UsuarioPlataformaCuentas.Count; i++)
             {
-                acumulado += ((from p in _context.PLATAFORMA
-                               where p.idPlataforma == UsuarioPlataformaCuentas[i].idPlataforma
-                               select p.precio).FirstOrDefault()) * UsuarioPlataformaCuentas[i].cantidad;
+                acumulado += await _plataformaRepository.GetPricePlataforma(UsuarioPlataformaCuentas[i].idPlataforma) * UsuarioPlataformaCuentas[i].cantidad;
 
                 if (i == UsuarioPlataformaCuentas.Count - 1)
                 {

@@ -22,6 +22,6 @@ namespace Billycock.Models
         [JsonIgnore]
         public string descEstado { get; set; }
         [JsonIgnore]
-        public List<UsuarioPlataformaCuenta> usuarioPlataformacuentas { get; set; }
+        public List<UsuarioPlataformaCuenta> usuarioPlataformaCuentas { get; set; }
     }
 }

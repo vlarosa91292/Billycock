@@ -16,5 +16,6 @@ namespace Billycock.Repositories.Interfaces
         Task<string> UpdatePlataforma(Plataforma usuario);
         Task<string> DeletePlataforma(Plataforma usuario);
         Task<bool> PlataformaExists(int id);
+        Task<double> GetPricePlataforma(int id);
     }
 }

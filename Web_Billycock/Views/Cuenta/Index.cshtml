@@ -13,7 +13,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.nombre)
+                @Html.DisplayNameFor(model => model.correo)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.diminutivo)
@@ -37,12 +37,6 @@
                 @Html.DisplayNameFor(model => model.spotify)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.descripcion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.password)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.idEstado)
             </th>
             <th></th>
@@ -52,34 +46,28 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.nombre)
+                @Html.DisplayFor(modelItem => item.correo)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.diminutivo)
             </td>
             <td>
-                @Html.CheckBoxFor(modelItem => item.netflix, new { @disabled = "disabled" })
+                @Html.DisplayFor(modelItem => item.netflix)
             </td>
             <td>
-                @Html.CheckBoxFor(modelItem => item.amazon, new { @disabled = "disabled" })
+                @Html.DisplayFor(modelItem => item.amazon)
             </td>
             <td>
-                @Html.CheckBoxFor(modelItem => item.disney, new { @disabled = "disabled" })
+                @Html.DisplayFor(modelItem => item.disney)
             </td>
             <td>
-                @Html.CheckBoxFor(modelItem => item.hbo, new { @disabled = "disabled" })
+                @Html.DisplayFor(modelItem => item.hbo)
             </td>
             <td>
-                @Html.CheckBoxFor(modelItem => item.youtube, new { @disabled = "disabled" })
+                @Html.DisplayFor(modelItem => item.youtube)
             </td>
             <td>
-                @Html.CheckBoxFor(modelItem => item.spotify, new { @disabled = "disabled" })
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.descripcion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.password)
+                @Html.DisplayFor(modelItem => item.spotify)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.idEstado)

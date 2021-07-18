@@ -10,8 +10,6 @@ namespace Billycock.Models
     public class UsuarioPlataformaCuenta
     {
         public int? cantidad { get; set; }
-        [NotMapped]
-        public Credencial credencial { get; set; }
 
         //Usuario
         [ForeignKey("Usuario")]
@@ -30,11 +28,5 @@ namespace Billycock.Models
         public int idCuenta { get; set; }
         [JsonIgnore]
         public Cuenta Cuenta { get; set; }
-
-        public class Credencial
-        {
-            public string usuario { get; set; }
-            public string clave { get; set; }
-        }
     }
 }

@@ -25,13 +25,11 @@ namespace Billycock.Repositories.Repositories
             Cuenta account = await GetCuentabyId(cuenta.idCuenta);
             try
             {
-                return await _commonRepository.DeleteLogicoObjeto(new Cuenta()
+                return await _commonRepository.DeleteLogicoObjeto(cuenta,new Cuenta()
                 {
                     idCuenta = account.idCuenta,
-                    descripcion = account.descripcion,
                     diminutivo = account.diminutivo,
-                    nombre = account.nombre,
-                    password = account.password,
+                    correo = account.correo,
                     netflix = account.netflix,
                     amazon = account.amazon,
                     disney = account.disney,
@@ -76,12 +74,10 @@ namespace Billycock.Repositories.Repositories
 
             try
             {
-                return await _commonRepository.InsertObjeto(new Cuenta()
+                return await _commonRepository.InsertObjeto(cuenta,new Cuenta()
                 {
-                    descripcion = cuenta.descripcion,
                     diminutivo = cuenta.diminutivo,
-                    nombre = cuenta.nombre,
-                    password = cuenta.password,
+                    correo = cuenta.correo,
                     netflix = cuenta.netflix,
                     amazon = cuenta.amazon,
                     disney = cuenta.disney,
@@ -135,13 +131,11 @@ namespace Billycock.Repositories.Repositories
 
             try
             {
-                return await _commonRepository.UpdateObjeto(new Cuenta()
+                return await _commonRepository.UpdateObjeto(cuenta,new Cuenta()
                 {
                     idCuenta = cuenta.idCuenta == 0 ? account.idCuenta : cuenta.idCuenta,
-                    descripcion = cuenta.descripcion == "" ? account.descripcion : cuenta.descripcion,
                     diminutivo = cuenta.diminutivo == "" ? account.diminutivo : cuenta.diminutivo,
-                    nombre = cuenta.nombre == "" ? account.nombre : cuenta.nombre,
-                    password = cuenta.password == "" ? account.password : cuenta.password,
+                    correo = cuenta.correo == "" ? account.correo : cuenta.correo,
                     netflix = cuenta.netflix == account.netflix ? account.netflix : cuenta.netflix,
                     amazon = cuenta.amazon == account.amazon ? account.amazon : cuenta.amazon,
                     disney = cuenta.disney == account.disney ? account.disney : cuenta.disney,
@@ -235,7 +229,7 @@ namespace Billycock.Repositories.Repositories
         public async Task<bool> CuentaExists(int id,string nombre)
         {
             if(nombre == null) return await _context.CUENTA.AnyAsync(e => e.idCuenta == id && e.idEstado == 1);
-            else return await _context.CUENTA.AnyAsync(e => e.nombre == nombre && e.idEstado == 1);
+            else return await _context.CUENTA.AnyAsync(e => e.correo == nombre && e.idEstado == 1);
         }
         public async Task<List<Cuenta>> ObtenerCuentas(int tipo, string dato)
         {
@@ -247,7 +241,6 @@ namespace Billycock.Repositories.Repositories
                               select new Cuenta()
                               {
                                   idCuenta = c.idCuenta,
-                                  descripcion = c.descripcion,
                                   idEstado = c.idEstado,
                                   descEstado = (from e in _context.ESTADO where e.idEstado == c.idEstado select e.descripcion).FirstOrDefault(),
                                   netflix = c.netflix,
@@ -256,9 +249,8 @@ namespace Billycock.Repositories.Repositories
                                   hbo = c.hbo,
                                   youtube = c.youtube,
                                   spotify = c.spotify,
-                                  nombre = c.nombre,
+                                  correo = c.correo,
                                   diminutivo = c.diminutivo,
-                                  password = c.password,
                                   //plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
                                   //                     where pc.idCuenta == c.idCuenta
                                   //                     select new PlataformaCuenta()
@@ -280,7 +272,6 @@ namespace Billycock.Repositories.Repositories
                               select new Cuenta()
                               {
                                   idCuenta = c.idCuenta,
-                                  descripcion = c.descripcion,
                                   idEstado = c.idEstado,
                                   descEstado = (from e in _context.ESTADO where e.idEstado == c.idEstado select e.descripcion).FirstOrDefault(),
                                   netflix = c.netflix,
@@ -289,9 +280,8 @@ namespace Billycock.Repositories.Repositories
                                   hbo = c.hbo,
                                   youtube = c.youtube,
                                   spotify = c.spotify,
-                                  nombre = c.nombre,
+                                  correo = c.correo,
                                   diminutivo = c.diminutivo,
-                                  password = c.password,
                                   //plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
                                   //                     where pc.idCuenta == c.idCuenta
                                   //                     select new PlataformaCuenta()
@@ -309,11 +299,10 @@ namespace Billycock.Repositories.Repositories
             else
             {
                 cuentas = await (from c in _context.CUENTA
-                              where c.idEstado != 2 && c.nombre == dato
+                              where c.idEstado != 2 && c.correo == dato
                               select new Cuenta()
                               {
                                   idCuenta = c.idCuenta,
-                                  descripcion = c.descripcion,
                                   idEstado = c.idEstado,
                                   descEstado = (from e in _context.ESTADO where e.idEstado == c.idEstado select e.descripcion).FirstOrDefault(),
                                   netflix = c.netflix,
@@ -322,9 +311,8 @@ namespace Billycock.Repositories.Repositories
                                   hbo = c.hbo,
                                   youtube = c.youtube,
                                   spotify = c.spotify,
-                                  nombre = c.nombre,
+                                  correo = c.correo,
                                   diminutivo = c.diminutivo,
-                                  password = c.password,
                                   //plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
                                   //                     where pc.idCuenta == c.idCuenta
                                   //                     select new PlataformaCuenta()
@@ -344,19 +332,6 @@ namespace Billycock.Repositories.Repositories
         #endregion
         #region Metodos secundarios
         #endregion
-        //public async Task<PlataformaCuenta> GetCuentaDisponible(int idPlataforma, int? cantidad)
-        //{
-        //    return await (from pc in _context.PLATAFORMACUENTA
-        //                  join c in _context.CUENTA on pc.idCuenta equals c.idCuenta
-        //                  where pc.idPlataforma == idPlataforma && pc.usuariosdisponibles >= cantidad && c.idEstado != 2
-        //                  select new PlataformaCuenta()
-        //                  {
-        //                      idPlataformaCuenta = pc.idCuenta.ToString() + "-" + pc.idPlataforma.ToString(),
-        //                      idCuenta = pc.idCuenta,
-        //                      idPlataforma = pc.idPlataforma,
-        //                      usuariosdisponibles = pc.usuariosdisponibles,
-        //                      fechaPago = pc.fechaPago
-        //                  }).FirstOrDefaultAsync();
-        //}
+        
     }
 }

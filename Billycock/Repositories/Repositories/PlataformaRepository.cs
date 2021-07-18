@@ -25,7 +25,7 @@ namespace Billycock.Repositories.Repositories
             Plataforma account = await GetPlataformabyId(plataforma.idPlataforma);
             try
             {
-                return await _commonRepository.DeleteLogicoObjeto(new Plataforma()
+                return await _commonRepository.DeleteLogicoObjeto(plataforma,new Plataforma()
                 {
                     idPlataforma = account.idPlataforma,
                     descripcion = plataforma.descripcion,
@@ -44,7 +44,7 @@ namespace Billycock.Repositories.Repositories
         {
             try
             {
-                return await _commonRepository.InsertObjeto(new Plataforma()
+                return await _commonRepository.InsertObjeto(plataforma, new Plataforma()
                 {
                     descripcion = plataforma.descripcion,
                     idEstado = 1,
@@ -66,7 +66,7 @@ namespace Billycock.Repositories.Repositories
             List<int> idPlataformasEliminar = new List<int>();
             try
             {
-                return await _commonRepository.UpdateObjeto(new Plataforma()
+                return await _commonRepository.UpdateObjeto(plataforma, new Plataforma()
                 {
                     idPlataforma = plataforma.idPlataforma,
                     descripcion = account.descripcion,
@@ -126,7 +126,7 @@ namespace Billycock.Repositories.Repositories
             else if (tipo == 2)
             {
                 return await (from c in _context.PLATAFORMA
-                              where c.idEstado != 2 && c.idEstado == int.Parse(dato)
+                              where c.idEstado != 2 && c.idPlataforma == int.Parse(dato)
                               select new Plataforma()
                               {
                                   idPlataforma = c.idPlataforma,
@@ -171,6 +171,13 @@ namespace Billycock.Repositories.Repositories
                                   //                     }).ToList()
                               }).ToListAsync();
             }
+        }
+
+        public async Task<double> GetPricePlataforma(int id)
+        {
+            return (await (from p in _context.PLATAFORMA
+                           where p.idPlataforma == id
+                           select p.precio).FirstOrDefaultAsync());
         }
         #endregion
         #region Metodos Secundarios

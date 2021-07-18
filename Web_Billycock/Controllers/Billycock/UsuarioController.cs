@@ -8,12 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using Billycock.Data;
 using Billycock.Models;
 using Billycock.Repositories.Interfaces;
+using Billycock.DTO;
 
 namespace Web_Billycock.Controllers
 {
     public class UsuarioController : Controller
     {
         private readonly IUsuarioRepository _context;
+        private string mensajeEntreVistas;
 
         public UsuarioController(IUsuarioRepository context)
         {
@@ -23,6 +25,7 @@ namespace Web_Billycock.Controllers
         // GET: Usuario
         public async Task<IActionResult> Index()
         {
+            ViewBag.ShowDialog = true;
             return View(await _context.GetUsuarios("WEB"));
         }
 
@@ -54,11 +57,11 @@ namespace Web_Billycock.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("descripcion,pago")] Usuario usuario)
+        public async Task<IActionResult> Create([Bind("descripcion,netflix,amazon,disney")] UsuarioDTO usuario)
         {
             if (ModelState.IsValid)
             {
-                await _context.InsertUsuario(usuario);
+                mensajeEntreVistas = await _context.InsertUsuario(usuario);
                 return RedirectToAction(nameof(Index));
             }
             return View(usuario);
@@ -85,7 +88,7 @@ namespace Web_Billycock.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("idUsuario,descripcion,idEstado,facturacion,pago")] Usuario usuario)
+        public async Task<IActionResult> Edit(int id, [Bind("idUsuario,descripcion,idEstado,facturacion,pago,netflix,amazon,disney")] Usuario usuario)
         {
             if (id != usuario.idUsuario)
             {
@@ -96,7 +99,7 @@ namespace Web_Billycock.Controllers
             {
                 try
                 {
-                    await _context.UpdateUsuario(usuario, "WEB");
+                    mensajeEntreVistas = await _context.UpdateUsuario(usuario, "WEB");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -137,7 +140,7 @@ namespace Web_Billycock.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var usuario = await _context.GetUsuariobyId(id, "WEB");
-            await _context.DeleteUsuario(usuario, "WEB");
+            mensajeEntreVistas = await _context.DeleteUsuario(usuario, "WEB");
             return RedirectToAction(nameof(Index));
         }
     }

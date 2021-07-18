@@ -23,7 +23,7 @@ namespace Billycock.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UsuarioPlataformaCuenta>().HasKey(up => new { up.idUsuario, up.idPlataforma,up.idCuenta});
+            modelBuilder.Entity<UsuarioPlataformaCuenta>().HasKey(up => new { up.idUsuario, up.idPlataforma, up.idCuenta });
             modelBuilder.Entity<PlataformaCuenta>().HasKey(pc => new { pc.idCuenta, pc.idPlataforma });
         }
     }

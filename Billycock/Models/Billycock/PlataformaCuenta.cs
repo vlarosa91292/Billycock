@@ -14,6 +14,7 @@ namespace Billycock.Models
         public string idPlataformaCuenta { get; set; }
         public int? usuariosdisponibles { get; set; }
         public string fechaPago { get; set; }
+        public string clave { get; set; }
 
         //PLATAFORMA
         [ForeignKey("Plataforma")]

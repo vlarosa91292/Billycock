@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Billycock.Data;
 using Billycock.Models;
 
-namespace Web_Billycock.Controllers
+namespace Web_Billycock.Controllers.Billycock
 {
     public class CuentaController : Controller
     {
@@ -54,7 +54,7 @@ namespace Web_Billycock.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("idCuenta,nombre,diminutivo,netflix,amazon,disney,hbo,youtube,spotify,descripcion,password,idEstado")] Cuenta cuenta)
+        public async Task<IActionResult> Create([Bind("idCuenta,correo,diminutivo,netflix,amazon,disney,hbo,youtube,spotify,idEstado")] Cuenta cuenta)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace Web_Billycock.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("idCuenta,nombre,diminutivo,netflix,amazon,disney,hbo,youtube,spotify,descripcion,password,idEstado")] Cuenta cuenta)
+        public async Task<IActionResult> Edit(int id, [Bind("idCuenta,correo,diminutivo,netflix,amazon,disney,hbo,youtube,spotify,idEstado")] Cuenta cuenta)
         {
             if (id != cuenta.idCuenta)
             {

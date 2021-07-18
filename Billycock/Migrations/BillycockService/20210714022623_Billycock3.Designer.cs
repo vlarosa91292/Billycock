@@ -4,14 +4,16 @@ using Billycock.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Billycock.Migrations.BillycockService
 {
     [DbContext(typeof(BillycockServiceContext))]
-    partial class BillycockServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20210714022623_Billycock3")]
+    partial class Billycock3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,9 +31,6 @@ namespace Billycock.Migrations.BillycockService
                     b.Property<bool>("amazon")
                         .HasColumnType("bit");
 
-                    b.Property<string>("correo")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("diminutivo")
                         .HasColumnType("nvarchar(max)");
 
@@ -46,6 +45,9 @@ namespace Billycock.Migrations.BillycockService
 
                     b.Property<bool>("netflix")
                         .HasColumnType("bit");
+
+                    b.Property<string>("nombre")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("spotify")
                         .HasColumnType("bit");
@@ -133,6 +135,9 @@ namespace Billycock.Migrations.BillycockService
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("fechaPago")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("usuario")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("usuariosdisponibles")

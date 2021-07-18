@@ -14,9 +14,9 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="idCuenta" />
             <div class="form-group">
-                <label asp-for="nombre" class="control-label"></label>
-                <input asp-for="nombre" class="form-control" />
-                <span asp-validation-for="nombre" class="text-danger"></span>
+                <label asp-for="correo" class="control-label"></label>
+                <input asp-for="correo" class="form-control" />
+                <span asp-validation-for="correo" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="diminutivo" class="control-label"></label>
@@ -52,16 +52,6 @@
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="spotify" /> @Html.DisplayNameFor(model => model.spotify)
                 </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="descripcion" class="control-label"></label>
-                <input asp-for="descripcion" class="form-control" />
-                <span asp-validation-for="descripcion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="password" class="control-label"></label>
-                <input asp-for="password" class="form-control" />
-                <span asp-validation-for="password" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="idEstado" class="control-label"></label>

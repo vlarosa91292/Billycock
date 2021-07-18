@@ -2,6 +2,7 @@
 using Billycock.Models;
 using Billycock.Repositories.Interfaces;
 using Billycock.Utils;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,18 +12,16 @@ namespace Billycock.Repositories.Repositories
 {
     public class CommonRepository<T> : ICommonRepository<T> where T : class
     {
-        public CommonRepository()
-        {
-        }
         public async Task Save(BillycockServiceContext _context)
         {
             await _context.SaveChangesAsync();
         }
-        public async Task<string> DeleteLogicoObjeto(T t, BillycockServiceContext _context)
+        public async Task<string> DeleteLogicoObjeto(T tracker,T t, BillycockServiceContext _context)
         {
             string mensaje = "Eliminacion XXX de " + t.GetType().Name;
             try
             {
+                _context.Entry(tracker).State = EntityState.Detached; 
                 _context.Update(t);
                 await Save(_context);
                 mensaje = mensaje.Replace("XXX","Correcta").ToUpper();
@@ -35,11 +34,12 @@ namespace Billycock.Repositories.Repositories
             await InsertHistory(t, mensaje,_context);
             return mensaje;
         }
-        public async Task<string> DeleteObjeto(T t, BillycockServiceContext _context)
+        public async Task<string> DeleteObjeto(T tracker, T t, BillycockServiceContext _context)
         {
             string mensaje = "Eliminacion XXX de " + t.GetType().Name;
             try
             {
+                _context.Entry(tracker).State = EntityState.Detached;
                 _context.Remove(t);
                 await Save(_context);
                 mensaje = mensaje.Replace("XXX", "Correcta").ToUpper();
@@ -52,12 +52,14 @@ namespace Billycock.Repositories.Repositories
             await InsertHistory(t, mensaje, _context);
             return mensaje;
         }
-        public async Task<string> InsertObjeto(T t, BillycockServiceContext _context)
+        public async Task<string> InsertObjeto(T tracker, T t, BillycockServiceContext _context)
         {
             string mensaje = "Creacion XXX de " + t.GetType().Name;
             try
             {
+                _context.Entry(tracker).State = EntityState.Detached;
                 await _context.AddAsync(t);
+
                 await Save(_context);
 
                 mensaje = mensaje.Replace("XXX", "Correcta").ToUpper();
@@ -70,11 +72,12 @@ namespace Billycock.Repositories.Repositories
             await InsertHistory(t, mensaje, _context);
             return mensaje;
         }
-        public async Task<string> UpdateObjeto(T t, BillycockServiceContext _context)
+        public async Task<string> UpdateObjeto(T tracker, T t, BillycockServiceContext _context)
         {
             string mensaje = ("Actualizacion XXX de " + t.GetType().Name).ToUpper();
             try
             {
+                _context.Entry(tracker).State = EntityState.Detached;
                 _context.Update(t);
                 await Save(_context);
 

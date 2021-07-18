@@ -42,7 +42,7 @@ namespace Api_Billycock
             services.AddScoped(typeof(ICommonRepository<>), typeof(CommonRepository<>));
             services.AddScoped<IPlataformaRepository, PlataformaRepository>();
             services.AddScoped<IPlataformaCuentaRepository, PlataformaCuentaRepository>();
-            services.AddScoped<IUsuarioPlataformaRepository, UsuarioPlataformaRepository>();
+            services.AddScoped<IUsuarioPlataformaCuentaRepository, UsuarioPlataformaCuentaRepository>();
             services.AddCors(opciones =>
             {
                 opciones.AddPolicy("AllowMyOrigin",
