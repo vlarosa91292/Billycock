@@ -24,16 +24,16 @@ namespace Api_Billycock.Controllers
 
         // GET: api/Usuario
         [HttpGet("ViewUsers")]
-        public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
+        public async Task<ActionResult<IEnumerable<UsuarioDTO>>> GetUsuarios()
         {
             return await _context.GetUsuarios("API");
         }
 
         // GET: api/Usuario/5
         [HttpPost("ViewUser")]
-        public async Task<ActionResult<Usuario>> GetUsuario([FromBody] Usuario usuario)
+        public async Task<ActionResult<UsuarioDTO>> GetUsuario([FromBody] UsuarioDTO usuario)
         {
-            var user = new Usuario();
+            var user = new UsuarioDTO();
             if (usuario.idUsuario != 0)
             {
                 user = await _context.GetUsuariobyId(usuario.idUsuario, "API");
@@ -55,7 +55,7 @@ namespace Api_Billycock.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost("UpdateUser")]
-        public async Task<ActionResult<string>> PutUsuario([FromBody] Usuario usuario)
+        public async Task<ActionResult<string>> PutUsuario([FromBody] UsuarioDTO usuario)
         {
             if (usuario.idUsuario != usuario.idUsuario)
             {
@@ -91,7 +91,7 @@ namespace Api_Billycock.Controllers
 
         // DELETE: api/Usuario/5
         [HttpPost("DeleteUser")]
-        public async Task<ActionResult<string>> DeleteUsuario([FromBody] Usuario usuario)
+        public async Task<ActionResult<string>> DeleteUsuario([FromBody] UsuarioDTO usuario)
         {
             var user = await _context.GetUsuariobyId(usuario.idUsuario, "API");
             if (user == null)

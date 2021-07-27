@@ -1,8 +1,5 @@
 ﻿using Billycock.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Billycock.DTO
 {
@@ -14,5 +11,7 @@ namespace Billycock.DTO
         public int hbo { get; set; }
         public int youtube { get; set; }
         public int spotify { get; set; }
+        [JsonIgnore]
+        public string descEstado { get; set; }
     }
 }

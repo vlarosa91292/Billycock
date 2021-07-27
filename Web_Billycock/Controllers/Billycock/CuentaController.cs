@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Billycock.Data;
-using Billycock.Models;
+using Billycock.Repositories.Interfaces;
+using Billycock.DTO;
 
 namespace Web_Billycock.Controllers.Billycock
 {
     public class CuentaController : Controller
     {
-        private readonly BillycockServiceContext _context;
+        private readonly ICuentaRepository _context;
 
-        public CuentaController(BillycockServiceContext context)
+        public CuentaController(ICuentaRepository context)
         {
             _context = context;
         }
@@ -22,7 +19,7 @@ namespace Web_Billycock.Controllers.Billycock
         // GET: Cuenta
         public async Task<IActionResult> Index()
         {
-            return View(await _context.CUENTA.ToListAsync());
+            return View(await _context.GetCuentas());
         }
 
         // GET: Cuenta/Details/5
@@ -33,8 +30,7 @@ namespace Web_Billycock.Controllers.Billycock
                 return NotFound();
             }
 
-            var cuenta = await _context.CUENTA
-                .FirstOrDefaultAsync(m => m.idCuenta == id);
+            var cuenta = await _context.GetCuentabyId(id);
             if (cuenta == null)
             {
                 return NotFound();
@@ -54,12 +50,11 @@ namespace Web_Billycock.Controllers.Billycock
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("idCuenta,correo,diminutivo,netflix,amazon,disney,hbo,youtube,spotify,idEstado")] Cuenta cuenta)
+        public async Task<IActionResult> Create([Bind("idCuenta,correo,diminutivo,netflix,amazon,disney,hbo,youtube,spotify,idEstado")] CuentaDTO cuenta)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(cuenta);
-                await _context.SaveChangesAsync();
+                await _context.InsertCuenta(cuenta);
                 return RedirectToAction(nameof(Index));
             }
             return View(cuenta);
@@ -73,7 +68,7 @@ namespace Web_Billycock.Controllers.Billycock
                 return NotFound();
             }
 
-            var cuenta = await _context.CUENTA.FindAsync(id);
+            var cuenta = await _context.GetCuentabyId(id);
             if (cuenta == null)
             {
                 return NotFound();
@@ -86,7 +81,7 @@ namespace Web_Billycock.Controllers.Billycock
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("idCuenta,correo,diminutivo,netflix,amazon,disney,hbo,youtube,spotify,idEstado")] Cuenta cuenta)
+        public async Task<IActionResult> Edit(int id, [Bind("idCuenta,correo,diminutivo,netflix,amazon,disney,hbo,youtube,spotify,idEstado")] CuentaDTO cuenta)
         {
             if (id != cuenta.idCuenta)
             {
@@ -97,12 +92,11 @@ namespace Web_Billycock.Controllers.Billycock
             {
                 try
                 {
-                    _context.Update(cuenta);
-                    await _context.SaveChangesAsync();
+                    await _context.UpdateCuenta(cuenta);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CuentaExists(cuenta.idCuenta))
+                    if (!await _context.CuentaExists(cuenta.idCuenta))
                     {
                         return NotFound();
                     }
@@ -124,8 +118,7 @@ namespace Web_Billycock.Controllers.Billycock
                 return NotFound();
             }
 
-            var cuenta = await _context.CUENTA
-                .FirstOrDefaultAsync(m => m.idCuenta == id);
+            var cuenta = await _context.GetCuentabyId(id);
             if (cuenta == null)
             {
                 return NotFound();
@@ -139,15 +132,9 @@ namespace Web_Billycock.Controllers.Billycock
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var cuenta = await _context.CUENTA.FindAsync(id);
-            _context.CUENTA.Remove(cuenta);
-            await _context.SaveChangesAsync();
+            var cuenta = await _context.GetCuentabyId(id);
+            await _context.DeleteCuenta(cuenta);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool CuentaExists(int id)
-        {
-            return _context.CUENTA.Any(e => e.idCuenta == id);
         }
     }
 }

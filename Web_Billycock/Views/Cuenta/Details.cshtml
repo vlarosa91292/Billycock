@@ -1,4 +1,4 @@
-﻿@model Billycock.Models.Cuenta
+﻿@model Billycock.DTO.CuentaDTO
 
 @{
     ViewData["Title"] = "Details";
@@ -7,21 +7,9 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Cuenta</h4>
+    <h4>CuentaDTO</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.correo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.correo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.diminutivo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.diminutivo)
-        </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.netflix)
         </dt>
@@ -57,6 +45,30 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.spotify)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.descEstado)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.descEstado)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.idCuenta)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.idCuenta)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.correo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.correo)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.diminutivo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.diminutivo)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.idEstado)

@@ -27,7 +27,7 @@ namespace Billycock.Repositories.Repositories
             _plataformaRepository = plataformaRepository;
         }
         #region Metodos Principales
-        public async Task<string> DeleteUsuario(Usuario usuario, string tipoSalida)
+        public async Task<string> DeleteUsuario(UsuarioDTO usuario, string tipoSalida)
         {
             Usuario user = await GetUsuariobyId(usuario.idUsuario, tipoSalida);
             try
@@ -76,9 +76,9 @@ namespace Billycock.Repositories.Repositories
                             {
                                 plataformacuentas.Add(plataformacuenta);
 
-                                plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentabyId(new string[] { plataformacuenta.idCuenta.ToString(), plataformacuenta.idPlataforma.ToString() });
+                                plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentabyIds(plataformacuenta.idPlataforma.ToString() + "-"+plataformacuenta.idCuenta.ToString());
 
-                                await _plataformaCuentaRepository.UpdatePlataformaCuenta(new PlataformaCuenta()
+                                await _plataformaCuentaRepository.UpdatePlataformaCuenta(new PlataformaCuentaDTO()
                                 {
                                     idCuenta = plataformacuenta.idCuenta,
                                     idPlataforma = plataformacuenta.idPlataforma,
@@ -93,9 +93,9 @@ namespace Billycock.Repositories.Repositories
 
                             foreach (var pfc in plataformacuentas)
                             {
-                                plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentabyId(new string[] { pfc.idCuenta.ToString(), pfc.idPlataforma.ToString() });
+                                plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentabyIds(pfc.idPlataforma.ToString() + "-"+pfc.idCuenta.ToString());
 
-                                await _plataformaCuentaRepository.InsertPlataformaCuenta(new PlataformaCuenta()
+                                await _plataformaCuentaRepository.InsertPlataformaCuenta(new PlataformaCuentaDTO()
                                 {
                                     idCuenta = plataformacuenta.idCuenta,
                                     idPlataforma = plataformacuenta.idPlataforma,
@@ -109,9 +109,9 @@ namespace Billycock.Repositories.Repositories
                     {
                         plataformacuentas.Add(plataformacuenta);
 
-                        plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentabyId(new string[] { plataformacuenta.idCuenta.ToString(), plataformacuenta.idPlataforma.ToString() });
+                        plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentabyIds(plataformacuenta.idPlataforma.ToString() + "-"+plataformacuenta.idCuenta.ToString());
 
-                        await _plataformaCuentaRepository.InsertPlataformaCuenta(new PlataformaCuenta()
+                        await _plataformaCuentaRepository.InsertPlataformaCuenta(new PlataformaCuentaDTO()
                         {
                             idCuenta = plataformacuenta.idCuenta,
                             idPlataforma = plataformacuenta.idPlataforma,
@@ -163,7 +163,7 @@ namespace Billycock.Repositories.Repositories
                 return _commonRepository.ExceptionMessage(usuario, "C");
             }
         }
-        public async Task<string> UpdateUsuario(Usuario usuario, string tipoSalida)
+        public async Task<string> UpdateUsuario(UsuarioDTO usuario, string tipoSalida)
         {
             Usuario user = await GetUsuariobyId(usuario.idUsuario, tipoSalida);
             try
@@ -184,15 +184,15 @@ namespace Billycock.Repositories.Repositories
                 return _commonRepository.ExceptionMessage(usuario,"U");
             }
         }
-        public async Task<List<Usuario>> GetUsuarios(string tipoSalida)
+        public async Task<List<UsuarioDTO>> GetUsuarios(string tipoSalida)
         {
             return await ObtenerUsuarios(1, "", tipoSalida);
         }
-        public async Task<Usuario> GetUsuariobyId(int? id,string tipoSalida)
+        public async Task<UsuarioDTO> GetUsuariobyId(int? id,string tipoSalida)
         {
             return (await ObtenerUsuarios(2, id.ToString(), tipoSalida))[0];
         }
-        public async Task<Usuario> GetUsuariobyName(string name, string tipoSalida)
+        public async Task<UsuarioDTO> GetUsuariobyName(string name, string tipoSalida)
         {
             return (await ObtenerUsuarios(3, name, tipoSalida))[0];
         }
@@ -200,9 +200,9 @@ namespace Billycock.Repositories.Repositories
         {
             return await _context.USUARIO.AnyAsync(e => e.idUsuario == id);
         }
-        public async Task<List<Usuario>> ObtenerUsuarios(int tipo, string dato,string tipoSalida)
+        public async Task<List<UsuarioDTO>> ObtenerUsuarios(int tipo, string dato,string tipoSalida)
         {
-            List<Usuario> usuarios = new List<Usuario>();
+            List<UsuarioDTO> usuarios = new List<UsuarioDTO>();
             try
             {
                 if (tipo == 1)
@@ -210,7 +210,7 @@ namespace Billycock.Repositories.Repositories
                     if(tipoSalida == "WEB")
                     {
                         usuarios = await (from u in _context.USUARIO
-                                          select new Usuario()
+                                          select new UsuarioDTO()
                                           {
                                               idUsuario = u.idUsuario,
                                               descripcion = u.descripcion,
@@ -245,7 +245,7 @@ namespace Billycock.Repositories.Repositories
                     {
                         usuarios = await (from u in _context.USUARIO
                                       where u.idEstado != 2
-                                      select new Usuario()
+                                      select new UsuarioDTO()
                                       {
                                           idUsuario = u.idUsuario,
                                           descripcion = u.descripcion,
@@ -283,7 +283,7 @@ namespace Billycock.Repositories.Repositories
                     {
                         usuarios = await (from u in _context.USUARIO
                                           where u.idUsuario == int.Parse(dato)
-                                          select new Usuario()
+                                          select new UsuarioDTO()
                                           {
                                               idUsuario = u.idUsuario,
                                               descripcion = u.descripcion,
@@ -318,7 +318,7 @@ namespace Billycock.Repositories.Repositories
                     {
                         usuarios = await (from u in _context.USUARIO
                                   where u.idEstado != 2 && u.idUsuario == int.Parse(dato)
-                                  select new Usuario()
+                                  select new UsuarioDTO()
                                   {
                                       idUsuario = u.idUsuario,
                                       descripcion = u.descripcion,
@@ -356,7 +356,7 @@ namespace Billycock.Repositories.Repositories
                     {
                         usuarios = await (from u in _context.USUARIO
                                           where u.descripcion == dato
-                                          select new Usuario()
+                                          select new UsuarioDTO()
                                           {
                                               idUsuario = u.idUsuario,
                                               descripcion = u.descripcion,
@@ -391,7 +391,7 @@ namespace Billycock.Repositories.Repositories
                     {
                         usuarios = await (from u in _context.USUARIO
                                   where u.idEstado != 2 && u.descripcion == dato
-                                  select new Usuario()
+                                  select new UsuarioDTO()
                                   {
                                       idUsuario = u.idUsuario,
                                       descripcion = u.descripcion,

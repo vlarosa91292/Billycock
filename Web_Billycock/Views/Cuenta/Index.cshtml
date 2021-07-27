@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Billycock.Models.Cuenta>
+﻿@model IEnumerable<Billycock.DTO.CuentaDTO>
 
 @{
     ViewData["Title"] = "Index";
@@ -12,12 +12,6 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.correo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.diminutivo)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.netflix)
             </th>
@@ -37,6 +31,18 @@
                 @Html.DisplayNameFor(model => model.spotify)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.descEstado)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.idCuenta)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.correo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.diminutivo)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.idEstado)
             </th>
             <th></th>
@@ -45,12 +51,6 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.correo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.diminutivo)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.netflix)
             </td>
@@ -68,6 +68,18 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.spotify)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.descEstado)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.idCuenta)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.correo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.diminutivo)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.idEstado)

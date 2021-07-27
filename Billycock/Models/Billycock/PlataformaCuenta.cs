@@ -10,18 +10,14 @@ namespace Billycock.Models
 {
     public class PlataformaCuenta
     {
-        [NotMapped]
-        public string idPlataformaCuenta { get; set; }
         public int? usuariosdisponibles { get; set; }
         public string fechaPago { get; set; }
         public string clave { get; set; }
-
         //PLATAFORMA
         [ForeignKey("Plataforma")]
         public int idPlataforma { get; set; }
         [JsonIgnore]
         public Plataforma Plataforma { get; set; }
-
         //CUENTA
         [ForeignKey("Cuenta")]
         public int idCuenta { get; set; }

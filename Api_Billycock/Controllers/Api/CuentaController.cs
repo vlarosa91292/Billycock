@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Billycock.DTO;
 using Billycock.Models;
 using Billycock.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Api_Billycock.Controllers
 {
-    [Route("/Cuenta")]
+    [Route("/CuentaDTO")]
     [ApiController]
     public class CuentaController : ControllerBase
     {
@@ -21,18 +22,18 @@ namespace Api_Billycock.Controllers
             _context = context;
         }
 
-        // GET: api/Cuenta
+        // GET: api/CuentaDTO
         [HttpGet("ViewAccounts")]
-        public async Task<ActionResult<IEnumerable<Cuenta>>> GetCuentas()
+        public async Task<ActionResult<IEnumerable<CuentaDTO>>> GetCuentas()
         {
             return await _context.GetCuentas();
         }
 
-        // GET: api/Cuenta/5
+        // GET: api/CuentaDTO/5
         [HttpPost("ViewAccount")]
-        public async Task<ActionResult<Cuenta>> GetCuenta([FromBody] Cuenta cuenta)
+        public async Task<ActionResult<CuentaDTO>> GetCuenta([FromBody] CuentaDTO cuenta)
         {
-            Cuenta account=null;
+            CuentaDTO account=null;
             if (cuenta.idCuenta != 0)
             {
                 account = await _context.GetCuentabyId(cuenta.idCuenta);
@@ -46,11 +47,11 @@ namespace Api_Billycock.Controllers
             return account;
         }
 
-        // PUT: api/Cuenta
+        // PUT: api/CuentaDTO
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost("UpdateAccount")]
-        public async Task<ActionResult<string>> PutCuenta([FromBody] Cuenta cuenta)
+        public async Task<ActionResult<string>> PutCuenta([FromBody] CuentaDTO cuenta)
         {
             if (cuenta.idCuenta != cuenta.idCuenta)
             {
@@ -63,7 +64,7 @@ namespace Api_Billycock.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _context.CuentaExists(cuenta.idCuenta,null))
+                if (!await _context.CuentaExists(cuenta.idCuenta))
                 {
                     return NotFound();
                 }
@@ -75,18 +76,18 @@ namespace Api_Billycock.Controllers
 
         }
 
-        // POST: api/Cuenta
+        // POST: api/CuentaDTO
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost("AddAccount")]
-        public async Task<ActionResult<string>> PostCuenta([FromBody] Cuenta cuenta)
+        public async Task<ActionResult<string>> PostCuenta([FromBody] CuentaDTO cuenta)
         {
             return await _context.InsertCuenta(cuenta);
         }
 
-        // DELETE: api/Cuenta/5
+        // DELETE: api/CuentaDTO/5
         [HttpPost("DeleteAccount")]
-        public async Task<ActionResult<string>> DeleteCuenta([FromBody] Cuenta cuenta)
+        public async Task<ActionResult<string>> DeleteCuenta([FromBody] CuentaDTO cuenta)
         {
             return await _context.DeleteCuenta(cuenta);
         }

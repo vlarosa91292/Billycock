@@ -1,4 +1,5 @@
 ﻿using Billycock.Data;
+using Billycock.DTO;
 using Billycock.Models;
 using Billycock.Repositories.Interfaces;
 using Billycock.Utils;
@@ -13,19 +14,19 @@ namespace Billycock.Repositories.Repositories
     public class PlataformaRepository : IPlataformaRepository
     {
         private readonly BillycockServiceContext _context;
-        private readonly ICommonRepository<Plataforma> _commonRepository;
-        public PlataformaRepository(BillycockServiceContext context, ICommonRepository<Plataforma> commonRepository)
+        private readonly ICommonRepository<PlataformaDTO> _commonRepository;
+        public PlataformaRepository(BillycockServiceContext context, ICommonRepository<PlataformaDTO> commonRepository)
         {
             _context = context;
             _commonRepository = commonRepository;
         }
         #region Metodos Principales
-        public async Task<string> DeletePlataforma(Plataforma plataforma)
+        public async Task<string> DeletePlataforma(PlataformaDTO plataforma)
         {
-            Plataforma account = await GetPlataformabyId(plataforma.idPlataforma);
+            PlataformaDTO account = await GetPlataformabyId(plataforma.idPlataforma);
             try
             {
-                return await _commonRepository.DeleteLogicoObjeto(plataforma,new Plataforma()
+                return await _commonRepository.DeleteLogicoObjeto(plataforma,new PlataformaDTO()
                 {
                     idPlataforma = account.idPlataforma,
                     descripcion = plataforma.descripcion,
@@ -40,11 +41,11 @@ namespace Billycock.Repositories.Repositories
                 return _commonRepository.ExceptionMessage(plataforma, "D");
             }
         }
-        public async Task<string> InsertPlataforma(Plataforma plataforma)
+        public async Task<string> InsertPlataforma(PlataformaDTO plataforma)
         {
             try
             {
-                return await _commonRepository.InsertObjeto(plataforma, new Plataforma()
+                return await _commonRepository.InsertObjeto(plataforma, new PlataformaDTO()
                 {
                     descripcion = plataforma.descripcion,
                     idEstado = 1,
@@ -59,14 +60,14 @@ namespace Billycock.Repositories.Repositories
             }
 
         }
-        public async Task<string> UpdatePlataforma(Plataforma plataforma)
+        public async Task<string> UpdatePlataforma(PlataformaDTO plataforma)
         {
-            Plataforma account = await GetPlataformabyId(plataforma.idPlataforma);
+            PlataformaDTO account = await GetPlataformabyId(plataforma.idPlataforma);
             List<int> idPlataformasAgregar = new List<int>();
             List<int> idPlataformasEliminar = new List<int>();
             try
             {
-                return await _commonRepository.UpdateObjeto(plataforma, new Plataforma()
+                return await _commonRepository.UpdateObjeto(plataforma, new PlataformaDTO()
                 {
                     idPlataforma = plataforma.idPlataforma,
                     descripcion = account.descripcion,
@@ -81,15 +82,15 @@ namespace Billycock.Repositories.Repositories
                 return _commonRepository.ExceptionMessage(plataforma, "U");
             }
         }
-        public async Task<List<Plataforma>> GetPlataformas()
+        public async Task<List<PlataformaDTO>> GetPlataformas()
         {
             return await ObtenerPlataformas(1, "");
         }
-        public async Task<Plataforma> GetPlataformabyId(int? id)
+        public async Task<PlataformaDTO> GetPlataformabyId(int? id)
         {
             return (await ObtenerPlataformas(2, id.ToString()))[0];
         }
-        public async Task<Plataforma> GetPlataformabyName(string name)
+        public async Task<PlataformaDTO> GetPlataformabyName(string name)
         {
             return (await ObtenerPlataformas(3, name))[0];
         }
@@ -97,18 +98,19 @@ namespace Billycock.Repositories.Repositories
         {
             return await _context.PLATAFORMA.AnyAsync(e => e.idPlataforma == id);
         }
-        public async Task<List<Plataforma>> ObtenerPlataformas(int tipo, string dato)
+        public async Task<List<PlataformaDTO>> ObtenerPlataformas(int tipo, string dato)
         {
             if (tipo == 1)
             {
                 return await (from c in _context.PLATAFORMA
                               where c.idEstado != 2
-                              select new Plataforma()
+                              select new PlataformaDTO()
                               {
                                   idPlataforma = c.idPlataforma,
                                   descripcion = c.descripcion,
                                   idEstado = c.idEstado,
                                   descEstado = (from e in _context.ESTADO where e.idEstado == c.idEstado select e.descripcion).FirstOrDefault(),
+                                  numeroMaximoUsuarios = c.numeroMaximoUsuarios,
                                   precio = c.precio,  
                                   //plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
                                   //                     where pc.idPlataforma == c.idPlataforma
@@ -127,12 +129,13 @@ namespace Billycock.Repositories.Repositories
             {
                 return await (from c in _context.PLATAFORMA
                               where c.idEstado != 2 && c.idPlataforma == int.Parse(dato)
-                              select new Plataforma()
+                              select new PlataformaDTO()
                               {
                                   idPlataforma = c.idPlataforma,
                                   descripcion = c.descripcion,
                                   idEstado = c.idEstado,
                                   descEstado = (from e in _context.ESTADO where e.idEstado == c.idEstado select e.descripcion).FirstOrDefault(),
+                                  numeroMaximoUsuarios = c.numeroMaximoUsuarios,
                                   precio = c.precio,
                                   //plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
                                   //                     where pc.idPlataforma == c.idPlataforma
@@ -151,12 +154,13 @@ namespace Billycock.Repositories.Repositories
             {
                 return await (from c in _context.PLATAFORMA
                               where c.idEstado != 2 && c.descripcion == dato
-                              select new Plataforma()
+                              select new PlataformaDTO()
                               {
                                   idPlataforma = c.idPlataforma,
                                   descripcion = c.descripcion,
                                   idEstado = c.idEstado,
                                   descEstado = (from e in _context.ESTADO where e.idEstado == c.idEstado select e.descripcion).FirstOrDefault(),
+                                  numeroMaximoUsuarios = c.numeroMaximoUsuarios,
                                   precio = c.precio,
                                   //plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
                                   //                     where pc.idPlataforma == c.idPlataforma

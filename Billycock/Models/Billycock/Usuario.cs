@@ -18,9 +18,6 @@ namespace Billycock.Models
         public int? idEstado { get; set; }
         public string facturacion { get; set; }
         public int? pago { get; set; }
-        [NotMapped]
-        [JsonIgnore]
-        public string descEstado { get; set; }
         [JsonIgnore]
         public List<UsuarioPlataformaCuenta> usuarioPlataformaCuentas { get; set; }
     }
