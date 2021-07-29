@@ -21,7 +21,7 @@
     },
     "resourceName": {
       "type": "string",
-      "defaultValue": "Billycock20210709181549",
+      "defaultValue": "WebBillycock20210709181742",
       "metadata": {
         "description": "Name of the main resource to be created by this template."
       }

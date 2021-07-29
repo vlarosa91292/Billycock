@@ -12,9 +12,13 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "HilarioDb": "Server=billycockplatform.database.windows.net,1433;Database=Hilario_Produccion;Persist Security Info=False;User Id=vlarosa;Password=Nayjuw+29;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;",
-        "BillycockDb": "Server=billycockplatform.database.windows.net,1433;Database=Billycock_Produccion;Persist Security Info=False;User Id=vlarosa;Password=Nayjuw+29;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;",
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "Others": "Persist Security Info=False;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;",
+        "Server": "Server=billycockplatform.database.windows.net,1433;",
+        "Password": "Password=Nayjuw+29;",
+        "UserId": "User Id=vlarosa;",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "B_Database": "Database=Billycock_Produccion;",
+        "H_Database": "Database=Hilario_Produccion;"
       }
     },
     "Billycock": {

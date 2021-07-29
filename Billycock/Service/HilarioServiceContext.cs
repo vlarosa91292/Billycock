@@ -20,7 +20,8 @@ namespace Billycock.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@_configuration["HilarioDb"], providerOptions => providerOptions.EnableRetryOnFailure());
+            optionsBuilder.UseSqlServer(@_configuration["HilarioDb"], 
+                providerOptions => providerOptions.EnableRetryOnFailure());
         }
 
         public DbSet<Producto> PRODUCTO { get; set; }
