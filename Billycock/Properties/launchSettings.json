@@ -12,13 +12,13 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "Others": "Persist Security Info=False;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;",
-        "Server": "Server=billycockplatform.database.windows.net,1433;",
+        "Others": "",
+        "Server": "Server=DESKTOP-RV3JNUN;",
         "Password": "Password=Nayjuw+29;",
-        "UserId": "User Id=vlarosa;",
+        "UserId": "User Id=sa;",
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "B_Database": "Database=Billycock_Produccion;",
-        "H_Database": "Database=Hilario_Produccion;"
+        "B_Database": "Database=Billycock_Desarrollo;",
+        "H_Database": "Database=Hilario_Desarrollo;"
       }
     },
     "Billycock": {
