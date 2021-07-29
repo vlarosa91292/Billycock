@@ -18,6 +18,7 @@ namespace Billycock.Models
         public int? idEstado { get; set; }
         public string facturacion { get; set; }
         public int? pago { get; set; }
+        public string pin { get; set; }
         [JsonIgnore]
         public List<UsuarioPlataformaCuenta> usuarioPlataformaCuentas { get; set; }
     }

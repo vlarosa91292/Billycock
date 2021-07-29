@@ -1,5 +1,6 @@
 ﻿using Billycock.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,18 @@ namespace Billycock.Data
 {
     public class BillycockServiceContext: DbContext
     {
-        public BillycockServiceContext(DbContextOptions<BillycockServiceContext> options)
-       : base(options)
-        { }
+        private readonly IConfiguration _configuration;
+
+        public BillycockServiceContext(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(@_configuration["BillycockDb"]
+                , providerOptions => providerOptions.EnableRetryOnFailure());
+        }
 
         public DbSet<Usuario> USUARIO { get; set; }
         public DbSet<Plataforma> PLATAFORMA { get; set; }

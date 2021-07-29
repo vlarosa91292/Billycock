@@ -1,6 +1,7 @@
 ﻿using Billycock.Models;
 using Billycock.Models.Hilario;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,17 @@ namespace Billycock.Data
 {
     public class HilarioServiceContext : DbContext
     {
-        public HilarioServiceContext(DbContextOptions<HilarioServiceContext> options)
-       : base(options)
-        { }
+        private readonly IConfiguration _configuration;
+
+        public HilarioServiceContext(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(@_configuration["HilarioDb"], providerOptions => providerOptions.EnableRetryOnFailure());
+        }
 
         public DbSet<Producto> PRODUCTO { get; set; }
         public DbSet<Proveedor> PROVEEDOR { get; set; }

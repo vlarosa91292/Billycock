@@ -24,8 +24,6 @@ namespace Billycock
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddDbContext<BillycockServiceContext>(options => options.UseSqlServer(Configuration["BillycockServiceConnection"], providerOptions => providerOptions.EnableRetryOnFailure()));
-            services.AddDbContext<HilarioServiceContext>(options => options.UseSqlServer(Configuration["HilarioServiceConnection"], providerOptions => providerOptions.EnableRetryOnFailure()));
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<ICuentaRepository, CuentaRepository>();
             services.AddScoped<IEstadoRepository, EstadoRepository>();
