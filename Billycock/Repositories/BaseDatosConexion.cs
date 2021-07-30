@@ -15,16 +15,16 @@ namespace Billycock.Repositories.Utils
         {
             _configuration = configuration;
         }
-        public string GetConnectionString(string Database)
+        public BD GetConnectionString(string Database)
         {
-            return JsonConvert.SerializeObject(new BD
+            return new BD
             {
                 Server = _configuration["Server"],
                 Database = Database == "H" ? _configuration["H_Database"]:_configuration["B_Database"],
                 UserId = _configuration["UserId"],
                 Password = _configuration["Password"],
                 Others = _configuration["Others"]
-            });
+            };
         }
     }
 }
