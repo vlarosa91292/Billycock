@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Billycock", "Billycock\Billycock.csproj", "{2E4D5E37-E618-4F2B-BE50-5100C3A3C953}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web_Billycock", "Web_Billycock\Web_Billycock.csproj", "{110EDA3D-6FFE-4045-B18F-95054697F489}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{2E4D5E37-E618-4F2B-BE50-5100C3A3C953}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E4D5E37-E618-4F2B-BE50-5100C3A3C953}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E4D5E37-E618-4F2B-BE50-5100C3A3C953}.Release|Any CPU.Build.0 = Release|Any CPU
-		{110EDA3D-6FFE-4045-B18F-95054697F489}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{110EDA3D-6FFE-4045-B18F-95054697F489}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{110EDA3D-6FFE-4045-B18F-95054697F489}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{110EDA3D-6FFE-4045-B18F-95054697F489}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
