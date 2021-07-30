@@ -1,5 +1,8 @@
+using Billycock.Data;
 using Billycock.Repositories.Interfaces;
+using Billycock.Repositories.Repositories;
 using Billycock.Repositories.Utils;
+using Billycock.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -20,20 +23,22 @@ namespace Billycock
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddScoped(_ => new BillycockServiceContext(Configuration["BillycockDb"]));
+            services.AddScoped(_ => new HilarioServiceContext(Configuration["HilarioDb"]));
             services.AddScoped<IBaseDatosConexion, BaseDatosConexion>();
-            //services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-            //services.AddScoped<ICuentaRepository, CuentaRepository>();
-            //services.AddScoped<IEstadoRepository, EstadoRepository>();
-            //services.AddScoped(typeof(ICommonRepository<>), typeof(CommonRepository<>));
-            //services.AddScoped<IPlataformaRepository, PlataformaRepository>();
-            //services.AddScoped<IPlataformaCuentaRepository, PlataformaCuentaRepository>();
-            //services.AddScoped<IUsuarioPlataformaCuentaRepository, UsuarioPlataformaCuentaRepository>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped<ICuentaRepository, CuentaRepository>();
+            services.AddScoped<IEstadoRepository, EstadoRepository>();
+            services.AddScoped(typeof(ICommonRepository<>), typeof(CommonRepository<>));
+            services.AddScoped<IPlataformaRepository, PlataformaRepository>();
+            services.AddScoped<IPlataformaCuentaRepository, PlataformaCuentaRepository>();
+            services.AddScoped<IUsuarioPlataformaCuentaRepository, UsuarioPlataformaCuentaRepository>();
 
             services.AddSwaggerGen(c =>
             {

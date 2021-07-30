@@ -24,7 +24,7 @@ namespace Billycock.Controllers
 
         // GET: api/BD
         [HttpGet("GetBd")]
-        public BD GetUsuarios(string bd)
+        public string GetUsuarios(string bd)
         {
             return _context.GetConnectionString(bd);
         }

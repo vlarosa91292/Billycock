@@ -11,17 +11,13 @@ namespace Billycock.Data
 {
     public class HilarioServiceContext : DbContext
     {
-        private readonly IConfiguration _configuration;
-
-        public HilarioServiceContext(IConfiguration configuration)
+        public HilarioServiceContext(string connectionString) : base(GetOptions(connectionString))
         {
-            _configuration = configuration;
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        private static DbContextOptions GetOptions(string connectionString)
         {
-            optionsBuilder.UseSqlServer(@_configuration["HilarioDb"], 
-                providerOptions => providerOptions.EnableRetryOnFailure());
+            return SqlServerDbContextOptionsExtensions.UseSqlServer(new DbContextOptionsBuilder(), connectionString).Options;
         }
 
         public DbSet<Producto> PRODUCTO { get; set; }

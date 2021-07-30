@@ -10,17 +10,13 @@ namespace Billycock.Data
 {
     public class BillycockServiceContext: DbContext
     {
-        private readonly IConfiguration _configuration;
-
-        public BillycockServiceContext(IConfiguration configuration)
+        public BillycockServiceContext(string connectionString) : base(GetOptions(connectionString))
         {
-            _configuration = configuration;
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        private static DbContextOptions GetOptions(string connectionString)
         {
-            optionsBuilder.UseSqlServer(@_configuration["BillycockDb"]
-                , providerOptions => providerOptions.EnableRetryOnFailure());
+            return SqlServerDbContextOptionsExtensions.UseSqlServer(new DbContextOptionsBuilder(), connectionString).Options;
         }
 
         public DbSet<Usuario> USUARIO { get; set; }
