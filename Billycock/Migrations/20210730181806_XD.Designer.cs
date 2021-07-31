@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Billycock.Migrations.BillycockService
+namespace Billycock.Migrations
 {
     [DbContext(typeof(BillycockServiceContext))]
-    [Migration("20210714022623_Billycock3")]
-    partial class Billycock3
+    [Migration("20210730181806_XD")]
+    partial class XD
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,32 +28,14 @@ namespace Billycock.Migrations.BillycockService
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("amazon")
-                        .HasColumnType("bit");
+                    b.Property<string>("correo")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("diminutivo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("disney")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("hbo")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("idEstado")
+                    b.Property<int>("idEstado")
                         .HasColumnType("int");
-
-                    b.Property<bool>("netflix")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("nombre")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("spotify")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("youtube")
-                        .HasColumnType("bit");
 
                     b.HasKey("idCuenta");
 
@@ -137,9 +119,6 @@ namespace Billycock.Migrations.BillycockService
                     b.Property<string>("fechaPago")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("usuario")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("usuariosdisponibles")
                         .HasColumnType("int");
 
@@ -171,6 +150,9 @@ namespace Billycock.Migrations.BillycockService
 
                     b.Property<int?>("pago")
                         .HasColumnType("int");
+
+                    b.Property<string>("pin")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("idUsuario");
 

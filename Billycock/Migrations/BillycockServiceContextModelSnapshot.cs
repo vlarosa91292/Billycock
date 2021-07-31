@@ -4,16 +4,14 @@ using Billycock.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Billycock.Migrations.BillycockService
+namespace Billycock.Migrations
 {
     [DbContext(typeof(BillycockServiceContext))]
-    [Migration("20210729141607_PinAdd")]
-    partial class PinAdd
+    partial class BillycockServiceContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

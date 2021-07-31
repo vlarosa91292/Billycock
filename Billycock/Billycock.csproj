@@ -8,25 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\BillycockService\20210707173702_Billycock.cs" />
-    <Compile Remove="Migrations\BillycockService\20210707173702_Billycock.Designer.cs" />
-    <Compile Remove="Migrations\BillycockService\20210707174607_Billycock.cs" />
-    <Compile Remove="Migrations\BillycockService\20210707174607_Billycock.Designer.cs" />
-    <Compile Remove="Migrations\BillycockService\20210709204126_Billycock2.cs" />
-    <Compile Remove="Migrations\BillycockService\20210709204126_Billycock2.Designer.cs" />
-    <Compile Remove="Migrations\BillycockService\20210709223511_Billycock3.cs" />
-    <Compile Remove="Migrations\BillycockService\20210709223511_Billycock3.Designer.cs" />
-    <Compile Remove="Migrations\BillycockService\20210714180626_Billycock6.cs" />
-    <Compile Remove="Migrations\BillycockService\20210714180626_Billycock6.Designer.cs" />
-    <Compile Remove="Migrations\BillycockService\20210714181750_Billycock6.cs" />
-    <Compile Remove="Migrations\BillycockService\20210714181750_Billycock6.Designer.cs" />
-    <Compile Remove="Migrations\BillycockService\20210714182007_Billycock6.cs" />
-    <Compile Remove="Migrations\BillycockService\20210714182007_Billycock6.Designer.cs" />
-    <Compile Remove="Migrations\HilarioService\20210709223613_Hilario6.cs" />
-    <Compile Remove="Migrations\HilarioService\20210709223613_Hilario6.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

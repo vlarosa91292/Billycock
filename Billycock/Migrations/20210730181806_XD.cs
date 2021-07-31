@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Billycock.Migrations.BillycockService
+namespace Billycock.Migrations
 {
-    public partial class Billycock : Migration
+    public partial class XD : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,17 +13,9 @@ namespace Billycock.Migrations.BillycockService
                 {
                     idCuenta = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    nombre = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    correo = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     diminutivo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    netflix = table.Column<int>(type: "int", nullable: false),
-                    amazon = table.Column<int>(type: "int", nullable: false),
-                    disney = table.Column<int>(type: "int", nullable: false),
-                    hbo = table.Column<int>(type: "int", nullable: false),
-                    youtube = table.Column<int>(type: "int", nullable: false),
-                    spotify = table.Column<int>(type: "int", nullable: false),
-                    descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    password = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    idEstado = table.Column<int>(type: "int", nullable: true)
+                    idEstado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,7 +77,8 @@ namespace Billycock.Migrations.BillycockService
                     fechaInscripcion = table.Column<DateTime>(type: "datetime2", nullable: true),
                     idEstado = table.Column<int>(type: "int", nullable: true),
                     facturacion = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    pago = table.Column<int>(type: "int", nullable: true)
+                    pago = table.Column<int>(type: "int", nullable: true),
+                    pin = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -99,7 +92,8 @@ namespace Billycock.Migrations.BillycockService
                     idPlataforma = table.Column<int>(type: "int", nullable: false),
                     idCuenta = table.Column<int>(type: "int", nullable: false),
                     usuariosdisponibles = table.Column<int>(type: "int", nullable: true),
-                    fechaPago = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    fechaPago = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    clave = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
