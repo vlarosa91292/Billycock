@@ -1,26 +1,88 @@
 SET IDENTITY_INSERT [dbo].[CUENTA] ON 
 GO
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (1, N'billycocknetflix1@gmail.com', N'Bc1',1)
-GO														 
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (2, N'billycocknetflix2@gmail.com', N'Bc2',1)
-GO														 
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (3, N'billycocknetflix3@gmail.com', N'Bc3',1)
-GO														 
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (4, N'billycocknetflix4@gmail.com', N'Bc4',1)
-GO														 
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (5, N'billycocknetflix5@gmail.com', N'Bc5',1)
-GO														 
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (6, N'billycocknetflix6@gmail.com', N'Bc6',1)
-GO														 
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (7, N'billycocknetflix7@gmail.com', N'Bc7',1)
-GO														 
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (8, N'billycocknetflix8@gmail.com', N'Bc8',1)
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (1, N'billycocknetflix1@gmail.com', N'Bc1', 1, 0, 1, 0, 0, 1, 1)
 GO
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (9, N'billycocknetflix9@gmail.com', N'Bc9',1)
-GO														 
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (10, N'billycocknetflix10@gmail.com', N'Bc10',1)
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (2, N'billycocknetflix2@gmail.com', N'Bc2', 1, 0, 1, 0, 1, 0, 1)
+GO
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (3, N'billycocknetflix3@gmail.com', N'Bc3', 1, 0, 1, 0, 0, 0, 1)
+GO
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (4, N'billycocknetflix4@gmail.com', N'Bc4', 1, 0, 1, 0, 0, 0, 1)
+GO
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (5, N'billycocknetflix5@gmail.com', N'Bc5', 0, 0, 0, 0, 0, 0, 2)
+GO
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (6, N'billycocknetflix6@gmail.com', N'Bc6', 1, 0, 0, 0, 0, 0, 1)
+GO
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (7, N'billycocknetflix7@gmail.com', N'Bc7', 1, 1, 0, 0, 0, 0, 1)
+GO
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (8, N'billycocknetflix8@gmail.com', N'Bc8', 1, 0, 0, 0, 0, 0, 1)
+GO
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (9, N'billycocknetflix9@gmail.com', N'Bc9', 0, 0, 0, 0, 0, 0, 2)
+GO
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (10, N'billycocknetflix10@gmail.com', N'Bc10', 1, 1, 0, 0, 0, 0, 1)
 GO
 SET IDENTITY_INSERT [dbo].[CUENTA] OFF
+GO
+SET IDENTITY_INSERT [dbo].[PLATAFORMA] ON 
+GO
+INSERT [dbo].[PLATAFORMA] ([idPlataforma], [descripcion], [numeroMaximoUsuarios], [precio], [idEstado]) VALUES (1, N'Netflix', 5, 12, 1)
+GO
+INSERT [dbo].[PLATAFORMA] ([idPlataforma], [descripcion], [numeroMaximoUsuarios], [precio], [idEstado]) VALUES (2, N'Amazon', 5, 8, 1)
+GO
+INSERT [dbo].[PLATAFORMA] ([idPlataforma], [descripcion], [numeroMaximoUsuarios], [precio], [idEstado]) VALUES (3, N'Disney+', 6, 8, 1)
+GO
+INSERT [dbo].[PLATAFORMA] ([idPlataforma], [descripcion], [numeroMaximoUsuarios], [precio], [idEstado]) VALUES (4, N'Hbo Max', 5, 10, 1)
+GO
+INSERT [dbo].[PLATAFORMA] ([idPlataforma], [descripcion], [numeroMaximoUsuarios], [precio], [idEstado]) VALUES (5, N'Youtube Premium', 5, 10, 1)
+GO
+INSERT [dbo].[PLATAFORMA] ([idPlataforma], [descripcion], [numeroMaximoUsuarios], [precio], [idEstado]) VALUES (6, N'Spotify Premium', 5, 10, 1)
+GO
+SET IDENTITY_INSERT [dbo].[PLATAFORMA] OFF
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (1, 1, 0, N'23/08/2021', N'Underground-05', N'1-1')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (1, 10, 3, N'17/08/2021', N'Happylife+65', N'1-10')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (1, 2, 1, N'03/08/2021', N'Beautifullife-8', N'1-2')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (1, 3, 0, N'28/08/2021', N'Whitedove+23', N'1-3')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (1, 4, 0, N'10/08/2021', N'Butterfly+55', N'1-4')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (1, 6, 0, N'26/08/2021', N'Admin+27', N'1-6')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (1, 7, 0, N'24/09/2021', N'Bluebunny+95', N'1-7')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (1, 8, 0, N'20/08/2021', N'Uglyduckling-4', N'1-8')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (2, 10, 1, N'23/08/2021', N'Blackkitten+15', N'2-10')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (2, 7, 0, N'29/08/2021', N'Bluepearl-29', N'2-7')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (3, 1, 0, N'24/08/2021', N'Redrose-89', N'3-1')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (3, 2, 2, N'28/08/2021', N'Lotusflower+45', N'3-2')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (3, 3, 0, N'28/08/2021', N'Cottoncandy+27', N'3-3')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (3, 4, 6, N'23/08/2021', N'Loveflower-25', N'3-4')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (4, 1, 5, N'31/08/2021', N'Littledaisy+05', N'4-1')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (5, 2, 2, N'07/08/2021', N'Nayjuw+29', N'5-2')
+GO
+INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (6, 1, 3, N'28/08/2021', N'Bigdog+4', N'6-1')
+GO
+SET IDENTITY_INSERT [dbo].[USUARIO] ON 
+GO
+INSERT [dbo].[USUARIO] ([idUsuario], [descripcion], [fechaInscripcion], [idEstado], [facturacion], [pago], [pin]) VALUES (1, N'Prueba Pruebita', CAST(N'2021-07-08T17:41:33.9277521' AS DateTime2), 1, N'15/08/2021', 12, NULL)
+GO
+INSERT [dbo].[USUARIO] ([idUsuario], [descripcion], [fechaInscripcion], [idEstado], [facturacion], [pago], [pin]) VALUES (2, N'Prueba Pruebita 2', CAST(N'2021-07-08T17:43:48.4661554' AS DateTime2), 1, N'15/08/2021', 10, NULL)
+GO
+INSERT [dbo].[USUARIO] ([idUsuario], [descripcion], [fechaInscripcion], [idEstado], [facturacion], [pago], [pin]) VALUES (3, N'Prueba Pruebota', CAST(N'2021-07-08T17:59:50.6060517' AS DateTime2), 1, N'15/08/2021', 20, NULL)
+GO
+INSERT [dbo].[USUARIO] ([idUsuario], [descripcion], [fechaInscripcion], [idEstado], [facturacion], [pago], [pin]) VALUES (4, N'Prueba Pruebotaza', CAST(N'2021-07-10T08:05:43.1065234' AS DateTime2), 1, N'15/08/2021', 15, NULL)
+GO
+SET IDENTITY_INSERT [dbo].[USUARIO] OFF
 GO
 SET IDENTITY_INSERT [dbo].[ESTADO] ON 
 GO
@@ -88,63 +150,11 @@ INSERT [dbo].[HISTORIA] ([idHistory], [Request], [Response], [fecha], [integraci
 GO
 INSERT [dbo].[HISTORIA] ([idHistory], [Request], [Response], [fecha], [integracion]) VALUES (28, N'{"idPlataformaCuenta":null,"usuariosdisponibles":2,"fechaPago":"28/07","clave":null,"idPlataforma":3,"Plataforma":null,"idCuenta":2,"Cuenta":null}', N'CREACION INCORRECTA DE PLATAFORMACUENTA', CAST(N'2021-07-14T18:35:36.6993542' AS DateTime2), NULL)
 GO
+INSERT [dbo].[HISTORIA] ([idHistory], [Request], [Response], [fecha], [integracion]) VALUES (30, N'{"idEstado":3,"descripcion":"Prueba"}', N'ELIMINACION CORRECTA DE ESTADO', CAST(N'2021-07-30T17:41:33.2353520' AS DateTime2), NULL)
+GO
+INSERT [dbo].[HISTORIA] ([idHistory], [Request], [Response], [fecha], [integracion]) VALUES (31, N'{"idCuenta":1,"correo":"billycocknetflix1@gmail.com","diminutivo":"Bc1","idEstado":1,"usuarioPlataformaCuentas":null,"plataformaCuentas":null}', N'ACTUALIZACION CORRECTA DE CUENTA', CAST(N'2021-07-31T15:38:20.4049983' AS DateTime2), NULL)
+GO
+INSERT [dbo].[HISTORIA] ([idHistory], [Request], [Response], [fecha], [integracion]) VALUES (32, N'{"idCuenta":1,"correo":"billycocknetflix1@gmail.com","diminutivo":"Bc1","idEstado":1,"usuarioPlataformaCuentas":null,"plataformaCuentas":null}', N'ACTUALIZACION CORRECTA DE CUENTA', CAST(N'2021-07-31T15:45:09.8202883' AS DateTime2), NULL)
+GO
 SET IDENTITY_INSERT [dbo].[HISTORIA] OFF
-GO
-SET IDENTITY_INSERT [dbo].[PLATAFORMA] ON 
-GO
-INSERT [dbo].[PLATAFORMA] ([idPlataforma], [descripcion], [numeroMaximoUsuarios], [precio], [idEstado]) VALUES (1, N'Netflix', 5, 12, 1)
-GO
-INSERT [dbo].[PLATAFORMA] ([idPlataforma], [descripcion], [numeroMaximoUsuarios], [precio], [idEstado]) VALUES (2, N'Amazon', 5, 8, 1)
-GO
-INSERT [dbo].[PLATAFORMA] ([idPlataforma], [descripcion], [numeroMaximoUsuarios], [precio], [idEstado]) VALUES (3, N'Disney+', 6, 8, 1)
-GO
-INSERT [dbo].[PLATAFORMA] ([idPlataforma], [descripcion], [numeroMaximoUsuarios], [precio], [idEstado]) VALUES (5, N'Youtube Premium', 5, 10, 1)
-GO
-INSERT [dbo].[PLATAFORMA] ([idPlataforma], [descripcion], [numeroMaximoUsuarios], [precio], [idEstado]) VALUES (6, N'Spotify Premium', 5, 10, 1)
-GO
-SET IDENTITY_INSERT [dbo].[PLATAFORMA] OFF
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (1, 1, 0, N'23/07', N'Underground-05')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (3, 1, 0, N'24/07', N'Redrose-89')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (6, 1, 3, N'28/07', N'Bigdog+4')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (1, 2, 1, N'03/08', N'Beautifullife-8')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (3, 2, 2, N'28/07', N'Lotusflower+45')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (5, 2, 2, N'07/08', N'Nayjuw+29')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (1, 3, 0, N'28/07', N'Whitedove+23')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (3, 3, 0, N'28/07', N'Cottoncandy+27')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (1, 4, 0, N'10/08', N'Butterfly+55')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (3, 4, 6, N'23/08', N'Loveflower-25')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (1, 6, 0, N'26/08', N'Admin+27')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (1, 7, 0, N'24/09', N'Bluebunny+95')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (2, 7, 0, N'29/07', N'Bluepearl-29')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (1, 8, 0, N'20/08', N'Uglyduckling-4')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (1, 10, 3, N'17/08', N'Happylife+65')
-GO
-INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave]) VALUES (2, 10, 1, N'23/07', N'Blackkitten+15')
-GO
-SET IDENTITY_INSERT [dbo].[USUARIO] ON 
-GO
-INSERT [dbo].[USUARIO] ([idUsuario], [descripcion], [fechaInscripcion], [idEstado], [facturacion], [pago], [pin]) VALUES (1, N'Prueba Pruebita', CAST(N'2021-07-08T17:41:33.9277521' AS DateTime2), 1, N'15/08/2021', 12, NULL)
-GO
-INSERT [dbo].[USUARIO] ([idUsuario], [descripcion], [fechaInscripcion], [idEstado], [facturacion], [pago], [pin]) VALUES (2, N'Prueba Pruebita 2', CAST(N'2021-07-08T17:43:48.4661554' AS DateTime2), 1, N'15/08/2021', 10, NULL)
-GO
-INSERT [dbo].[USUARIO] ([idUsuario], [descripcion], [fechaInscripcion], [idEstado], [facturacion], [pago], [pin]) VALUES (3, N'Prueba Pruebota', CAST(N'2021-07-08T17:59:50.6060517' AS DateTime2), 1, N'15/08/2021', 20, NULL)
-GO
-INSERT [dbo].[USUARIO] ([idUsuario], [descripcion], [fechaInscripcion], [idEstado], [facturacion], [pago], [pin]) VALUES (4, N'Prueba Pruebotaza', CAST(N'2021-07-10T08:05:43.1065234' AS DateTime2), 1, N'15/08/2021', 15, NULL)
-GO
-SET IDENTITY_INSERT [dbo].[USUARIO] OFF
 GO
