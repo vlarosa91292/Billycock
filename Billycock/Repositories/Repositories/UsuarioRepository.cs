@@ -462,10 +462,10 @@ namespace Billycock.Repositories.Repositories
                 }
             }
         }
-        private async Task<int?> ObtenerMontoPagoAsync(List<UsuarioPlataformaCuenta> UsuarioPlataformaCuentas)
+        private async Task<int> ObtenerMontoPagoAsync(List<UsuarioPlataformaCuenta> UsuarioPlataformaCuentas)
         {
-            int? pago = 0;
-            double? acumulado = 0;
+            int pago = 0;
+            double acumulado = 0;
             for (int i = 0; i < UsuarioPlataformaCuentas.Count; i++)
             {
                 acumulado += await _plataformaRepository.GetPricePlataforma(UsuarioPlataformaCuentas[i].idPlataforma) * UsuarioPlataformaCuentas[i].cantidad;
