@@ -133,7 +133,7 @@ namespace Billycock.Repositories.Repositories
                 return await _commonRepository.InsertObjeto(usuario,new Usuario()
                 {
                     descripcion = usuario.descripcion,
-                    fechaInscripcion = DateTime.Now,
+                    //fechaInscripcion = DateTime.Now,
                     idEstado = 1,
                     facturacion = ObtenerFechaFacturacion(),
                     pago = await ObtenerMontoPagoAsync(plataformasxusuario)

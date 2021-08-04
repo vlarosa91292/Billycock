@@ -116,7 +116,7 @@ namespace Billycock.Repositories.Repositories
                 {
                     Request = JsonConvert.SerializeObject(t),
                     Response = response,
-                    fecha = DateTime.Now
+                    //fecha = DateTime.Now
                 });
                 await Save(_context);
             }
