@@ -1,24 +1,24 @@
 SET IDENTITY_INSERT [dbo].[CUENTA] ON 
 GO
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (1, N'billycocknetflix1@gmail.com', N'Bc1', 1, 0, 1, 0, 0, 1, 1)
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (1, N'billycocknetflix1@gmail.com', N'Bc1', 1)
 GO
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (2, N'billycocknetflix2@gmail.com', N'Bc2', 1, 0, 1, 0, 1, 0, 1)
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (2, N'billycocknetflix2@gmail.com', N'Bc2', 1)
 GO
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (3, N'billycocknetflix3@gmail.com', N'Bc3', 1, 0, 1, 0, 0, 0, 1)
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (3, N'billycocknetflix3@gmail.com', N'Bc3', 1)
 GO
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (4, N'billycocknetflix4@gmail.com', N'Bc4', 1, 0, 1, 0, 0, 0, 1)
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (4, N'billycocknetflix4@gmail.com', N'Bc4', 1)
 GO
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (5, N'billycocknetflix5@gmail.com', N'Bc5', 0, 0, 0, 0, 0, 0, 2)
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (5, N'billycocknetflix5@gmail.com', N'Bc5', 1)
 GO
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (6, N'billycocknetflix6@gmail.com', N'Bc6', 1, 0, 0, 0, 0, 0, 1)
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (6, N'billycocknetflix6@gmail.com', N'Bc6', 1)
 GO
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (7, N'billycocknetflix7@gmail.com', N'Bc7', 1, 1, 0, 0, 0, 0, 1)
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (7, N'billycocknetflix7@gmail.com', N'Bc7', 1)
 GO
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (8, N'billycocknetflix8@gmail.com', N'Bc8', 1, 0, 0, 0, 0, 0, 1)
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (8, N'billycocknetflix8@gmail.com', N'Bc8', 1)
 GO
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (9, N'billycocknetflix9@gmail.com', N'Bc9', 0, 0, 0, 0, 0, 0, 2)
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (9, N'billycocknetflix9@gmail.com', N'Bc9', 1)
 GO
-INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [netflix], [amazon], [disney], [hbo], [youtube], [spotify], [idEstado]) VALUES (10, N'billycocknetflix10@gmail.com', N'Bc10', 1, 1, 0, 0, 0, 0, 1)
+INSERT [dbo].[CUENTA] ([idCuenta], [correo], [diminutivo], [idEstado]) VALUES (10, N'billycocknetflix10@gmail.com', N'Bc10', 1)
 GO
 SET IDENTITY_INSERT [dbo].[CUENTA] OFF
 GO
@@ -71,18 +71,6 @@ GO
 INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (5, 2, 2, N'07/08/2021', N'Nayjuw+29', N'5-2')
 GO
 INSERT [dbo].[PLATAFORMACUENTA] ([idPlataforma], [idCuenta], [usuariosdisponibles], [fechaPago], [clave], [idPlataformaCuenta]) VALUES (6, 1, 3, N'28/08/2021', N'Bigdog+4', N'6-1')
-GO
-SET IDENTITY_INSERT [dbo].[USUARIO] ON 
-GO
-INSERT [dbo].[USUARIO] ([idUsuario], [descripcion], [fechaInscripcion], [idEstado], [facturacion], [pago], [pin]) VALUES (1, N'Prueba Pruebita', CAST(N'2021-07-08T17:41:33.9277521' AS DateTime2), 1, N'15/08/2021', 12, NULL)
-GO
-INSERT [dbo].[USUARIO] ([idUsuario], [descripcion], [fechaInscripcion], [idEstado], [facturacion], [pago], [pin]) VALUES (2, N'Prueba Pruebita 2', CAST(N'2021-07-08T17:43:48.4661554' AS DateTime2), 1, N'15/08/2021', 10, NULL)
-GO
-INSERT [dbo].[USUARIO] ([idUsuario], [descripcion], [fechaInscripcion], [idEstado], [facturacion], [pago], [pin]) VALUES (3, N'Prueba Pruebota', CAST(N'2021-07-08T17:59:50.6060517' AS DateTime2), 1, N'15/08/2021', 20, NULL)
-GO
-INSERT [dbo].[USUARIO] ([idUsuario], [descripcion], [fechaInscripcion], [idEstado], [facturacion], [pago], [pin]) VALUES (4, N'Prueba Pruebotaza', CAST(N'2021-07-10T08:05:43.1065234' AS DateTime2), 1, N'15/08/2021', 15, NULL)
-GO
-SET IDENTITY_INSERT [dbo].[USUARIO] OFF
 GO
 SET IDENTITY_INSERT [dbo].[ESTADO] ON 
 GO
