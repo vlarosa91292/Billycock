@@ -29,8 +29,8 @@ namespace Billycock
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddScoped(_ => new BillycockServiceContext(Configuration["BillycockDb"]));
-            services.AddScoped(_ => new HilarioServiceContext(Configuration["HilarioDb"]));
+            services.AddScoped(_ => new BillycockServiceContext(Configuration));
+            services.AddScoped(_ => new HilarioServiceContext(Configuration));
             services.AddScoped<IBaseDatosConexion, BaseDatosConexion>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<ICuentaRepository, CuentaRepository>();

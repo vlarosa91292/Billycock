@@ -15,10 +15,31 @@ namespace Billycock.Repositories.Utils
         {
             _configuration = configuration;
         }
-        public string GetConnectionString(string Database)
+        public BD GetConnectionString(string Database)
         {
-            if(Database == "B") return _configuration.GetSection("BillycockDb").Value;
-            else return _configuration.GetSection("HilarioDb").Value;
+            BD bd = new BD()
+            {
+                Server = _configuration["Server"],
+                UserId = _configuration["UserId"],
+                Password = _configuration["Password"],
+                Others = _configuration["Others"]
+            };
+            if (bd.UserId != "sa")
+            {
+                bd.MultipleActiveResultSets = true;
+                bd.PersistSecurityInfo = false;
+                bd.Encrypt = true;
+                bd.TrustServerCertificate = false;
+            }
+            if (Database == "B")
+            {
+                bd.Database = _configuration["Database_B"];
+            }
+            else
+            {
+                bd.Database = _configuration["Database_H"];
+            }
+            return bd;
         }
     }
 }

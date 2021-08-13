@@ -1,5 +1,6 @@
 ﻿using Billycock.Models;
 using Billycock.Models.Hilario;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -11,13 +12,28 @@ namespace Billycock.Data
 {
     public class HilarioServiceContext : DbContext
     {
-        public HilarioServiceContext(string connectionString) : base(GetOptions(connectionString))
+        public HilarioServiceContext(IConfiguration configuration) : base(GetOptions(configuration))
         {
         }
 
-        private static DbContextOptions GetOptions(string connectionString)
+        private static DbContextOptions GetOptions(IConfiguration configuration)
         {
-            return SqlServerDbContextOptionsExtensions.UseSqlServer(new DbContextOptionsBuilder(), connectionString).Options;
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder()
+            {
+                DataSource = configuration["Server"],
+                InitialCatalog = configuration["Database_B"],
+                UserID = configuration["UserId"],
+                Password = configuration["Password"],
+                ApplicationName = "Billycock"
+            };
+            if (builder.UserID != "sa")
+            {
+                builder.MultipleActiveResultSets = true;
+                builder.PersistSecurityInfo = false;
+                builder.Encrypt = true;
+                builder.TrustServerCertificate = false;
+            }
+            return SqlServerDbContextOptionsExtensions.UseSqlServer(new DbContextOptionsBuilder(), builder.ConnectionString).Options;
         }
 
         public DbSet<Producto> PRODUCTO { get; set; }

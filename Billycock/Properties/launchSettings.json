@@ -12,7 +12,13 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "Others": "",
+        "Server": ".",
+        "Password": "Nayjuw+29",
+        "UserId": "sa",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Database_B": "Billycock_Desarrollo",
+        "Database_H": "Hilario_Desarrollo"
       }
     },
     "Billycock": {

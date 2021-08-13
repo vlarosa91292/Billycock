@@ -8,6 +8,6 @@ namespace Billycock.Repositories.Interfaces
 {
     public interface IBaseDatosConexion
     {
-        public string GetConnectionString(string Database);
+        public BD GetConnectionString(string Database);
     }
 }

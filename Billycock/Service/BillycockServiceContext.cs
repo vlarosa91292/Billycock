@@ -1,4 +1,5 @@
 ﻿using Billycock.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -10,13 +11,28 @@ namespace Billycock.Data
 {
     public class BillycockServiceContext: DbContext
     {
-        public BillycockServiceContext(string connectionString) : base(GetOptions(connectionString))
+        public BillycockServiceContext(IConfiguration configuration) : base(GetOptions(configuration))
         {
         }
 
-        private static DbContextOptions GetOptions(string connectionString)
+        private static DbContextOptions GetOptions(IConfiguration configuration)
         {
-            return SqlServerDbContextOptionsExtensions.UseSqlServer(new DbContextOptionsBuilder(), connectionString).Options;
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder()
+            {
+                DataSource = configuration["Server"],
+                InitialCatalog = configuration["Database_B"],
+                UserID = configuration["UserId"],
+                Password = configuration["Password"],
+                ApplicationName = "Billycock"
+            };
+            if(builder.UserID != "sa")
+            {
+                builder.MultipleActiveResultSets = true;
+                builder.PersistSecurityInfo = false;
+                builder.Encrypt = true;
+                builder.TrustServerCertificate = false;
+            }
+            return SqlServerDbContextOptionsExtensions.UseSqlServer(new DbContextOptionsBuilder(), builder.ConnectionString).Options;
         }
 
         public DbSet<Usuario> USUARIO { get; set; }
