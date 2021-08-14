@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Billycock.Migrations
 {
     [DbContext(typeof(BillycockServiceContext))]
-    [Migration("20210805192539_Cambios de fechas a strings")]
-    partial class Cambiosdefechasastrings
+    [Migration("20210814182106_14-08-2021")]
+    partial class _14082021
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

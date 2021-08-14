@@ -10,19 +10,14 @@ namespace Billycock.Repositories.Utils
 {
     public class BaseDatosConexion : IBaseDatosConexion
     {
-        public readonly IConfiguration _configuration;
-        public BaseDatosConexion(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
         public BD GetConnectionString(string Database)
         {
             BD bd = new BD()
             {
-                Server = _configuration["Server"],
-                UserId = _configuration["UserId"],
-                Password = _configuration["Password"],
-                Others = _configuration["Others"]
+                Server = Environment.GetEnvironmentVariable("Server"),
+                UserId = Environment.GetEnvironmentVariable("UserId"),
+                Password = Environment.GetEnvironmentVariable("Password"),
+                Others = Environment.GetEnvironmentVariable("Others")
             };
             if (bd.UserId != "sa")
             {
@@ -33,11 +28,11 @@ namespace Billycock.Repositories.Utils
             }
             if (Database == "B")
             {
-                bd.Database = _configuration["Database_B"];
+                bd.Database = Environment.GetEnvironmentVariable("Database_B");
             }
             else
             {
-                bd.Database = _configuration["Database_H"];
+                bd.Database = Environment.GetEnvironmentVariable("Database_H");
             }
             return bd;
         }

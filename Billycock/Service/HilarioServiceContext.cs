@@ -12,28 +12,9 @@ namespace Billycock.Data
 {
     public class HilarioServiceContext : DbContext
     {
-        public HilarioServiceContext(IConfiguration configuration) : base(GetOptions(configuration))
+        public HilarioServiceContext(DbContextOptions<HilarioServiceContext> options)
+        : base(options)
         {
-        }
-
-        private static DbContextOptions GetOptions(IConfiguration configuration)
-        {
-            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder()
-            {
-                DataSource = configuration["Server"],
-                InitialCatalog = configuration["Database_B"],
-                UserID = configuration["UserId"],
-                Password = configuration["Password"],
-                ApplicationName = "Billycock"
-            };
-            if (builder.UserID != "sa")
-            {
-                builder.MultipleActiveResultSets = true;
-                builder.PersistSecurityInfo = false;
-                builder.Encrypt = true;
-                builder.TrustServerCertificate = false;
-            }
-            return SqlServerDbContextOptionsExtensions.UseSqlServer(new DbContextOptionsBuilder(), builder.ConnectionString).Options;
         }
 
         public DbSet<Producto> PRODUCTO { get; set; }

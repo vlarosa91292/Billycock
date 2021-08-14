@@ -2,7 +2,7 @@
 
 namespace Billycock.Migrations
 {
-    public partial class Cambiosdefechasastrings : Migration
+    public partial class _14082021 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
