@@ -30,13 +30,15 @@ namespace Billycock
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            Environment.SetEnvironmentVariable("Server", ".");
-            Environment.SetEnvironmentVariable("UserId", "sa");
-            Environment.SetEnvironmentVariable("Password", "Nayjuw+29");
-            Environment.SetEnvironmentVariable("Database_B", "Billycock_Desarrollo");
-            Environment.SetEnvironmentVariable("Database_H", "Hilario_Desarrollo");
-
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+            if(Environment.GetEnvironmentVariable("Server") == "SERVER")
+            {
+                Environment.SetEnvironmentVariable("Server", ".");
+                Environment.SetEnvironmentVariable("UserId", "sa");
+                Environment.SetEnvironmentVariable("Password", "Nayjuw+29");
+                Environment.SetEnvironmentVariable("Database_B", "Billycock_Desarrollo");
+                Environment.SetEnvironmentVariable("Database_H", "Hilario_Desarrollo");
+            }
             builder.DataSource = Environment.GetEnvironmentVariable("Server");
             builder.InitialCatalog = Environment.GetEnvironmentVariable("Database_B");
             builder.UserID = Environment.GetEnvironmentVariable("UserId");
