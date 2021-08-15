@@ -30,8 +30,9 @@ namespace Billycock
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
-            if(Environment.GetEnvironmentVariable("Server") == "SERVER")
+            SqlConnectionStringBuilder builder_B = new SqlConnectionStringBuilder();
+            SqlConnectionStringBuilder builder_H = new SqlConnectionStringBuilder();
+            if (Environment.GetEnvironmentVariable("Server") == "SERVER")
             {
                 Environment.SetEnvironmentVariable("Server", ".");
                 Environment.SetEnvironmentVariable("UserId", "sa");
@@ -39,26 +40,43 @@ namespace Billycock
                 Environment.SetEnvironmentVariable("Database_B", "Billycock_Desarrollo");
                 Environment.SetEnvironmentVariable("Database_H", "Hilario_Desarrollo");
             }
-            builder.DataSource = Environment.GetEnvironmentVariable("Server");
-            builder.InitialCatalog = Environment.GetEnvironmentVariable("Database_B");
-            builder.UserID = Environment.GetEnvironmentVariable("UserId");
-            builder.Password = Environment.GetEnvironmentVariable("Password");
-            builder.ApplicationName = "Billycock";
-            if (builder.UserID != "sa")
+            builder_B = new SqlConnectionStringBuilder()
             {
-                builder.MultipleActiveResultSets = true;
-                builder.PersistSecurityInfo = false;
-                builder.Encrypt = true;
-                builder.TrustServerCertificate = false;
+                DataSource = Environment.GetEnvironmentVariable("Server"),
+                InitialCatalog = Environment.GetEnvironmentVariable("Database_B"),
+                UserID = Environment.GetEnvironmentVariable("UserId"),
+                Password = Environment.GetEnvironmentVariable("Password"),
+                ApplicationName = "Billycock"
+            };
+            builder_H = new SqlConnectionStringBuilder()
+            {
+                DataSource = Environment.GetEnvironmentVariable("Server"),
+                InitialCatalog = Environment.GetEnvironmentVariable("Database_H"),
+                UserID = Environment.GetEnvironmentVariable("UserId"),
+                Password = Environment.GetEnvironmentVariable("Password"),
+                ApplicationName = "Billycock"
+            };
+            if (builder_B.UserID != "sa" && builder_H.UserID != "sa")
+            {
+                builder_B.MultipleActiveResultSets = true;
+                builder_B.PersistSecurityInfo = false;
+                builder_B.Encrypt = true;
+                builder_B.TrustServerCertificate = false;
+
+                builder_H.MultipleActiveResultSets = true;
+                builder_H.PersistSecurityInfo = false;
+                builder_H.Encrypt = true;
+                builder_H.TrustServerCertificate = false;
             }
-            services.AddDbContext<BillycockServiceContext>(options => options.UseSqlServer(builder.ConnectionString,
+            services.AddDbContext<BillycockServiceContext>(options => options.UseSqlServer(builder_B.ConnectionString,
                 options => options.EnableRetryOnFailure()));
-            builder.InitialCatalog = Environment.GetEnvironmentVariable("Database_H");
-            services.AddDbContext<HilarioServiceContext>(options => options.UseSqlServer(builder.ConnectionString,
+            services.AddDbContext<HilarioServiceContext>(options => options.UseSqlServer(builder_H.ConnectionString,
                 options => options.EnableRetryOnFailure()));
+
             services.AddScoped<IEstadoRepository, EstadoRepository>();
             services.AddScoped<IBaseDatosConexion, BaseDatosConexion>();
             services.AddScoped<ICuentaRepository, CuentaRepository>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped(typeof(ICommonRepository<>), typeof(CommonRepository<>));
             services.AddScoped<IPlataformaRepository, PlataformaRepository>();
             services.AddScoped<IPlataformaCuentaRepository, PlataformaCuentaRepository>();
