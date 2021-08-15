@@ -35,11 +35,19 @@ namespace Billycock
             SqlConnectionStringBuilder builder_H = new SqlConnectionStringBuilder();
             if (Environment.GetEnvironmentVariable("Server") == "SERVER" || Environment.GetEnvironmentVariable("Server") == null)
             {
-                Environment.SetEnvironmentVariable("Server", "tcp:billycockserver.database.windows.net,1433");
+                //PRODUCCION
+                /*Environment.SetEnvironmentVariable("Server", "tcp:billycockserver.database.windows.net,1433");
                 Environment.SetEnvironmentVariable("UserId", "vlarosa");
                 Environment.SetEnvironmentVariable("Password", "Nayjuw+29");
                 Environment.SetEnvironmentVariable("Database_B", "Billycock_Produccion");
-                Environment.SetEnvironmentVariable("Database_H", "Hilario_Produccion");
+                Environment.SetEnvironmentVariable("Database_H", "Hilario_Produccion");*/
+
+                //DESARROLLO
+                Environment.SetEnvironmentVariable("Server", "localhost");
+                Environment.SetEnvironmentVariable("UserId", "sa");
+                Environment.SetEnvironmentVariable("Password", "Nayjuw+29");
+                Environment.SetEnvironmentVariable("Database_B", "Billycock_Desarrollo");
+                Environment.SetEnvironmentVariable("Database_H", "Hilario_Desarrollo");
             }
             builder_B = new SqlConnectionStringBuilder()
             {
