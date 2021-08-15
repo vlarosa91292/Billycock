@@ -13,7 +13,9 @@ namespace Billycock.Models
         [Key]
         public string idPlataformaCuenta { get; set; }
         public int usuariosdisponibles { get; set; }
+        [Column(TypeName = "varchar(10)")]
         public string fechaPago { get; set; }
+        [Column(TypeName = "varchar(20)")]
         public string clave { get; set; }
         //PLATAFORMA
         [ForeignKey("Plataforma")]

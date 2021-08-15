@@ -11,8 +11,8 @@ namespace Billycock.Models
     public class Plataforma
     {
         [Key]
-        [JsonIgnore]
         public int idPlataforma { get; set; }
+        [Column(TypeName = "varchar(50)")]
         public string descripcion { get; set; }
         public int numeroMaximoUsuarios { get; set; }
         public double precio { get; set; }

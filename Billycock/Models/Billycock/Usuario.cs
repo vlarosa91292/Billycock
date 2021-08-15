@@ -12,13 +12,19 @@ namespace Billycock.Models
     {
         [Key]
         public int idUsuario { get; set; }
+        [Column(TypeName = "varchar(100)")]
         public string descripcion { get; set; }
+        [Column(TypeName = "varchar(50)")]
         public string fechaInscripcion { get; set; }
         [JsonIgnore]
         public int idEstado { get; set; }
+        [Column(TypeName = "varchar(10)")]
         public string facturacion { get; set; }
         public int pago { get; set; }
+        [Column(TypeName = "varchar(4)")]
         public string pin { get; set; }
+        [Column(TypeName = "varchar(50)")]
+        public string contacto { get; set; }
         [JsonIgnore]
         public List<UsuarioPlataformaCuenta> usuarioPlataformaCuentas { get; set; }
     }

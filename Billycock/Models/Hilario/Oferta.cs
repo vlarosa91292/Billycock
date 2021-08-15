@@ -11,9 +11,11 @@ namespace Billycock.Models.Hilario
     {
         [Key]
         public int idOferta { get; set; }
+        [Column(TypeName = "varchar(50)")]
         public string codigoBarra { get; set; }
         [NotMapped]
         public string descProducto { get; set; }
+        [Column(TypeName = "varchar(50)")]
         public string descripcion { get; set; }
         public double precioOferta { get; set; }
         public int cantidad { get; set; }

@@ -3,14 +3,16 @@ using Billycock.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Billycock.Migrations
 {
     [DbContext(typeof(BillycockServiceContext))]
-    partial class BillycockServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20210815123453_Cambios de propiedades de columnas en la base de datos")]
+    partial class Cambiosdepropiedadesdecolumnasenlabasededatos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
