@@ -30,9 +30,10 @@ namespace Billycock
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
             SqlConnectionStringBuilder builder_B = new SqlConnectionStringBuilder();
             SqlConnectionStringBuilder builder_H = new SqlConnectionStringBuilder();
-            if (Environment.GetEnvironmentVariable("Server") == "SERVER")
+            if (Environment.GetEnvironmentVariable("Server") == "SERVER" || Environment.GetEnvironmentVariable("Server") == null)
             {
                 Environment.SetEnvironmentVariable("Server", ".");
                 Environment.SetEnvironmentVariable("UserId", "sa");
@@ -68,6 +69,7 @@ namespace Billycock
                 builder_H.Encrypt = true;
                 builder_H.TrustServerCertificate = false;
             }
+
             services.AddDbContext<BillycockServiceContext>(options => options.UseSqlServer(builder_B.ConnectionString,
                 options => options.EnableRetryOnFailure()));
             services.AddDbContext<HilarioServiceContext>(options => options.UseSqlServer(builder_H.ConnectionString,
