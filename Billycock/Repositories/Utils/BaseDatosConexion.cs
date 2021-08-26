@@ -16,8 +16,7 @@ namespace Billycock.Repositories.Utils
             {
                 Server = Environment.GetEnvironmentVariable("Server"),
                 UserId = Environment.GetEnvironmentVariable("UserId"),
-                Password = Environment.GetEnvironmentVariable("Password"),
-                Others = Environment.GetEnvironmentVariable("Others")
+                Password = Environment.GetEnvironmentVariable("Password")
             };
             if (bd.UserId != "sa")
             {
