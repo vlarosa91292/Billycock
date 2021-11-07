@@ -8,183 +8,223 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Api_Billycock.Program;
 
 namespace Billycock.Repositories.Repositories
 {
-    public class PlataformaRepository : IPlataformaRepository
+    public class PlataformaRepository:IPlataformaRepository
     {
         private readonly BillycockServiceContext _context;
-        private readonly ICommonRepository<PlataformaDTO> _commonRepository;
-        public PlataformaRepository(BillycockServiceContext context, ICommonRepository<PlataformaDTO> commonRepository)
+        private readonly ICommonRepository<Plataforma> _commonRepository_P;
+        private readonly IPlataformaCuentaRepository _Repository_PC;
+        private readonly IEstadoRepository _Repository_E;
+        private readonly IUsuarioPlataformaCuentaRepository _Repository_UPC;
+        public PlataformaRepository(BillycockServiceContext context
+            , ICommonRepository<Plataforma> commonRepository_P
+            , IEstadoRepository Repository_E
+            , IPlataformaCuentaRepository Repository_PC
+            , IUsuarioPlataformaCuentaRepository Repository_UPC)
         {
             _context = context;
-            _commonRepository = commonRepository;
+            _commonRepository_P = commonRepository_P;
+            _Repository_E = Repository_E;
+            _Repository_PC = Repository_PC;
+            _Repository_UPC = Repository_UPC;
+            Globales.mensaje = string.Empty;
         }
-        #region Metodos Principales
-        public async Task<string> DeletePlataforma(PlataformaDTO plataforma)
-        {
-            PlataformaDTO account = await GetPlataformabyId(plataforma.idPlataforma);
-            try
-            {
-                return await _commonRepository.DeleteLogicoObjeto(plataforma,new PlataformaDTO()
-                {
-                    idPlataforma = account.idPlataforma,
-                    descripcion = plataforma.descripcion,
-                    idEstado = 2,
-                    numeroMaximoUsuarios = account.numeroMaximoUsuarios,
-                    precio = account.precio
-                },_context);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return _commonRepository.ExceptionMessage(plataforma, "D");
-            }
-        }
-        public async Task<string> InsertPlataforma(PlataformaDTO plataforma)
+        #region Create
+        public async Task CreatePlataforma(PlataformaDTO.Create_P plataforma)
         {
             try
             {
-                return await _commonRepository.InsertObjeto(plataforma, new PlataformaDTO()
+                Globales.mensaje = await _commonRepository_P.InsertObjeto(new Plataforma()
                 {
                     descripcion = plataforma.descripcion,
-                    idEstado = 1,
-                    numeroMaximoUsuarios = plataforma.numeroMaximoUsuarios,
-                    precio = plataforma.precio
-                },_context);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return _commonRepository.ExceptionMessage(plataforma, "C");
-            }
-
-        }
-        public async Task<string> UpdatePlataforma(PlataformaDTO plataforma)
-        {
-            PlataformaDTO account = await GetPlataformabyId(plataforma.idPlataforma);
-            List<int> idPlataformasAgregar = new List<int>();
-            List<int> idPlataformasEliminar = new List<int>();
-            try
-            {
-                return await _commonRepository.UpdateObjeto(plataforma, new PlataformaDTO()
-                {
-                    idPlataforma = plataforma.idPlataforma,
-                    descripcion = account.descripcion,
                     idEstado = plataforma.idEstado,
                     numeroMaximoUsuarios = plataforma.numeroMaximoUsuarios,
-                    precio = account.precio
-                },_context);
+                    precio = plataforma.precio,
+                    costo = plataforma.costo
+                }, _context);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return _commonRepository.ExceptionMessage(plataforma, "U");
+                Globales.mensaje = await _commonRepository_P.ExceptionMessage(new Plataforma()
+                {
+                    descripcion = plataforma.descripcion,
+                    idEstado = plataforma.idEstado,
+                    numeroMaximoUsuarios = plataforma.numeroMaximoUsuarios,
+                    precio = plataforma.precio,
+                    costo = plataforma.costo
+                }, "C");
             }
         }
-        public async Task<List<PlataformaDTO>> GetPlataformas()
+        #endregion
+        #region Read
+        public async Task<List<PlataformaDTO.Read_P>> GetPlataformas(bool complemento)
         {
-            return await ObtenerPlataformas(1, "");
+            return await ObtenerPlataformas(1, null, complemento);
         }
-        public async Task<PlataformaDTO> GetPlataformabyId(int? id)
+        public async Task<PlataformaDTO.Read_P> GetPlataformabyId(int? id, bool complemento)
         {
-            return (await ObtenerPlataformas(2, id.ToString()))[0];
+            List<PlataformaDTO.Read_P> plataformas = await ObtenerPlataformas(2, id.ToString(), complemento);
+            if (plataformas.Count == 1) return plataformas[0];
+            else return null;
         }
-        public async Task<PlataformaDTO> GetPlataformabyName(string name)
+        public async Task<PlataformaDTO.Read_P> GetPlataformabyName(string name, bool complemento)
         {
-            return (await ObtenerPlataformas(3, name))[0];
+            List<PlataformaDTO.Read_P> plataformas = await ObtenerPlataformas(2, name, complemento);
+            if (plataformas.Count == 1) return plataformas[0];
+            else return null;
         }
         public async Task<bool> PlataformaExists(int id)
         {
             return await _context.PLATAFORMA.AnyAsync(e => e.idPlataforma == id);
         }
-        public async Task<List<PlataformaDTO>> ObtenerPlataformas(int tipo, string dato)
+        public async Task<List<PlataformaDTO.Read_P>> ObtenerPlataformas(int tipo, string dato, bool complemento)
         {
+            List<PlataformaDTO.Read_P> plataformas;
+            List<PlataformaCuenta> plataformaCuentas = new List<PlataformaCuenta>();
+            List<PlataformaCuenta> _plataformaCuentas;
+            List<UsuarioPlataformaCuenta> usuarioPlataformaCuentas = new List<UsuarioPlataformaCuenta>();
             if (tipo == 1)
             {
-                return await (from c in _context.PLATAFORMA
-                              where c.idEstado != 2
-                              select new PlataformaDTO()
-                              {
-                                  idPlataforma = c.idPlataforma,
-                                  descripcion = c.descripcion,
-                                  idEstado = c.idEstado,
-                                  descEstado = (from e in _context.ESTADO where e.idEstado == c.idEstado select e.descripcion).FirstOrDefault(),
-                                  numeroMaximoUsuarios = c.numeroMaximoUsuarios,
-                                  precio = c.precio,  
-                                  //plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
-                                  //                     where pc.idPlataforma == c.idPlataforma
-                                  //                     select new PlataformaCuenta()
-                                  //                     {
-                                  //                         idCuenta = pc.idPlataforma,
-                                  //                         descCuenta = c.descripcion,
-                                  //                         idPlataforma = pc.idPlataforma,
-                                  //                         descPlataforma = (from p in _context.PLATAFORMA where p.idPlataforma == pc.idPlataforma select p.descripcion).FirstOrDefault(),
-                                  //                         fechaPago = pc.fechaPago,
-                                  //                         usuariosdisponibles = pc.usuariosdisponibles
-                                  //                     }).ToList()
-                              }).ToListAsync();
+                plataformas = await (from p in _context.PLATAFORMA
+                                     orderby p.idPlataforma
+                                     select new PlataformaDTO.Read_P()
+                                     {
+                                         idPlataforma = p.idPlataforma,
+                                         descripcion = p.descripcion,
+                                         idEstado = p.idEstado,
+                                         numeroMaximoUsuarios = p.numeroMaximoUsuarios,
+                                         precio = p.precio,
+                                         costo = p.costo,
+                                         descEstado = _Repository_E.GetEstadobyId(p.idEstado).Result.descripcion
+                                     }).ToListAsync();
             }
             else if (tipo == 2)
             {
-                return await (from c in _context.PLATAFORMA
-                              where c.idEstado != 2 && c.idPlataforma == int.Parse(dato)
-                              select new PlataformaDTO()
-                              {
-                                  idPlataforma = c.idPlataforma,
-                                  descripcion = c.descripcion,
-                                  idEstado = c.idEstado,
-                                  descEstado = (from e in _context.ESTADO where e.idEstado == c.idEstado select e.descripcion).FirstOrDefault(),
-                                  numeroMaximoUsuarios = c.numeroMaximoUsuarios,
-                                  precio = c.precio,
-                                  //plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
-                                  //                     where pc.idPlataforma == c.idPlataforma
-                                  //                     select new PlataformaCuenta()
-                                  //                     {
-                                  //                         idCuenta = pc.idPlataforma,
-                                  //                         descCuenta = c.descripcion,
-                                  //                         idPlataforma = pc.idPlataforma,
-                                  //                         descPlataforma = (from p in _context.PLATAFORMA where p.idPlataforma == pc.idPlataforma select p.descripcion).FirstOrDefault(),
-                                  //                         fechaPago = pc.fechaPago,
-                                  //                         usuariosdisponibles = pc.usuariosdisponibles
-                                  //                     }).ToList()
-                              }).ToListAsync();
+                plataformas = await (from p in _context.PLATAFORMA
+                                     where p.idPlataforma == int.Parse(dato)
+                                     orderby p.idPlataforma
+                                     select new PlataformaDTO.Read_P()
+                                     {
+                                         idPlataforma = p.idPlataforma,
+                                         descripcion = p.descripcion,
+                                         idEstado = p.idEstado,
+                                         numeroMaximoUsuarios = p.numeroMaximoUsuarios,
+                                         precio = p.precio,
+                                         costo = p.costo,
+                                         descEstado = _Repository_E.GetEstadobyId(p.idEstado).Result.descripcion
+                                     }).ToListAsync();
             }
             else
             {
-                return await (from c in _context.PLATAFORMA
-                              where c.idEstado != 2 && c.descripcion == dato
-                              select new PlataformaDTO()
-                              {
-                                  idPlataforma = c.idPlataforma,
-                                  descripcion = c.descripcion,
-                                  idEstado = c.idEstado,
-                                  descEstado = (from e in _context.ESTADO where e.idEstado == c.idEstado select e.descripcion).FirstOrDefault(),
-                                  numeroMaximoUsuarios = c.numeroMaximoUsuarios,
-                                  precio = c.precio,
-                                  //plataformaCuentas = (from pc in _context.PLATAFORMACUENTA
-                                  //                     where pc.idPlataforma == c.idPlataforma
-                                  //                     select new PlataformaCuenta()
-                                  //                     {
-                                  //                         idCuenta = pc.idPlataforma,
-                                  //                         descCuenta = c.descripcion,
-                                  //                         idPlataforma = pc.idPlataforma,
-                                  //                         descPlataforma = (from p in _context.PLATAFORMA where p.idPlataforma == pc.idPlataforma select p.descripcion).FirstOrDefault(),
-                                  //                         fechaPago = pc.fechaPago,
-                                  //                         usuariosdisponibles = pc.usuariosdisponibles
-                                  //                     }).ToList()
-                              }).ToListAsync();
+                plataformas = await (from p in _context.PLATAFORMA
+                                     where p.descripcion == dato
+                                     orderby p.idPlataforma
+                                     select new PlataformaDTO.Read_P()
+                                     {
+                                         idPlataforma = p.idPlataforma,
+                                         descripcion = p.descripcion,
+                                         idEstado = p.idEstado,
+                                         numeroMaximoUsuarios = p.numeroMaximoUsuarios,
+                                         precio = p.precio,
+                                         costo = p.costo,
+                                         descEstado = _Repository_E.GetEstadobyId(p.idEstado).Result.descripcion
+                                     }).ToListAsync();
             }
-        }
-
-        public async Task<double> GetPricePlataforma(int id)
-        {
-            return (await (from p in _context.PLATAFORMA
-                           where p.idPlataforma == id
-                           select p.precio).FirstOrDefaultAsync());
+            if (complemento)
+            {
+                foreach (var _plataforma in plataformas)
+                {
+                    plataformaCuentas = await _Repository_PC.GetPlataformaCuentasbyIdPlataforma(_plataforma.idPlataforma);
+                    if(plataformaCuentas != null)
+                    {
+                        _plataformaCuentas = new List<PlataformaCuenta>();
+                        foreach (var _plataformaCuenta in plataformaCuentas)
+                        {
+                            _plataformaCuentas.Add(new PlataformaCuenta()
+                            {
+                                idPlataformaCuenta = _plataformaCuenta.idPlataformaCuenta,
+                                idPlataforma = _plataformaCuenta.idPlataforma,
+                                idCuenta = _plataformaCuenta.idCuenta,
+                                fechaPago = _plataformaCuenta.fechaPago,
+                                clave = _plataformaCuenta.clave,
+                                usuariosdisponibles = _plataformaCuenta.usuariosdisponibles
+                            });
+                        }
+                        _plataforma.plataformaCuentas = _plataformaCuentas;
+                    }
+                    usuarioPlataformaCuentas = await _Repository_UPC.GetUsuarioPlataformaCuentasbyIdPlataforma(_plataforma.idPlataforma);
+                    if (usuarioPlataformaCuentas != null)
+                    {
+                        _plataforma.usuarioPlataformaCuentas = usuarioPlataformaCuentas;
+                    }
+                }
+            }
+            return plataformas;
         }
         #endregion
-        #region Metodos Secundarios
+        #region Update
+        public async Task UpdatePlataforma(PlataformaDTO.Update_P plataforma)
+        {
+            Plataforma platform = await GetPlataformabyId(plataforma.idPlataforma, false);
+            try
+            {
+                Globales.mensaje = await _commonRepository_P.UpdateObjeto(new Plataforma()
+                {
+                    idPlataforma = platform.idPlataforma,
+                    descripcion = plataforma.descripcion,
+                    idEstado = platform.idEstado,
+                    numeroMaximoUsuarios = plataforma.numeroMaximoUsuarios,
+                    precio = plataforma.precio,
+                    costo = plataforma.costo
+                }, _context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Globales.mensaje = await _commonRepository_P.ExceptionMessage(new Plataforma()
+                {
+                    idPlataforma = platform.idPlataforma,
+                    descripcion = plataforma.descripcion,
+                    idEstado = platform.idEstado,
+                    numeroMaximoUsuarios = plataforma.numeroMaximoUsuarios,
+                    precio = plataforma.precio,
+                    costo = plataforma.costo
+                }, "U");
+            }
+        }
+        public async Task DeactivatePlataforma(PlataformaDTO.Update_P plataforma)
+        {
+            Plataforma platform = await GetPlataformabyId(plataforma.idPlataforma, false);
+            platform.idEstado = 2;
+            try
+            {
+                Globales.mensaje = await _commonRepository_P.UpdateObjeto(platform, _context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Globales.mensaje = await _commonRepository_P.ExceptionMessage(platform, "U");
+            }
+        }
+        #endregion
+        #region Delete
+        public async Task DeletePlataforma(int id)
+        {
+            PlataformaDTO.Read_P platform = await GetPlataformabyId(id, false);
+            try
+            {
+                Globales.mensaje += await _commonRepository_P.DeleteObjeto(platform, _context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Globales.mensaje += _commonRepository_P.ExceptionMessage(platform, "D");
+            }
+        }
         #endregion
     }
 }

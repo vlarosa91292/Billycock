@@ -1,287 +1,300 @@
 ﻿using Billycock.Data;
+using Billycock.DTO;
 using Billycock.Models;
+using Billycock.Repositories.Interfaces;
+using Billycock.Utils;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Billycock.Repositories.Interfaces;
-using Billycock.Utils;
-using Billycock.DTO;
+using static Api_Billycock.Program;
 
 namespace Billycock.Repositories.Repositories
 {
-    public class CuentaRepository:ICuentaRepository
+    public class CuentaRepository: ICuentaRepository
     {
         private readonly BillycockServiceContext _context;
-        private readonly ICommonRepository<Cuenta> _commonRepository;
-        private readonly IPlataformaCuentaRepository _plataformaCuentaRepository;
-        private readonly IPlataformaRepository _plataformaRepository;
-        public CuentaRepository(BillycockServiceContext context, ICommonRepository<Cuenta> commonRepository,
-            IPlataformaCuentaRepository plataformaCuentaRepository,IPlataformaRepository plataformaRepository)
+        private readonly ICommonRepository<Cuenta> _commonRepository_C;
+        private readonly IPlataformaRepository _Repository_P;
+        private readonly IEstadoRepository _Repository_E;
+        private readonly IPlataformaCuentaRepository _Repository_PC;
+        private readonly IUsuarioPlataformaCuentaRepository _Repository_UPC;
+
+        public CuentaRepository(BillycockServiceContext context,
+            ICommonRepository<Cuenta> commonRepository_C
+            , IPlataformaRepository Repository_P
+            , IEstadoRepository Repository_E
+            , IPlataformaCuentaRepository Repository_PC
+            , IUsuarioPlataformaCuentaRepository Repository_UPC
+            )
         {
             _context = context;
-            _commonRepository = commonRepository;
-            _plataformaCuentaRepository = plataformaCuentaRepository;
-            _plataformaRepository = plataformaRepository;
+            _commonRepository_C = commonRepository_C;
+            _Repository_P = Repository_P;
+            _Repository_E = Repository_E;
+            _Repository_PC = Repository_PC;
+            _Repository_UPC = Repository_UPC;
+            Globales.mensaje = string.Empty;
         }
-        #region Metodos Principales
-        public async Task<string> DeleteCuenta(CuentaDTO cuenta)
+        #region Create
+        public async Task CreateCuenta(CuentaDTO.Create_C cuenta)
         {
-            CuentaDTO account = await GetCuentabyId(cuenta.idCuenta);
-            try
-            {
-                return await _commonRepository.DeleteLogicoObjeto(cuenta,new Cuenta()
-                {
-                    idCuenta = account.idCuenta,
-                    diminutivo = account.diminutivo,
-                    correo = account.correo,
-                    //netflix = account.netflix,
-                    //amazon = account.amazon,
-                    //disney = account.disney,
-                    //hbo = account.hbo,
-                    //youtube = account.youtube,
-                    //spotify = account.spotify,
-                    idEstado = 2
-                },_context);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return _commonRepository.ExceptionMessage(cuenta, "D");
-            }
-        }
-        public async Task<string> InsertCuenta(CuentaDTO cuenta)
-        {
-            CuentaDTO account;
-            string mensaje = string.Empty;
-            List<int> idPlataformas=new List<int>();
+            Cuenta account = new Cuenta();
             int contador = 0;
 
             try
             {
-                mensaje = await _commonRepository.InsertObjeto(cuenta,new Cuenta()
+                Globales.mensaje += await _commonRepository_C.InsertObjeto(new Cuenta()
                 {
                     diminutivo = cuenta.diminutivo,
                     correo = cuenta.correo,
-                    //netflix = cuenta.netflix,
-                    //amazon = cuenta.amazon,
-                    //disney = cuenta.disney,
-                    //hbo = cuenta.hbo,
-                    //youtube = cuenta.youtube,
-                    //spotify = cuenta.spotify,
-                    idEstado = 1
-                },_context);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                mensaje = _commonRepository.ExceptionMessage(cuenta, "C");
-            }
-            if (mensaje.Contains("Correcta"))
-            {
-                mensaje += Environment.NewLine;
-                try
+                    idEstado = cuenta.idEstado,
+                    plataformaCuentas = cuenta.plataformaCuentas
+                }, _context);
+                if (Globales.mensaje.Contains("CORRECTA"))
                 {
-                    if (cuenta.netflix) idPlataformas.Add(1);
-                    if (cuenta.amazon) idPlataformas.Add(2);
-                    if (cuenta.disney) idPlataformas.Add(3);
-                    if (cuenta.hbo) idPlataformas.Add(4);
-                    if (cuenta.youtube) idPlataformas.Add(5);
-                    if (cuenta.spotify) idPlataformas.Add(6);
-                    account = await GetCuentabyName(cuenta.correo);
-                    foreach (var item in idPlataformas)
+                    Globales.mensaje += Environment.NewLine;
+                    try
                     {
-                        if (contador >= 1) mensaje += Environment.NewLine;
-                        mensaje += await _plataformaCuentaRepository.InsertPlataformaCuenta(new PlataformaCuentaDTO()
+                        account = await GetCuentabyName(cuenta.correo, false);
+                        foreach (var item in cuenta.plataformaCuentas)
                         {
-                            idCuenta = account.idCuenta,
-                            idPlataforma = item,
-                            fechaPago = DateTime.Now.ToShortDateString(),
-                            usuariosdisponibles = _plataformaRepository.GetPlataformabyId(item).Result.numeroMaximoUsuarios
-                        });
-                        contador++;
+                            if (contador >= 1) Globales.mensaje += Environment.NewLine;
+                            Globales.mensaje += await _Repository_PC.CreatePlataformaCuenta(new PlataformaCuentaDTO.Create_PC()
+                            {
+                                idCuenta = account.idCuenta,
+                                idPlataforma = item.idPlataforma,
+                                usuariosdisponibles = _Repository_P.GetPlataformabyId(item.idPlataforma, false).Result.numeroMaximoUsuarios
+                            });
+                            contador++;
+                        }
+                    }
+                    catch
+                    {
+                        Globales.mensaje += await _commonRepository_C.ExceptionMessage(account, "C");
                     }
                 }
-                catch
-                {
-                    mensaje = _commonRepository.ExceptionMessage(cuenta, "C");
-                }
-            }
-            return mensaje;
-        }
-        public async Task<string> UpdateCuenta(CuentaDTO cuenta)
-        {
-            CuentaDTO account = await GetCuentabyId(cuenta.idCuenta);
-            string mensaje = string.Empty;
-            List<int> idPlataformasAgregar = new List<int>();
-            List<int> idPlataformasEliminar = new List<int>();
-
-            try
-            {
-                mensaje = await _commonRepository.UpdateObjeto(cuenta,new Cuenta()
-                {
-                    idCuenta = cuenta.idCuenta == 0 ? account.idCuenta : cuenta.idCuenta,
-                    diminutivo = cuenta.diminutivo == "" ? account.diminutivo : cuenta.diminutivo,
-                    correo = cuenta.correo == "" ? account.correo : cuenta.correo,
-                    //netflix = cuenta.netflix == account.netflix ? account.netflix : cuenta.netflix,
-                    //amazon = cuenta.amazon == account.amazon ? account.amazon : cuenta.amazon,
-                    //disney = cuenta.disney == account.disney ? account.disney : cuenta.disney,
-                    //hbo = cuenta.hbo == account.hbo ? account.hbo : cuenta.hbo,
-                    //youtube = cuenta.youtube == account.youtube ? account.youtube : cuenta.youtube,
-                    //spotify = cuenta.spotify == account.spotify ? account.spotify : cuenta.spotify,
-                    idEstado = cuenta.idEstado == account.idEstado ? account.idEstado : cuenta.idEstado
-                }, _context);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                mensaje = _commonRepository.ExceptionMessage(cuenta, "U");
+                Globales.mensaje += await _commonRepository_C.ExceptionMessage(new Cuenta()
+                {
+                    diminutivo = cuenta.diminutivo,
+                    correo = cuenta.correo,
+                    idEstado = 1,
+                    plataformaCuentas = cuenta.plataformaCuentas
+                }, "C");
             }
-
-            //if (mensaje.Contains("Correcta"))
-            //{
-            //    try
-            //    {
-            //        if (cuenta.netflix != account.netflix)
-            //        {
-            //            if (cuenta.netflix == false) idPlataformasEliminar.Add(1);
-            //            else idPlataformasAgregar.Add(1);
-            //        }
-            //        if (cuenta.amazon != account.amazon)
-            //        {
-            //            if (cuenta.amazon == false) idPlataformasEliminar.Add(2);
-            //            else idPlataformasAgregar.Add(2);
-            //        }
-            //        if (cuenta.disney != account.disney)
-            //        {
-            //            if (cuenta.disney == false) idPlataformasEliminar.Add(3);
-            //            else idPlataformasAgregar.Add(3);
-            //        }
-            //        if (cuenta.hbo != account.hbo)
-            //        {
-            //            if (cuenta.hbo == false) idPlataformasEliminar.Add(4);
-            //            else idPlataformasAgregar.Add(4);
-            //        }
-            //        if (cuenta.youtube != account.youtube)
-            //        {
-            //            if (cuenta.youtube == false) idPlataformasEliminar.Add(5);
-            //            else idPlataformasAgregar.Add(5);
-            //        }
-            //        if (cuenta.spotify != account.spotify)
-            //        {
-            //            if (cuenta.spotify == false) idPlataformasEliminar.Add(6);
-            //            else idPlataformasAgregar.Add(6);
-            //        }
-            //        foreach (var item in idPlataformasAgregar)
-            //        {
-            //            mensaje += Environment.NewLine;
-            //            mensaje += await _plataformaCuentaRepository.InsertPlataformaCuenta(new PlataformaCuentaDTO()
-            //            {
-            //                idPlataforma = item,
-            //                idCuenta = cuenta.idCuenta,
-            //                fechaPago = DateTime.Now.ToShortDateString(),
-            //                usuariosdisponibles = _plataformaRepository.GetPlataformabyId(item).Result.numeroMaximoUsuarios
-            //            });
-            //        }
-            //        foreach (var item in idPlataformasEliminar)
-            //        {
-            //            mensaje += Environment.NewLine;
-            //            mensaje += await _plataformaCuentaRepository.DeletePlataformaCuenta(new PlataformaCuentaDTO()
-            //            {
-            //                idCuenta = cuenta.idCuenta,
-            //                idPlataforma = item
-            //            });
-            //        }
-            //    }
-            //    catch
-            //    {
-            //        mensaje += "ERROR EN LA ACTUALIZACION DE PLATAFORMAS EN CUENTA-SERVER";
-            //    }
-            //}
-            return mensaje;
         }
-        public async Task<List<CuentaDTO>> GetCuentas()
+        #endregion
+        #region Read
+        public async Task<List<CuentaDTO.Read_C>> GetCuentas(bool complemento)
         {
-            return await ObtenerCuentas(1, "");
+            return await ObtenerCuentas(1, null, complemento);
         }
-        public async Task<CuentaDTO> GetCuentabyId(int? id)
+        public async Task<CuentaDTO.Read_C> GetCuentabyId(int? id, bool complemento)
         {
-            return (await ObtenerCuentas(2, id.ToString()))[0];
+            List<CuentaDTO.Read_C> cuentas = await ObtenerCuentas(2, id.ToString(), complemento);
+            if (cuentas.Count == 1) return cuentas[0];
+            else return null;
         }
-        public async Task<CuentaDTO> GetCuentabyName(string name)
+        public async Task<CuentaDTO.Read_C> GetCuentabyName(string name, bool complemento)
         {
-            return (await ObtenerCuentas(3, name))[0];
+            List<CuentaDTO.Read_C> cuentas = await ObtenerCuentas(3, name, complemento);
+            if (cuentas.Count == 1) return cuentas[0];
+            else return null;
         }
         public async Task<bool> CuentaExists(int id)
         {
             return await _context.CUENTA.AnyAsync(e => e.idCuenta == id);
         }
-        public async Task<List<CuentaDTO>> ObtenerCuentas(int tipo, string dato)
+        public async Task<List<CuentaDTO.Read_C>> ObtenerCuentas(int tipo, string dato, bool complemento)
         {
-            List<CuentaDTO> cuentas;
+            List<CuentaDTO.Read_C> cuentas;
             List<PlataformaCuenta> plataformaCuentas = new List<PlataformaCuenta>();
+            List<PlataformaCuenta> _plataformaCuentas;
+            List<UsuarioPlataformaCuenta> usuarioPlataformaCuentas;
             if (tipo == 1)
             {
                 cuentas = await (from c in _context.CUENTA
-                              where c.idEstado != 2
-                              select new CuentaDTO()
-                              {
-                                  idCuenta = c.idCuenta,
-                                  idEstado = c.idEstado,
-                                  descEstado = (from e in _context.ESTADO where e.idEstado == c.idEstado select e.descripcion).FirstOrDefault(),
-                                  correo = c.correo,
-                                  diminutivo = c.diminutivo
-                              }).ToListAsync();
+                                 orderby c.idCuenta
+                                 select new CuentaDTO.Read_C()
+                                 {
+                                     idCuenta = c.idCuenta,
+                                     idEstado = c.idEstado,
+                                     correo = c.correo,
+                                     diminutivo = c.diminutivo,
+                                     descEstado = _Repository_E.GetEstadobyId(c.idEstado).Result.descripcion
+                                 }).ToListAsync();
             }
             else if (tipo == 2)
             {
                 cuentas = await (from c in _context.CUENTA
-                              where c.idEstado != 2 && c.idCuenta == int.Parse(dato)
-                              select new CuentaDTO()
-                              {
-                                  idCuenta = c.idCuenta,
-                                  idEstado = c.idEstado,
-                                  descEstado = (from e in _context.ESTADO where e.idEstado == c.idEstado select e.descripcion).FirstOrDefault(),
-                                  correo = c.correo,
-                                  diminutivo = c.diminutivo
-                              }).ToListAsync();
+                                 where c.idCuenta == int.Parse(dato)
+                                 orderby c.idCuenta
+                                 select new CuentaDTO.Read_C()
+                                 {
+                                     idCuenta = c.idCuenta,
+                                     idEstado = c.idEstado,
+                                     correo = c.correo,
+                                     diminutivo = c.diminutivo,
+                                     descEstado = _Repository_E.GetEstadobyId(c.idEstado).Result.descripcion
+                                 }).ToListAsync();
             }
             else
             {
                 cuentas = await (from c in _context.CUENTA
-                              where c.idEstado != 2 && c.correo == dato
-                              select new CuentaDTO()
-                              {
-                                  idCuenta = c.idCuenta,
-                                  idEstado = c.idEstado,
-                                  descEstado = (from e in _context.ESTADO where e.idEstado == c.idEstado select e.descripcion).FirstOrDefault(),
-                                  correo = c.correo,
-                                  diminutivo = c.diminutivo
-                              }).ToListAsync();
+                                 where c.correo == dato
+                                 orderby c.idCuenta
+                                 select new CuentaDTO.Read_C()
+                                 {
+                                     idCuenta = c.idCuenta,
+                                     idEstado = c.idEstado,
+                                     correo = c.correo,
+                                     diminutivo = c.diminutivo,
+                                     descEstado = _Repository_E.GetEstadobyId(c.idEstado).Result.descripcion
+                                 }).ToListAsync();
             }
-            foreach (var _cuenta in cuentas)
+            if (complemento)
             {
-                foreach (var _plataforma in await _plataformaRepository.GetPlataformas())
+                foreach (var _cuenta in cuentas)
                 {
-                    if (await _plataformaCuentaRepository.PlataformaCuentaExists(_plataforma.idPlataforma+"-"+_cuenta.idCuenta))
+                    plataformaCuentas = await _Repository_PC.GetPlataformaCuentasbyIdCuenta(_cuenta.idCuenta);
+                    if (plataformaCuentas != null)
                     {
-                        if(_plataforma.idPlataforma == 1) _cuenta.netflix = true;
-                        else if(_plataforma.idPlataforma == 2) _cuenta.amazon = true;
-                        else if(_plataforma.idPlataforma == 3) _cuenta.disney = true;
-                        else if(_plataforma.idPlataforma == 4) _cuenta.hbo = true;
-                        else if(_plataforma.idPlataforma == 5) _cuenta.youtube = true;
-                        else _cuenta.spotify = true;
-                        plataformaCuentas.Add(await _plataformaCuentaRepository.GetPlataformaCuentabyIds(_plataforma.idPlataforma + "-" + _cuenta.idCuenta));
+                        _plataformaCuentas = new List<PlataformaCuenta>();
+                        foreach (var _plataformaCuenta in plataformaCuentas)
+                        {
+                            _plataformaCuentas.Add(new PlataformaCuenta()
+                            {
+                                idPlataformaCuenta = _plataformaCuenta.idPlataformaCuenta,
+                                idPlataforma = _plataformaCuenta.idPlataforma,
+                                idCuenta = _plataformaCuenta.idCuenta,
+                                fechaPago = _plataformaCuenta.fechaPago,
+                                clave = _plataformaCuenta.clave,
+                                usuariosdisponibles = _plataformaCuenta.usuariosdisponibles
+                            });
+                        }
+                        _cuenta.plataformaCuentas = _plataformaCuentas;
+                    }
+                    usuarioPlataformaCuentas = await _Repository_UPC.GetUsuarioPlataformaCuentasbyIdCuenta(_cuenta.idCuenta);
+                    if (usuarioPlataformaCuentas != null)
+                    {
+                        _cuenta.usuarioPlataformaCuentas = usuarioPlataformaCuentas;
                     }
                 }
-                _cuenta.plataformaCuentas = plataformaCuentas;
             }
             return cuentas;
         }
         #endregion
-        #region Metodos secundarios
+        #region Update
+        public async Task UpdateCuenta(CuentaDTO.Update_C cuenta)
+        {
+            List<PlataformaCuenta> plataformacuentasAgregarEliminar = new List<PlataformaCuenta>();
+            PlataformaCuenta plataformaCuentaTemporal;
+
+            Cuenta account = await GetCuentabyId(cuenta.idCuenta, true);
+            try
+            {
+                Globales.mensaje += await _commonRepository_C.UpdateObjeto(new Cuenta()
+                {
+                    idCuenta = account.idCuenta,
+                    diminutivo = cuenta.diminutivo,
+                    correo = cuenta.correo,
+                    plataformaCuentas = cuenta.plataformaCuentas,
+                    idEstado = account.idEstado
+                }, _context);
+
+                if (Globales.mensaje.Contains("CORRECTA"))
+                {
+                    foreach (var item in account.plataformaCuentas)
+                    {
+                        plataformaCuentaTemporal = cuenta.plataformaCuentas
+                            .Where(u => u.idPlataforma == item.idPlataforma && u.idCuenta == item.idCuenta)
+                            .Select(u => u).FirstOrDefault();
+                        if (plataformaCuentaTemporal == null)
+                        {
+                            plataformacuentasAgregarEliminar.Add(new PlataformaCuenta() //Eliminar
+                            {
+                                idPlataforma = item.idPlataforma
+                            });
+                        }
+                    }
+                    foreach (var item in plataformacuentasAgregarEliminar)
+                    {
+                        Globales.mensaje += Environment.NewLine;
+                        Globales.mensaje += await _Repository_PC.DeletePlataformaCuenta(item.idPlataformaCuenta);
+                    }
+                    plataformacuentasAgregarEliminar = new List<PlataformaCuenta>();
+                    foreach (var item in cuenta.plataformaCuentas)
+                    {
+                        plataformaCuentaTemporal = cuenta.plataformaCuentas
+                            .Where(u => u.idPlataforma == item.idPlataforma && u.idCuenta == item.idCuenta)
+                            .Select(u => u).FirstOrDefault();
+                        if (plataformaCuentaTemporal == null)
+                        {
+                            plataformacuentasAgregarEliminar.Add(new PlataformaCuenta() //Agregar
+                            {
+                                idPlataforma = item.idPlataforma
+                            });
+                        }
+                    }
+                    foreach (var item in plataformacuentasAgregarEliminar)
+                    {
+                        Globales.mensaje += Environment.NewLine;
+                        Globales.mensaje += await _Repository_PC.CreatePlataformaCuenta(new PlataformaCuentaDTO.Create_PC()
+                        {
+                            idPlataforma = item.idPlataforma,
+                            idCuenta = account.idCuenta,
+                            usuariosdisponibles = _Repository_P.GetPlataformabyId(item.idPlataforma, false).Result.numeroMaximoUsuarios
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Globales.mensaje += await _commonRepository_C.ExceptionMessage(new Cuenta()
+                {
+                    idCuenta = account.idCuenta,
+                    diminutivo = cuenta.diminutivo,
+                    correo = cuenta.correo,
+                    plataformaCuentas = cuenta.plataformaCuentas,
+                    idEstado = account.idEstado
+                }, "U");
+            }
+        }
+        public async Task DeactivateCuenta(CuentaDTO.Update_C cuenta)
+        {
+            Cuenta account = await GetCuentabyId(cuenta.idCuenta, false);
+            account.idEstado = 2;
+            try
+            {
+                Globales.mensaje = await _commonRepository_C.UpdateObjeto(account, _context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Globales.mensaje = await _commonRepository_C.ExceptionMessage(account, "U");
+            }
+        }
         #endregion
-        
+        #region Delete
+        public async Task DeleteCuenta(int id)
+        {
+            Cuenta account = await GetCuentabyId(id, false);
+            try
+            {
+                Globales.mensaje += await _commonRepository_C.DeleteObjeto(account, _context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Globales.mensaje += _commonRepository_C.ExceptionMessage(account, "D");
+            }
+        }
+        #endregion
     }
 }

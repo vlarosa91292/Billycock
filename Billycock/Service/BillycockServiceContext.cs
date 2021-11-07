@@ -1,14 +1,5 @@
 ﻿using Billycock.Models;
-using Billycock.Repositories.Utils;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Billycock.Data
 {
@@ -29,6 +20,7 @@ namespace Billycock.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            
         } 
     }
 }

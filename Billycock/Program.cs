@@ -12,6 +12,10 @@ namespace Api_Billycock
 {
     public class Program
     {
+        public static class Globales
+        {
+            public static string mensaje;
+        }
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();

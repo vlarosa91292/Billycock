@@ -1,8 +1,5 @@
 using Billycock.Data;
 using Billycock.Repositories.Interfaces;
-using Billycock.Repositories.Repositories;
-using Billycock.Repositories.Utils;
-using Billycock.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +11,8 @@ using System;
 using System.IO;
 using Microsoft.Data.SqlClient;
 using System.Reflection;
+using Billycock.Utils;
+using Billycock.Repositories.Repositories;
 
 namespace Billycock
 {
@@ -36,14 +35,15 @@ namespace Billycock
             if (Environment.GetEnvironmentVariable("Server") == "SERVER" || Environment.GetEnvironmentVariable("Server") == null)
             {
                 //PRODUCCION
-                /*Environment.SetEnvironmentVariable("Server", "tcp:billycockserver.database.windows.net,1433");
+                /*Environment.SetEnvironmentVariable("Server", "tcp:billycock-server.database.windows.net,1433");
                 Environment.SetEnvironmentVariable("UserId", "vlarosa");
                 Environment.SetEnvironmentVariable("Password", "Nayjuw+29");
                 Environment.SetEnvironmentVariable("Database_B", "Billycock_Produccion");
                 Environment.SetEnvironmentVariable("Database_H", "Hilario_Produccion");*/
 
                 //DESARROLLO
-                Environment.SetEnvironmentVariable("Server", "localhost");
+                //Environment.SetEnvironmentVariable("Server", "."); 
+                Environment.SetEnvironmentVariable("Server", ".");
                 Environment.SetEnvironmentVariable("UserId", "sa");
                 Environment.SetEnvironmentVariable("Password", "Nayjuw+29");
                 Environment.SetEnvironmentVariable("Database_B", "Billycock_Desarrollo");
@@ -65,6 +65,14 @@ namespace Billycock
                 Password = Environment.GetEnvironmentVariable("Password"),
                 ApplicationName = "Billycock"
             };
+            if(builder_B.DataSource == "Server" && builder_B.DataSource == "Server")
+            {
+                builder_B.MultipleActiveResultSets = true;
+                builder_B.PersistSecurityInfo = false;
+
+                builder_H.MultipleActiveResultSets = true;
+                builder_H.PersistSecurityInfo = false;
+            }
             if (builder_B.UserID != "sa" && builder_H.UserID != "sa")
             {
                 builder_B.MultipleActiveResultSets = true;
@@ -83,14 +91,20 @@ namespace Billycock
             services.AddDbContext<HilarioServiceContext>(options => options.UseSqlServer(builder_H.ConnectionString,
                 options => options.EnableRetryOnFailure()));
 
-            services.AddScoped<IEstadoRepository, EstadoRepository>();
-            services.AddScoped<IBaseDatosConexion, BaseDatosConexion>();
             services.AddScoped<ICuentaRepository, CuentaRepository>();
+            services.AddScoped<IEstadoRepository, EstadoRepository>();
+            services.AddScoped<IPlataformaCuentaRepository, PlataformaCuentaRepository>();
+            services.AddScoped<IPlataformaRepository, PlataformaRepository>();
+            services.AddScoped<IUsuarioPlataformaCuentaRepository, UsuarioPlataformaCuentaRepository>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped(typeof(ICommonRepository<>), typeof(CommonRepository<>));
-            services.AddScoped<IPlataformaRepository, PlataformaRepository>();
-            services.AddScoped<IPlataformaCuentaRepository, PlataformaCuentaRepository>();
-            services.AddScoped<IUsuarioPlataformaCuentaRepository, UsuarioPlataformaCuentaRepository>();
+
+            services.AddCors(options => options.AddPolicy("AllowWebApp",
+                            builder => builder
+                            .AllowAnyMethod()
+                            .AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .SetPreflightMaxAge(TimeSpan.FromSeconds(2520))));
 
             services.AddSwaggerGen(c =>
             {
@@ -108,6 +122,8 @@ namespace Billycock
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("AllowWebApp");
 
             app.UseHttpsRedirection();
 

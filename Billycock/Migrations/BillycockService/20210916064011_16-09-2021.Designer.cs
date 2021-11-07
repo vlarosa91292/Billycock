@@ -3,19 +3,21 @@ using Billycock.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Billycock.Migrations
 {
     [DbContext(typeof(BillycockServiceContext))]
-    partial class BillycockServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20210916064011_16-09-2021")]
+    partial class _16092021
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.7")
+                .HasAnnotation("ProductVersion", "5.0.9")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Billycock.Models.Cuenta", b =>
@@ -47,7 +49,7 @@ namespace Billycock.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("descripcion")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(20)");
 
                     b.HasKey("idEstado");
 
@@ -68,10 +70,10 @@ namespace Billycock.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("fecha")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("integracion")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(30)");
 
                     b.HasKey("idHistory");
 
@@ -84,6 +86,9 @@ namespace Billycock.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("costo")
+                        .HasColumnType("float");
 
                     b.Property<string>("descripcion")
                         .HasColumnType("varchar(50)");
@@ -108,7 +113,7 @@ namespace Billycock.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("clave")
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("varchar(30)");
 
                     b.Property<string>("fechaPago")
                         .HasColumnType("varchar(10)");
@@ -148,7 +153,7 @@ namespace Billycock.Migrations
                         .HasColumnType("varchar(10)");
 
                     b.Property<string>("fechaInscripcion")
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(20)");
 
                     b.Property<int>("idEstado")
                         .HasColumnType("int");
@@ -157,7 +162,7 @@ namespace Billycock.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("pin")
-                        .HasColumnType("varchar(4)");
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("idUsuario");
 

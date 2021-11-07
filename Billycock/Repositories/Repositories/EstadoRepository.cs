@@ -1,85 +1,63 @@
 ﻿using Billycock.Data;
+using Billycock.DTO;
 using Billycock.Models;
+using Billycock.Repositories.Interfaces;
+using Billycock.Utils;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Billycock.Repositories.Interfaces;
-using Billycock.Utils;
+using static Api_Billycock.Program;
 
 namespace Billycock.Repositories.Repositories
 {
-    public class EstadoRepository:IEstadoRepository
+    public class EstadoRepository: IEstadoRepository
     {
+        private readonly ICommonRepository<Estado> _commonRepository_E;
         private readonly BillycockServiceContext _context;
-        private readonly ICommonRepository<Estado> _commonRepository;
-        public EstadoRepository(BillycockServiceContext context, ICommonRepository<Estado> commonRepository)
+        public EstadoRepository(BillycockServiceContext context, ICommonRepository<Estado> commonRepository_E)
         {
             _context = context;
-            _commonRepository = commonRepository;
+            _commonRepository_E = commonRepository_E;
+            Globales.mensaje = string.Empty;
         }
-        #region Metodos Principales
-        public async Task<string> DeleteEstado(Estado estado)
+        #region Create
+        public async Task<string> CreateEstado(EstadoDTO.Create_E estado)
         {
-            Estado state = await GetEstadobyId(estado.idEstado);
             try
             {
-                return await _commonRepository.DeleteObjeto(estado,new Estado()
+                return await _commonRepository_E.InsertObjeto(new Estado()
                 {
-                    idEstado = state.idEstado,
                     descripcion = estado.descripcion
-                },_context);
+                }, _context);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return _commonRepository.ExceptionMessage(estado, "D");
-            }
-        }
-        public async Task<string> InsertEstado(Estado estado)
-        {
-            try
-            {
-                return await _commonRepository.InsertObjeto(estado,new Estado()
+                return await _commonRepository_E.ExceptionMessage(new Estado()
                 {
                     descripcion = estado.descripcion
-                },_context);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return _commonRepository.ExceptionMessage(estado, "C");
+                }, "C");
             }
         }
-        public async Task<string> UpdateEstado(Estado estado)
-        {
-            Estado account = await GetEstadobyId(estado.idEstado);
-            try
-            {
-                return await _commonRepository.UpdateObjeto(estado,new Estado()
-                {
-                    idEstado = account.idEstado,
-                    descripcion = estado.descripcion
-                },_context);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return _commonRepository.ExceptionMessage(estado, "U");
-            }
-        }
+        #endregion
+        #region Read
         public async Task<List<Estado>> GetEstados()
         {
-            return await ObtenerEstados(1, "");
+            return await ObtenerEstados(1, null);
         }
         public async Task<Estado> GetEstadobyId(int? id)
         {
-            return (await ObtenerEstados(2, id.ToString()))[0];
+            List<Estado> estados = await ObtenerEstados(2, id.ToString());
+            if (estados.Count == 1) return estados[0];
+            else return null;
         }
         public async Task<Estado> GetEstadobyName(string name)
         {
-            return (await ObtenerEstados(3, name))[0];
+            List<Estado> estados = await ObtenerEstados(3, name);
+            if (estados.Count == 1) return estados[0];
+            else return null;
         }
         public async Task<bool> EstadoExists(int id)
         {
@@ -89,36 +67,74 @@ namespace Billycock.Repositories.Repositories
         {
             if (tipo == 1)
             {
-                return await (from c in _context.ESTADO
+                return await (from e in _context.ESTADO
                               select new Estado()
                               {
-                                  idEstado = c.idEstado,
-                                  descripcion = c.descripcion
+                                  idEstado = e.idEstado,
+                                  descripcion = e.descripcion
                               }).ToListAsync();
             }
             else if (tipo == 2)
             {
-                return await (from c in _context.ESTADO
-                              where c.idEstado == int.Parse(dato)
+                return await (from e in _context.ESTADO
+                              where e.idEstado == int.Parse(dato)
+                              orderby e.idEstado
                               select new Estado()
                               {
-                                  idEstado = c.idEstado,
-                                  descripcion = c.descripcion
+                                  idEstado = e.idEstado,
+                                  descripcion = e.descripcion
                               }).ToListAsync();
             }
             else
             {
-                return await (from c in _context.ESTADO
-                              where c.descripcion == dato
+                return await (from e in _context.ESTADO
+                              where e.descripcion == dato
+                              orderby e.idEstado
                               select new Estado()
                               {
-                                  idEstado = c.idEstado,
-                                  descripcion = c.descripcion
+                                  idEstado = e.idEstado,
+                                  descripcion = e.descripcion
                               }).ToListAsync();
             }
         }
         #endregion
-        #region Metodos Secundarios
+        #region Update
+        public async Task<string> UpdateEstado(Estado estado)
+        {
+            Estado account = await GetEstadobyId(estado.idEstado);
+            try
+            {
+                return await _commonRepository_E.UpdateObjeto(new Estado()
+                {
+                    idEstado = account.idEstado,
+                    descripcion = estado.descripcion
+                }, _context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return await _commonRepository_E.ExceptionMessage(new Estado()
+                {
+                    idEstado = account.idEstado,
+                    descripcion = estado.descripcion
+                }, "U");
+            }
+        }
+        #endregion
+        #region Delete
+        public async Task<string> DeleteEstado(int id)
+        {
+            Estado estado = await GetEstadobyId(id);
+            try
+            {
+                return await _commonRepository_E.DeleteObjeto(estado, _context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return await _commonRepository_E.ExceptionMessage(estado, "D");
+            }
+        }
         #endregion
     }
 }

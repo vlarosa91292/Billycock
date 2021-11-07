@@ -16,6 +16,7 @@ namespace Billycock.Models
         public string descripcion { get; set; }
         public int numeroMaximoUsuarios { get; set; }
         public double precio { get; set; }
+        public double costo { get; set; }
         [JsonIgnore]
         public int idEstado { get; set; }
         [JsonIgnore]

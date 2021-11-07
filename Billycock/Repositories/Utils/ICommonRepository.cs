@@ -8,10 +8,13 @@ namespace Billycock.Utils
 {
     public interface ICommonRepository<T> where T : class
     {
-        public Task<string> DeleteLogicoObjeto(T traker,T t, BillycockServiceContext context);
-        public Task<string> DeleteObjeto(T traker,T t, BillycockServiceContext context);
-        public Task<string> InsertObjeto(T traker,T t, BillycockServiceContext context);
-        public Task<string> UpdateObjeto(T traker,T t, BillycockServiceContext context);
-        public string ExceptionMessage(T t, string MessageType);
+        public Task<string> DeleteObjeto(T t, BillycockServiceContext context);
+        public Task<string> InsertObjeto(T t, BillycockServiceContext context);
+        public Task<string> UpdateObjeto(T t, BillycockServiceContext context);
+        public Task<string> ExceptionMessage(T t, string MessageType);
+        public string ObtenerFechaFacturacionUsuario();
+        public int reprocesoUsuario(int cuenta, double monto);
+        public string SetearFecha(DateTime fecha);
+        public string SetearFechaTiempo();
     }
 }

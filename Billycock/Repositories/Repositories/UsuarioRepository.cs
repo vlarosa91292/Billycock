@@ -1,427 +1,161 @@
-﻿﻿using Billycock.Data;
+﻿using Billycock.Data;
+using Billycock.DTO;
 using Billycock.Models;
+using Billycock.Repositories.Interfaces;
+using Billycock.Utils;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Billycock.Repositories.Interfaces;
-using Billycock.Utils;
-using Billycock.DTO;
+using static Api_Billycock.Program;
 
 namespace Billycock.Repositories.Repositories
 {
-    public class UsuarioRepository : IUsuarioRepository
+    public class UsuarioRepository:IUsuarioRepository
     {
         private readonly BillycockServiceContext _context;
-        private readonly ICommonRepository<Usuario> _commonRepository;
-        private readonly IPlataformaCuentaRepository _plataformaCuentaRepository;
-        private readonly IPlataformaRepository _plataformaRepository;
-        public UsuarioRepository(BillycockServiceContext context, ICommonRepository<Usuario> commonRepository,
-            IPlataformaCuentaRepository plataformaCuentaRepository, IPlataformaRepository plataformaRepository)
+        private readonly ICommonRepository<Usuario> _commonRepository_U;
+        private readonly IPlataformaRepository _Repository_P;
+        private readonly IPlataformaCuentaRepository _Repository_PC;
+        private readonly IUsuarioPlataformaCuentaRepository _Repository_UPC;
+        
+        public UsuarioRepository(BillycockServiceContext context, ICommonRepository<Usuario> commonRepository_U
+            ,IPlataformaRepository Repository_P, IPlataformaCuentaRepository Repository_PC
+            , IUsuarioPlataformaCuentaRepository Repository_UPC)
         {
             _context = context;
-            _commonRepository= commonRepository;
-            _plataformaCuentaRepository = plataformaCuentaRepository;
-            _plataformaRepository = plataformaRepository;
+            _commonRepository_U = commonRepository_U;
+            _Repository_P = Repository_P;
+            _Repository_PC = Repository_PC;
+            _Repository_UPC = Repository_UPC;
+            Globales.mensaje = string.Empty;
         }
-        #region Metodos Principales
-        public async Task<string> DeleteUsuario(UsuarioDTO usuario, string tipoSalida)
+        #region Create
+        public async Task CreateUsuario(UsuarioDTO.Create_U usuario)
         {
-            Usuario user = await GetUsuariobyId(usuario.idUsuario, tipoSalida);
             try
             {
-                return await _commonRepository.DeleteLogicoObjeto(usuario,new Usuario()
+                if(await GetUsuariobyName(usuario.descripcion,false) != null)
                 {
-                    idUsuario = user.idUsuario,
-                    descripcion = user.descripcion,
-                    idEstado = 2,
-                    fechaInscripcion = user.fechaInscripcion,
-                    facturacion = user.facturacion,
-                    pago = user.pago
-                },_context);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return _commonRepository.ExceptionMessage(usuario, "D");
-            }
-        }
-        public async Task<string> InsertUsuario(UsuarioDTO usuario)
-        {
-            List<UsuarioPlataformaCuenta> plataformasxusuario=new List<UsuarioPlataformaCuenta>();
-            List<PlataformaCuenta> plataformacuentasTemporal = new List<PlataformaCuenta>();
-            List<PlataformaCuenta> plataformacuentas = new List<PlataformaCuenta>();
-            PlataformaCuenta plataformacuenta = new PlataformaCuenta();
-            List<string> resultadonulo = new List<string>();
-            try
-            {
-                if (usuario.netflix > 0)plataformasxusuario.Add(new UsuarioPlataformaCuenta() {idPlataforma = 1,cantidad = usuario.netflix });
-                if (usuario.amazon > 0) plataformasxusuario.Add(new UsuarioPlataformaCuenta() { idPlataforma = 2, cantidad = usuario.amazon });
-                if (usuario.disney > 0) plataformasxusuario.Add(new UsuarioPlataformaCuenta() { idPlataforma = 3, cantidad = usuario.disney });
-                if (usuario.hbo > 0) plataformasxusuario.Add(new UsuarioPlataformaCuenta() { idPlataforma = 4, cantidad = usuario.hbo });
-                if (usuario.youtube > 0) plataformasxusuario.Add(new UsuarioPlataformaCuenta() { idPlataforma = 5, cantidad = usuario.youtube });
-                if (usuario.spotify > 0) plataformasxusuario.Add(new UsuarioPlataformaCuenta() { idPlataforma = 6, cantidad = usuario.spotify });
-                foreach (var item in plataformasxusuario)
+                    Globales.mensaje = "Ya existe un usuario con ese nombre";
+                }
+                else
                 {
-                    plataformacuentas = new List<PlataformaCuenta>();
-                    plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentaDisponible(item.idPlataforma, item.cantidad);
-                    if (plataformacuenta == null)
+                    if (await ValidarPlataformaCuentasDisponibles(usuario.usuarioPlataformaCuentas))
                     {
-                        for (int i = 0; i < item.cantidad; i++)
+                        Globales.mensaje += await _commonRepository_U.InsertObjeto(new Usuario()
                         {
-                            plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentaDisponible(item.idPlataforma, 1);
-                            if (plataformacuenta != null)
-                            {
-                                plataformacuentas.Add(plataformacuenta);
+                            descripcion = usuario.descripcion,
+                            idEstado = usuario.idEstado,
+                            fechaInscripcion = _commonRepository_U.SetearFechaTiempo(),
+                            facturacion = _commonRepository_U.ObtenerFechaFacturacionUsuario(),
+                            pago = await ObtenerMontoPagoUsuario(usuario.usuarioPlataformaCuentas)
+                        }, _context);
 
-                                plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentabyIds(plataformacuenta.idPlataforma.ToString() + "-"+plataformacuenta.idCuenta.ToString());
-
-                                await _plataformaCuentaRepository.UpdatePlataformaCuenta(new PlataformaCuentaDTO()
-                                {
-                                    idCuenta = plataformacuenta.idCuenta,
-                                    idPlataforma = plataformacuenta.idPlataforma,
-                                    fechaPago = plataformacuenta.fechaPago,
-                                    usuariosdisponibles = plataformacuenta.usuariosdisponibles - 1
-                                });
-                            }
-                        }
-                        if (item.cantidad > plataformacuentas.Count)
-                        {
-                            resultadonulo.Add(item.cantidad + "-" + (_plataformaRepository.GetPlataformabyId(item.idPlataforma)).Result.descripcion);
-
-                            foreach (var pfc in plataformacuentas)
-                            {
-                                plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentabyIds(pfc.idPlataforma.ToString() + "-"+pfc.idCuenta.ToString());
-
-                                await _plataformaCuentaRepository.InsertPlataformaCuenta(new PlataformaCuentaDTO()
-                                {
-                                    idCuenta = plataformacuenta.idCuenta,
-                                    idPlataforma = plataformacuenta.idPlataforma,
-                                    fechaPago = plataformacuenta.fechaPago,
-                                    usuariosdisponibles = plataformacuenta.usuariosdisponibles + 1
-                                });
-                            }
-                        }
-                    }
-                    else
-                    {
-                        plataformacuentas.Add(plataformacuenta);
-
-                        plataformacuenta = await _plataformaCuentaRepository.GetPlataformaCuentabyIds(plataformacuenta.idPlataforma.ToString() + "-"+plataformacuenta.idCuenta.ToString());
-
-                        await _plataformaCuentaRepository.InsertPlataformaCuenta(new PlataformaCuentaDTO()
-                        {
-                            idCuenta = plataformacuenta.idCuenta,
-                            idPlataforma = plataformacuenta.idPlataforma,
-                            fechaPago = plataformacuenta.fechaPago,
-                            usuariosdisponibles = plataformacuenta.usuariosdisponibles - item.cantidad
-                        });
+                        await ObteneryReservarPlataformaCuentas(usuario.usuarioPlataformaCuentas, usuario.descripcion);
                     }
                 }
-                if (resultadonulo.Count != 0)
-                {
-                    string mensaje = "NO HAY SUFICIENTES USUARIOS DISPONIBLES: " + Environment.NewLine;
-                    for (int i = 0; i < resultadonulo.Count; i++)
-                    {
-                        mensaje += resultadonulo[i];
-                        if (i < resultadonulo.Count - 1) mensaje += Environment.NewLine;
-                    }
-                    return mensaje;
-                }
-                return await _commonRepository.InsertObjeto(usuario,new Usuario()
-                {
-                    descripcion = usuario.descripcion,
-                    //fechaInscripcion = DateTime.Now,
-                    idEstado = 1,
-                    facturacion = ObtenerFechaFacturacion(),
-                    pago = await ObtenerMontoPagoAsync(plataformasxusuario)
-                },_context);
-                //plataformacuentasTemporal = plataformacuentas.GroupBy(x => x.idPlataformaCuenta)
-                //                    .Select(group => group.First()).ToList();
-
-                //foreach (var plataformasxusuario in usuario.plataformasxusuario)
-                //{
-                //    for (int i = 0; i < plataformacuentasTemporal.Count; i++)
-                //    {
-                //        user = await GetUsuariobyName(usuario.descripcion);
-                //        await _context.UsuarioPlataformaCuenta.AddAsync(new UsuarioPlataformaCuenta()
-                //        {
-                //            idUsuario = user.idUsuario,
-                //            idPlataforma = plataformasxusuario.idPlataforma,
-                //            cantidad = plataformasxusuario.cantidad,
-                //            idCuenta = plataformacuentasTemporal[i].idCuenta
-                //        });
-                //        await Save();
-                //    }
-                //}
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return _commonRepository.ExceptionMessage(usuario, "C");
-            }
-        }
-        public async Task<string> UpdateUsuario(UsuarioDTO usuario, string tipoSalida)
-        {
-            Usuario user = await GetUsuariobyId(usuario.idUsuario, tipoSalida);
-            try
-            {
-                return await _commonRepository.UpdateObjeto(usuario,new Usuario()
+                Globales.mensaje += await _commonRepository_U.ExceptionMessage(new Usuario()
                 {
-                    idUsuario = user.idUsuario,
                     descripcion = usuario.descripcion,
+                    contacto = usuario.contacto,
                     idEstado = usuario.idEstado,
-                    fechaInscripcion = user.fechaInscripcion,
-                    facturacion = usuario.facturacion,
-                    pago = usuario.pago
-                },_context);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return _commonRepository.ExceptionMessage(usuario,"U");
+                    pin = usuario.pin,
+                    usuarioPlataformaCuentas = usuario.usuarioPlataformaCuentas
+                }, "C");
             }
         }
-        public async Task<List<UsuarioDTO>> GetUsuarios(string tipoSalida)
+        #endregion
+        #region Read
+        public async Task<List<UsuarioDTO.Read_U>> GetUsuarios(bool complemento)
         {
-            return await ObtenerUsuarios(1, "", tipoSalida);
+            return await ObtenerUsuarios(1, null, complemento);
         }
-        public async Task<UsuarioDTO> GetUsuariobyId(int? id,string tipoSalida)
+        public async Task<UsuarioDTO.Read_U> GetUsuariobyId(int? id, bool complemento)
         {
-            return (await ObtenerUsuarios(2, id.ToString(), tipoSalida))[0];
+            List<UsuarioDTO.Read_U> usuarios = await ObtenerUsuarios(2, id.ToString(), complemento);
+            if (usuarios.Count == 1) return usuarios[0];
+            else return null;
         }
-        public async Task<UsuarioDTO> GetUsuariobyName(string name, string tipoSalida)
+        public async Task<UsuarioDTO.Read_U> GetUsuariobyName(string name, bool complemento)
         {
-            return (await ObtenerUsuarios(3, name, tipoSalida))[0];
+            List<UsuarioDTO.Read_U> usuarios = await ObtenerUsuarios(3, name, complemento);
+            if (usuarios.Count == 1) return usuarios[0];
+            else return null;
         }
         public async Task<bool> UsuarioExists(int id)
         {
             return await _context.USUARIO.AnyAsync(e => e.idUsuario == id);
         }
-        public async Task<List<UsuarioDTO>> ObtenerUsuarios(int tipo, string dato,string tipoSalida)
+        public async Task<List<UsuarioDTO.Read_U>> ObtenerUsuarios(int tipo, string dato, bool complemento)
         {
-            List<UsuarioDTO> usuarios = new List<UsuarioDTO>();
+            List<UsuarioDTO.Read_U> usuarios = new List<UsuarioDTO.Read_U>();
+            List<UsuarioPlataformaCuenta> usuarioPlataformaCuentas = new List<UsuarioPlataformaCuenta>();
+            UsuarioPlataformaCuenta usuarioPlataformaCuenta = new UsuarioPlataformaCuenta();
             try
             {
                 if (tipo == 1)
                 {
-                    if(tipoSalida == "WEB")
-                    {
-                        usuarios = await (from u in _context.USUARIO
-                                          select new UsuarioDTO()
-                                          {
-                                              idUsuario = u.idUsuario,
-                                              descripcion = u.descripcion,
-                                              fechaInscripcion = u.fechaInscripcion,
-                                              idEstado = u.idEstado,
-                                              descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
-                                              facturacion = u.facturacion,
-                                              //usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
-                                              //                            where up.idUsuario == u.idUsuario
-                                              //                      orderby up.idUsuario
-                                              //                      select new UsuarioPlataformaCuenta()
-                                              //                      {
-                                              //                          idUsuario = up.idUsuario,
-                                              //                          idPlataforma = up.idPlataforma,
-                                              //                          descPlataforma = (from p in _context.PLATAFORMA
-                                              //                                            where p.idPlataforma == up.idPlataforma
-                                              //                                            select p.descripcion).FirstOrDefault(),
-                                              //                          cantidad = up.cantidad,
-                                              //                          idCuenta = up.idCuenta,
-                                              //                          credencial = (from c in _context.CUENTA
-                                              //                                        where c.idCuenta == up.idCuenta
-                                              //                                        select new UsuarioPlataformaCuenta.Credencial()
-                                              //                                        {
-                                              //                                            usuario = c.descripcion,
-                                              //                                            clave = c.password
-                                              //                                        }).FirstOrDefault()
-                                              //                      }).ToList(),
-                                              pago = u.pago
-                                          }).ToListAsync();
-                    }
-                    else
-                    {
-                        usuarios = await (from u in _context.USUARIO
-                                      where u.idEstado != 2
-                                      select new UsuarioDTO()
+                    usuarios = await (from u in _context.USUARIO
+                                      orderby u.idUsuario
+                                      select new UsuarioDTO.Read_U()
                                       {
                                           idUsuario = u.idUsuario,
                                           descripcion = u.descripcion,
                                           fechaInscripcion = u.fechaInscripcion,
                                           idEstado = u.idEstado,
-                                          descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
                                           facturacion = u.facturacion,
-                                          //usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
-                                          //                       where up.idUsuario == u.idUsuario
-                                          //                       orderby up.idUsuario
-                                          //                       select new UsuarioPlataformaCuenta()
-                                          //                       {
-                                          //                           idUsuario = up.idUsuario,
-                                          //                           idPlataforma = up.idPlataforma,
-                                          //                           descPlataforma = (from p in _context.PLATAFORMA
-                                          //                                             where p.idPlataforma == up.idPlataforma
-                                          //                                             select p.descripcion).FirstOrDefault(),
-                                          //                           cantidad = up.cantidad,
-                                          //                           idCuenta = up.idCuenta,
-                                          //                           credencial = (from c in _context.CUENTA
-                                          //                                         where c.idCuenta == up.idCuenta
-                                          //                                         select new UsuarioPlataformaCuenta.Credencial()
-                                          //                                         {
-                                          //                                             usuario = c.descripcion,
-                                          //                                             clave = c.password
-                                          //                                         }).FirstOrDefault()
-                                          //                       }).ToList(),
                                           pago = u.pago
                                       }).ToListAsync();
-                    }
+
                 }
                 else if (tipo == 2)
                 {
-                    if (tipoSalida == "WEB")
-                    {
-                        usuarios = await (from u in _context.USUARIO
-                                          where u.idUsuario == int.Parse(dato)
-                                          select new UsuarioDTO()
-                                          {
-                                              idUsuario = u.idUsuario,
-                                              descripcion = u.descripcion,
-                                              fechaInscripcion = u.fechaInscripcion,
-                                              idEstado = u.idEstado,
-                                              descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
-                                              facturacion = u.facturacion,
-                                              //usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
-                                              //                      where up.idUsuario == u.idUsuario
-                                              //                      orderby up.idUsuario
-                                              //                      select new UsuarioPlataformaCuenta()
-                                              //                      {
-                                              //                          idUsuario = up.idUsuario,
-                                              //                          idPlataforma = up.idPlataforma,
-                                              //                          descPlataforma = (from p in _context.PLATAFORMA
-                                              //                                            where p.idPlataforma == up.idPlataforma
-                                              //                                            select p.descripcion).FirstOrDefault(),
-                                              //                          cantidad = up.cantidad,
-                                              //                          idCuenta = up.idCuenta,
-                                              //                          credencial = (from c in _context.CUENTA
-                                              //                                        where c.idCuenta == up.idCuenta
-                                              //                                        select new UsuarioPlataformaCuenta.Credencial()
-                                              //                                        {
-                                              //                                            usuario = c.descripcion,
-                                              //                                            clave = c.password
-                                              //                                        }).FirstOrDefault()
-                                              //                      }).ToList(),
-                                              pago = u.pago
-                                          }).ToListAsync();
-                    }
-                    else
-                    {
-                        usuarios = await (from u in _context.USUARIO
-                                  where u.idEstado != 2 && u.idUsuario == int.Parse(dato)
-                                  select new UsuarioDTO()
-                                  {
-                                      idUsuario = u.idUsuario,
-                                      descripcion = u.descripcion,
-                                      fechaInscripcion = u.fechaInscripcion,
-                                      idEstado = u.idEstado,
-                                      descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
-                                      facturacion = u.facturacion,
-                                      //usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
-                                      //                       where up.idUsuario == u.idUsuario
-                                      //                       orderby up.idUsuario
-                                      //                       select new UsuarioPlataformaCuenta()
-                                      //                       {
-                                      //                           idUsuario = up.idUsuario,
-                                      //                           idPlataforma = up.idPlataforma,
-                                      //                           descPlataforma = (from p in _context.PLATAFORMA
-                                      //                                             where p.idPlataforma == up.idPlataforma
-                                      //                                             select p.descripcion).FirstOrDefault(),
-                                      //                           cantidad = up.cantidad,
-                                      //                           idCuenta = up.idCuenta,
-                                      //                           credencial = (from c in _context.CUENTA
-                                      //                                         where c.idCuenta == up.idCuenta
-                                      //                                         select new UsuarioPlataformaCuenta.Credencial()
-                                      //                                         {
-                                      //                                             usuario = c.descripcion,
-                                      //                                             clave = c.password
-                                      //                                         }).FirstOrDefault()
-                                      //                       }).ToList(),
-                                      pago = u.pago
-                                  }).ToListAsync();
-                    }
+                    usuarios = await (from u in _context.USUARIO
+                                      where u.idUsuario == int.Parse(dato)
+                                      orderby u.idUsuario
+                                      select new UsuarioDTO.Read_U()
+                                      {
+                                          idUsuario = u.idUsuario,
+                                          descripcion = u.descripcion,
+                                          fechaInscripcion = u.fechaInscripcion,
+                                          idEstado = u.idEstado,
+                                          facturacion = u.facturacion,
+                                          pago = u.pago
+                                      }).ToListAsync();
+
                 }
                 else
                 {
-                    if (tipoSalida == "WEB")
-                    {
-                        usuarios = await (from u in _context.USUARIO
-                                          where u.descripcion == dato
-                                          select new UsuarioDTO()
-                                          {
-                                              idUsuario = u.idUsuario,
-                                              descripcion = u.descripcion,
-                                              fechaInscripcion = u.fechaInscripcion,
-                                              idEstado = u.idEstado,
-                                              descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
-                                              facturacion = u.facturacion,
-                                              //usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
-                                              //                      where up.idUsuario == u.idUsuario
-                                              //                      orderby up.idUsuario
-                                              //                      select new UsuarioPlataformaCuenta()
-                                              //                      {
-                                              //                          idUsuario = up.idUsuario,
-                                              //                          idPlataforma = up.idPlataforma,
-                                              //                          descPlataforma = (from p in _context.PLATAFORMA
-                                              //                                            where p.idPlataforma == up.idPlataforma
-                                              //                                            select p.descripcion).FirstOrDefault(),
-                                              //                          cantidad = up.cantidad,
-                                              //                          idCuenta = up.idCuenta,
-                                              //                          credencial = (from c in _context.CUENTA
-                                              //                                        where c.idCuenta == up.idCuenta
-                                              //                                        select new UsuarioPlataformaCuenta.Credencial()
-                                              //                                        {
-                                              //                                            usuario = c.descripcion,
-                                              //                                            clave = c.password
-                                              //                                        }).FirstOrDefault()
-                                              //                      }).ToList(),
-                                              pago = u.pago
-                                          }).ToListAsync();
-                    }
-                    else
-                    {
-                        usuarios = await (from u in _context.USUARIO
-                                  where u.idEstado != 2 && u.descripcion == dato
-                                  select new UsuarioDTO()
-                                  {
-                                      idUsuario = u.idUsuario,
-                                      descripcion = u.descripcion,
-                                      fechaInscripcion = u.fechaInscripcion,
-                                      idEstado = u.idEstado,
-                                      descEstado = (from e in _context.ESTADO where e.idEstado == u.idEstado select e.descripcion).FirstOrDefault(),
-                                      facturacion = u.facturacion,
-                                      //usuarioPlataformacuentas = (from up in _context.USUARIOPLATAFORMACUENTA
-                                      //                       where up.idUsuario == u.idUsuario
-                                      //                       orderby up.idUsuario
-                                      //                       select new UsuarioPlataformaCuenta()
-                                      //                       {
-                                      //                           idUsuario = up.idUsuario,
-                                      //                           idPlataforma = up.idPlataforma,
-                                      //                           descPlataforma = (from p in _context.PLATAFORMA
-                                      //                                             where p.idPlataforma == up.idPlataforma
-                                      //                                             select p.descripcion).FirstOrDefault(),
-                                      //                           cantidad = up.cantidad,
-                                      //                           idCuenta = up.idCuenta,
-                                      //                           credencial = (from c in _context.CUENTA
-                                      //                                         where c.idCuenta == up.idCuenta
-                                      //                                         select new UsuarioPlataformaCuenta.Credencial()
-                                      //                                         {
-                                      //                                             usuario = c.descripcion,
-                                      //                                             clave = c.password
-                                      //                                         }).FirstOrDefault()
-                                      //                       }).ToList(),
-                                      pago = u.pago
-                                  }).ToListAsync();
+                    usuarios = await (from u in _context.USUARIO
+                                      where u.descripcion == dato
+                                      orderby u.idUsuario
+                                      select new UsuarioDTO.Read_U()
+                                      {
+                                          idUsuario = u.idUsuario,
+                                          descripcion = u.descripcion,
+                                          fechaInscripcion = u.fechaInscripcion,
+                                          idEstado = u.idEstado,
+                                          facturacion = u.facturacion,
+                                          pago = u.pago,
 
+                                      }).ToListAsync();
+
+                }
+                if (complemento)
+                {
+                    foreach (var _usuario in usuarios)
+                    {
+                        usuarioPlataformaCuentas = await _Repository_UPC.GetUsuarioPlataformaCuentasbyIdUsuario(_usuario.idUsuario);
+                        if (usuarioPlataformaCuentas != null)
+                        {
+                            _usuario.usuarioPlataformaCuentas = usuarioPlataformaCuentas;
+                        }
                     }
                 }
             }
@@ -433,61 +167,271 @@ namespace Billycock.Repositories.Repositories
             return usuarios;
         }
         #endregion
-        #region Metodos secundarios
-        private string ObtenerFechaFacturacion()
+        #region Update
+        public async Task UpdateUsuario(UsuarioDTO.Update_U usuario)
         {
-            DateTime fechaHoy = DateTime.Now;
-            bool QuincenaMes = fechaHoy.Day <= 15 ? true : false;
-            DateTime oPrimerDiaDelMes = new DateTime(fechaHoy.Year, fechaHoy.Month, 1);
-            if (fechaHoy.Month < 12)
+            try
             {
-                if (QuincenaMes)
+                UsuarioDTO.Read_U user = await GetUsuariobyId(usuario.idUsuario, true);
+                await CrearActualizarEliminarUsuarioPlataformaCuenta(new UsuarioDTO.Update_U()
                 {
-                    return new DateTime(fechaHoy.Year, fechaHoy.Month, 15).AddMonths(1).ToShortDateString();
-                }
-                else
+                    idUsuario = user.idUsuario,
+                    descripcion = user.descripcion,
+                    contacto = user.contacto,
+                    pin = user.pin,
+                    idEstado = user.idEstado,
+                    usuarioPlataformaCuentas = user.usuarioPlataformaCuentas
+                }, usuario);
+
+                if (Globales.mensaje != string.Empty) Globales.mensaje += Environment.NewLine;
+                Globales.mensaje += await _commonRepository_U.UpdateObjeto(new Usuario()
                 {
-                    return oPrimerDiaDelMes.AddMonths(2).AddDays(-1).ToShortDateString();
-                }
+                    idUsuario = user.idUsuario,
+                    descripcion = usuario.descripcion,
+                    idEstado = user.idEstado,
+                    fechaInscripcion = user.fechaInscripcion,
+                    facturacion = user.facturacion,
+                    pago = await ObtenerMontoPagoUsuario(usuario.usuarioPlataformaCuentas),
+                    pin = usuario.pin,
+                    contacto = usuario.contacto
+                }, _context);
             }
-            else
+            catch (Exception ex)
             {
-                if (QuincenaMes)
+                Console.WriteLine(ex.Message);
+                Globales.mensaje += _commonRepository_U.ExceptionMessage(new Usuario()
                 {
-                    return new DateTime(fechaHoy.Year, fechaHoy.Month, 15).AddMonths(1).ToShortDateString();
-                }
-                else
-                {
-                    return oPrimerDiaDelMes.AddMonths(2).AddDays(-1).ToShortDateString();
-                }
+                    idUsuario = usuario.idUsuario,
+                    descripcion = usuario.descripcion,
+                    contacto = usuario.contacto,
+                    idEstado = usuario.idEstado,
+                    pin = usuario.pin,
+                    usuarioPlataformaCuentas = usuario.usuarioPlataformaCuentas
+                }, "U");
             }
         }
-        private async Task<int> ObtenerMontoPagoAsync(List<UsuarioPlataformaCuenta> UsuarioPlataformaCuentas)
+        public async Task DeactivateUsuario(Usuario usuario)
         {
-            int pago = 0;
+            try
+            {
+                Usuario user = await GetUsuariobyId(usuario.idUsuario, true);
+                user.idEstado = 2;
+                Globales.mensaje += await _commonRepository_U.UpdateObjeto(user, _context);
+                foreach (var item in user.usuarioPlataformaCuentas)
+                {
+                    PlataformaCuenta plataformaCuenta = await _Repository_PC.GetPlataformaCuentabyIds(item.Plataforma+"-"+item.idCuenta);
+                    Globales.mensaje += await _Repository_PC.UpdatePlataformaCuenta(new PlataformaCuentaDTO.Update_PC()
+                    {
+                        idPlataformaCuenta = plataformaCuenta.idPlataformaCuenta,
+                        fechaPago = plataformaCuenta.fechaPago,
+                        clave = plataformaCuenta.clave,
+                        usuariosdisponibles = plataformaCuenta.usuariosdisponibles + item.cantidad
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Globales.mensaje += _commonRepository_U.ExceptionMessage(usuario, "U");
+            }
+        }
+        #endregion
+        #region Delete
+        public async Task DeleteUsuario(Usuario usuario)
+        {
+            try
+            {
+                Usuario user = await GetUsuariobyId(usuario.idUsuario, false);
+                user.idEstado = 2;
+                Globales.mensaje += await _commonRepository_U.DeleteObjeto(user, _context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Globales.mensaje += _commonRepository_U.ExceptionMessage(usuario, "D");
+            }
+        }
+        #endregion
+        #region  Extras
+        public async Task<int> ObtenerMontoPagoUsuario(List<UsuarioPlataformaCuenta> UsuarioPlataformaCuentas)
+        {
             double acumulado = 0;
+            Plataforma Plataforma;
             for (int i = 0; i < UsuarioPlataformaCuentas.Count; i++)
             {
-                acumulado += await _plataformaRepository.GetPricePlataforma(UsuarioPlataformaCuentas[i].idPlataforma) * UsuarioPlataformaCuentas[i].cantidad;
+                Plataforma = await _Repository_P.GetPlataformabyId(UsuarioPlataformaCuentas[i].idPlataforma, false);
+                if (UsuarioPlataformaCuentas[i].cantidad > 1 && UsuarioPlataformaCuentas[i].cantidad < 4) acumulado += Plataforma.precio * UsuarioPlataformaCuentas[i].cantidad * 0.875;
+                else acumulado += Plataforma.precio * UsuarioPlataformaCuentas[i].cantidad;
+            }
+            if (UsuarioPlataformaCuentas.Count >= 2) { acumulado = _commonRepository_U.reprocesoUsuario(UsuarioPlataformaCuentas.Count, acumulado); }
+            return (int)(acumulado);
+        }
+        public async Task CrearActualizarEliminarUsuarioPlataformaCuenta(UsuarioDTO.Update_U user, UsuarioDTO.Update_U usuario)
+        {
+            List<UsuarioPlataformaCuentaDTO.Create_UPC> usuarioplataformacuentasAgregar = new List<UsuarioPlataformaCuentaDTO.Create_UPC>();
+            List<PlataformaCuenta> plataformacuentasTotalitario = new List<PlataformaCuenta>();
+            List<UsuarioPlataformaCuentaDTO.Update_UPC> usuarioplataformacuentasActualizar = new List<UsuarioPlataformaCuentaDTO.Update_UPC>();
+            List<UsuarioPlataformaCuenta> usuarioplataformacuentasEliminar = new List<UsuarioPlataformaCuenta>();
+            UsuarioPlataformaCuenta usuarioPlataformaCuentaTemporal;
 
-                if (i == UsuarioPlataformaCuentas.Count - 1)
+            foreach (var item in usuario.usuarioPlataformaCuentas)
+            {
+                usuarioPlataformaCuentaTemporal = user.usuarioPlataformaCuentas.Where(u => u.idUsuario == item.idUsuario && u.idPlataforma == item.idPlataforma)
+                    .Select(u => u).FirstOrDefault();
+                if (usuarioPlataformaCuentaTemporal == null)
                 {
-                    if (UsuarioPlataformaCuentas[i].cantidad == 1 && UsuarioPlataformaCuentas.Count > 1) { pago = reproceso(1, UsuarioPlataformaCuentas.Count, acumulado); }
-                    else if (UsuarioPlataformaCuentas[i].cantidad > 1 && UsuarioPlataformaCuentas.Count == 1) { pago = reproceso(2, UsuarioPlataformaCuentas[i].cantidad, acumulado); }
-                    else pago = Convert.ToInt16(acumulado);
+                    usuarioplataformacuentasAgregar.Add(new UsuarioPlataformaCuentaDTO.Create_UPC()
+                    {
+                        idUsuario = usuario.idUsuario,
+                        idPlataforma = item.idPlataforma,
+                        cantidad = item.cantidad
+                    });
                 }
             }
-            return pago;
-        }
-        private int reproceso(int tipo, int? cuenta, double? monto)
-        {
-            if (tipo == 1)
+            foreach (var item in user.usuarioPlataformaCuentas)
             {
-                return (int)((monto / cuenta) * (cuenta * 0.9));
+                usuarioPlataformaCuentaTemporal = usuario.usuarioPlataformaCuentas
+                    .Where(u => u.idUsuario == item.idUsuario && u.idPlataforma == item.idPlataforma && u.idCuenta == item.idCuenta)
+                    .Select(u => u).FirstOrDefault();
+                if (usuarioPlataformaCuentaTemporal != null)
+                {
+                    if (usuarioPlataformaCuentaTemporal.cantidad != item.cantidad)
+                    {
+                        usuarioplataformacuentasActualizar.Add(new UsuarioPlataformaCuentaDTO.Update_UPC()
+                        {
+                            idUsuarioPlataformaCuenta = usuarioPlataformaCuentaTemporal.idUsuarioPlataformaCuenta,
+                            idPlataforma = usuarioPlataformaCuentaTemporal.idPlataforma,
+                            cantidad = item.cantidad - usuarioPlataformaCuentaTemporal.cantidad
+                        });
+                    }
+                }
+                else
+                {
+                    usuarioplataformacuentasEliminar.Add(new UsuarioPlataformaCuenta()
+                    {
+                        idUsuarioPlataformaCuenta = usuarioPlataformaCuentaTemporal.idUsuarioPlataformaCuenta
+                    });
+                }
+            }
+
+            foreach (var agregar in usuarioplataformacuentasAgregar)
+            {
+                if (await ValidarPlataformaCuentasDisponibles(new List<UsuarioPlataformaCuenta>() { new UsuarioPlataformaCuenta() {idPlataforma = agregar.idPlataforma,cantidad=agregar.cantidad} }))
+                {
+                    await ObteneryReservarPlataformaCuentas(new List<UsuarioPlataformaCuenta>() { new UsuarioPlataformaCuenta() { idPlataforma = agregar.idPlataforma, cantidad = agregar.cantidad }}, user.descripcion);
+                }
+                else return;
+            }
+            foreach (var actualizar in usuarioplataformacuentasActualizar)
+            {
+                if (actualizar.cantidad < 0)
+                {
+                    if (await ValidarPlataformaCuentasDisponibles(new List<UsuarioPlataformaCuenta>() { new UsuarioPlataformaCuenta() { idPlataforma = actualizar.idPlataforma, cantidad = actualizar.cantidad } }))
+                    {
+                        await ObteneryReservarPlataformaCuentas(new List<UsuarioPlataformaCuenta>() { new UsuarioPlataformaCuenta() { idPlataforma = actualizar.idPlataforma, cantidad = actualizar.cantidad } }, user.descripcion);
+                        if (Globales.mensaje != string.Empty) Globales.mensaje += Environment.NewLine;
+                        UsuarioPlataformaCuenta usuarioPlataformaCuenta = await _Repository_UPC.GetUsuarioPlataformaCuentabyIds(actualizar.idUsuarioPlataformaCuenta);
+                        usuarioPlataformaCuenta.cantidad -= actualizar.cantidad;
+                        Globales.mensaje += await _Repository_UPC.DeleteUsuarioPlataformaCuenta(actualizar.idUsuarioPlataformaCuenta);
+
+                        Globales.mensaje += await _Repository_UPC.InsertUsuarioPlataformaCuenta(new UsuarioPlataformaCuentaDTO.Create_UPC()
+                        {
+                            idUsuario = usuarioPlataformaCuenta.idUsuario,
+                            idPlataforma = usuarioPlataformaCuenta.idPlataforma,
+                            idCuenta = usuarioPlataformaCuenta.idCuenta,
+                            cantidad = usuarioPlataformaCuenta.cantidad
+                        });
+                    }
+                    else return;
+                }
+                else
+                {
+                    if (Globales.mensaje != string.Empty) Globales.mensaje += Environment.NewLine;
+                    UsuarioPlataformaCuenta usuarioPlataformaCuenta = await _Repository_UPC.GetUsuarioPlataformaCuentabyIds(actualizar.idUsuarioPlataformaCuenta);
+                    usuarioPlataformaCuenta.cantidad -= actualizar.cantidad;
+                    Globales.mensaje += await _Repository_UPC.DeleteUsuarioPlataformaCuenta(actualizar.idUsuarioPlataformaCuenta);
+
+                    Globales.mensaje += await _Repository_UPC.InsertUsuarioPlataformaCuenta(new UsuarioPlataformaCuentaDTO.Create_UPC()
+                    {
+                        idUsuario = usuarioPlataformaCuenta.idUsuario,
+                        idPlataforma = usuarioPlataformaCuenta.idPlataforma,
+                        idCuenta = usuarioPlataformaCuenta.idCuenta,
+                        cantidad = usuarioPlataformaCuenta.cantidad
+                    });
+                }
+            }
+            foreach (var eliminar in usuarioplataformacuentasEliminar)
+            {
+                if (Globales.mensaje != string.Empty) Globales.mensaje += Environment.NewLine;
+                Globales.mensaje += await _Repository_UPC.DeleteUsuarioPlataformaCuenta(eliminar.idUsuarioPlataformaCuenta);
+            }
+        }
+        public async Task<bool> ValidarPlataformaCuentasDisponibles(List<UsuarioPlataformaCuenta> usuarioplataformacuentasAgregar)
+        {
+            List<string> resultadonulo = new List<string>();
+
+            foreach (var item in usuarioplataformacuentasAgregar)
+            {
+                int usuariosdisponibles = _Repository_PC.GetPlataformaCuentasbyIdPlataforma(item.idPlataforma).Result.Sum(pc => pc.usuariosdisponibles);
+
+                if (usuariosdisponibles < item.cantidad) resultadonulo.Add(item.cantidad + "-" + (await _Repository_P.GetPlataformabyId(item.idPlataforma, false)).descripcion);
+            }
+            if (resultadonulo.Any())
+            {
+                if (Globales.mensaje != string.Empty) Globales.mensaje += Environment.NewLine;
+                Globales.mensaje += "NO HAY SUFICIENTES USUARIOS DISPONIBLES: ";
+
+                for (int i = 0; i < resultadonulo.Count; i++)
+                {
+                    Globales.mensaje += Environment.NewLine;
+                    Globales.mensaje += resultadonulo[i];
+                }
+
+                return false;
             }
             else
             {
-                return (int)(monto * 0.85);
+                return true;
+            }
+        }
+        public async Task ObteneryReservarPlataformaCuentas(List<UsuarioPlataformaCuenta> usuarioplataformacuentasAgregar,string descripcion)
+        {
+            PlataformaCuenta platformAccount;
+
+            Usuario user = await GetUsuariobyName(descripcion, false);
+            foreach (var item in usuarioplataformacuentasAgregar)
+            {
+                platformAccount = await _Repository_PC.GetPlataformaCuentaDisponible(item.idPlataforma, item.cantidad);
+                if (platformAccount == null)
+                {
+                    for (int i = 0; i < item.cantidad; i++)
+                    {
+                        platformAccount = new PlataformaCuenta();
+                        platformAccount = await _Repository_PC.GetPlataformaCuentaDisponible(item.idPlataforma, 1);
+                        if (platformAccount != null)
+                        {
+                            Globales.mensaje += Environment.NewLine;
+                            Globales.mensaje += await _Repository_UPC.InsertUsuarioPlataformaCuenta(new UsuarioPlataformaCuentaDTO.Create_UPC()
+                            {
+                                idUsuario = user.idUsuario,
+                                idPlataforma = item.idPlataforma,
+                                idCuenta = platformAccount.idCuenta,
+                                cantidad = 1
+                            });
+                        }
+                    }
+                }
+                else
+                {
+                    Globales.mensaje += Environment.NewLine;
+                    Globales.mensaje += await _Repository_UPC.InsertUsuarioPlataformaCuenta(new UsuarioPlataformaCuentaDTO.Create_UPC()
+                    {
+                        idUsuario = user.idUsuario,
+                        idPlataforma = item.idPlataforma,
+                        idCuenta = platformAccount.idCuenta,
+                        cantidad = item.cantidad
+                    });
+                }
             }
         }
         #endregion

@@ -1,17 +1,31 @@
 ﻿using Billycock.Models;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Billycock.DTO
 {
-    public class UsuarioDTO:Usuario
+    public class UsuarioDTO
     {
-        public int netflix { get; set; }
-        public int amazon { get; set; }
-        public int disney { get; set; }
-        public int hbo { get; set; }
-        public int youtube { get; set; }
-        public int spotify { get; set; }
-        [JsonIgnore]
-        public string descEstado { get; set; }
+        public class Create_U
+        {
+            public string descripcion { get; set; }
+            public int idEstado = 1;
+            public string pin { get; set; }
+            public string contacto { get; set; }
+            public List<UsuarioPlataformaCuenta> usuarioPlataformaCuentas { get; set; }
+        }
+        public class Read_U : Usuario
+        {
+            public string descEstado { get; set; }
+        }
+        public class Update_U
+        {
+            public int idUsuario { get; set; }
+            public string descripcion { get; set; }
+            public int idEstado { get; set; }
+            public string pin { get; set; }
+            public string contacto { get; set; }
+            public List<UsuarioPlataformaCuenta> usuarioPlataformaCuentas { get; set; }
+        }
     }
 }

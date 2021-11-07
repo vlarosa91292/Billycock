@@ -15,7 +15,7 @@ namespace Billycock.Models
         public int usuariosdisponibles { get; set; }
         [Column(TypeName = "varchar(10)")]
         public string fechaPago { get; set; }
-        [Column(TypeName = "varchar(20)")]
+        [Column(TypeName = "varchar(30)")]
         public string clave { get; set; }
         //PLATAFORMA
         [ForeignKey("Plataforma")]

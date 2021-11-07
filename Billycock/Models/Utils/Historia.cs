@@ -13,9 +13,9 @@ namespace Billycock.Models
         public int idHistory {get;set;}
         public string Request { get; set; }
         public string Response { get; set; }
-        [Column(TypeName = "varchar(50)")]
+        [Column(TypeName = "varchar(20)")]
         public string fecha { get; set; }
-        [Column(TypeName = "varchar(50)")]
+        [Column(TypeName = "varchar(30)")]
         public string integracion { get; set; }
     }
 }

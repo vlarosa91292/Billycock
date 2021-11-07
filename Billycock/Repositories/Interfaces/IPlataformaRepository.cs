@@ -9,14 +9,21 @@ namespace Billycock.Repositories.Interfaces
 {
     public interface IPlataformaRepository
     {
-        Task<List<PlataformaDTO>> GetPlataformas();
-        Task<PlataformaDTO> GetPlataformabyId(int? id);
-        Task<PlataformaDTO> GetPlataformabyName(string name);
-        //Operaciones Transaccionales
-        Task<string> InsertPlataforma(PlataformaDTO usuario);
-        Task<string> UpdatePlataforma(PlataformaDTO usuario);
-        Task<string> DeletePlataforma(PlataformaDTO usuario);
+        #region Create
+        Task CreatePlataforma(PlataformaDTO.Create_P usuario);
+        #endregion
+        #region Read
+        Task<List<PlataformaDTO.Read_P>> GetPlataformas(bool complemento);
+        Task<PlataformaDTO.Read_P> GetPlataformabyId(int? id, bool complemento);
+        Task<PlataformaDTO.Read_P> GetPlataformabyName(string name, bool complemento);
         Task<bool> PlataformaExists(int id);
-        Task<double> GetPricePlataforma(int id);
+        #endregion
+        #region Update
+        Task UpdatePlataforma(PlataformaDTO.Update_P usuario);
+        Task DeactivatePlataforma(PlataformaDTO.Update_P usuario);
+        #endregion
+        #region Delete
+        Task DeletePlataforma(int id);
+        #endregion
     }
 }

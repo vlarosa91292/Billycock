@@ -9,13 +9,21 @@ namespace Billycock.Repositories.Interfaces
 {
     public interface IUsuarioRepository
     {
-        Task<List<UsuarioDTO>> GetUsuarios(string tipoSalida);
-        Task<UsuarioDTO> GetUsuariobyId(int? id, string tipoSalida);
-        Task<UsuarioDTO> GetUsuariobyName(string name, string tipoSalida);
-        //Operaciones Transaccionales
-        Task<string> InsertUsuario(UsuarioDTO usuario);    
-        Task<string> UpdateUsuario(UsuarioDTO usuario, string tipoSalida);
-        Task<string> DeleteUsuario(UsuarioDTO usuario, string tipoSalida);
+        #region Create
+        Task CreateUsuario(UsuarioDTO.Create_U usuario);
+        #endregion
+        #region Read
+        Task<List<UsuarioDTO.Read_U>> GetUsuarios(bool complemento);
+        Task<UsuarioDTO.Read_U> GetUsuariobyId(int? id, bool complemento);
+        Task<UsuarioDTO.Read_U> GetUsuariobyName(string name, bool complemento);
         Task<bool> UsuarioExists(int id);
+        #endregion
+        #region Update
+        Task UpdateUsuario(UsuarioDTO.Update_U usuario);
+        Task DeactivateUsuario(Usuario usuario);
+        #endregion
+        #region Delete
+        Task DeleteUsuario(Usuario usuario);
+        #endregion
     }
 }

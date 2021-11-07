@@ -1,99 +1,84 @@
 ﻿using Billycock.Data;
 using Billycock.Models;
-using Billycock.Repositories.Interfaces;
 using Billycock.Utils;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using static Api_Billycock.Program;
 
 namespace Billycock.Repositories.Repositories
 {
     public class CommonRepository<T> : ICommonRepository<T> where T : class
     {
+        private readonly BillycockServiceContext _context;
+        public CommonRepository(BillycockServiceContext context)
+        {
+            _context = context;
+        }
         public async Task Save(BillycockServiceContext _context)
         {
             await _context.SaveChangesAsync();
         }
-        public async Task<string> DeleteLogicoObjeto(T tracker,T t, BillycockServiceContext _context)
+        public async Task<string> DeleteObjeto(T t, BillycockServiceContext _context)
         {
-            string mensaje = "Eliminacion XXX de " + t.GetType().Name;
+            Globales.mensaje = "Eliminacion XXX de " + t.GetType().Name.Replace("DTO","");
             try
             {
-                _context.Entry(tracker).State = EntityState.Detached; 
-                _context.Update(t);
+                _context.Entry(t).State = EntityState.Deleted;
                 await Save(_context);
-                mensaje = mensaje.Replace("XXX","Correcta").ToUpper();
+                _context.Entry(t).State = EntityState.Detached;
+                Globales.mensaje = Globales.mensaje.Replace("XXX", "Correcta").ToUpper();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                mensaje = mensaje.Replace("XXX", "Incorrecta").ToUpper();
+                Globales.mensaje = Globales.mensaje.Replace("XXX", "Incorrecta").ToUpper();
             }
-            await InsertHistory(t, mensaje,_context);
-            return mensaje;
+            await InsertHistory(t, Globales.mensaje);
+            return Globales.mensaje;
         }
-        public async Task<string> DeleteObjeto(T tracker, T t, BillycockServiceContext _context)
+        public async Task<string> InsertObjeto(T t, BillycockServiceContext _context)
         {
-            string mensaje = "Eliminacion XXX de " + t.GetType().Name;
+            Globales.mensaje = "Creacion XXX de " + t.GetType().Name.Replace("DTO","");
             try
             {
-                _context.Entry(tracker).State = EntityState.Detached;
-                _context.Remove(t);
+                _context.Entry(t).State = EntityState.Added;
                 await Save(_context);
-                mensaje = mensaje.Replace("XXX", "Correcta").ToUpper();
+                _context.Entry(t).State = EntityState.Detached;
+                Globales.mensaje = Globales.mensaje.Replace("XXX", "Correcta").ToUpper();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                mensaje = mensaje.Replace("XXX", "Incorrecta").ToUpper();
+                Globales.mensaje = Globales.mensaje.Replace("XXX", "Incorrecta").ToUpper();
             }
-            await InsertHistory(t, mensaje, _context);
-            return mensaje;
+            await InsertHistory(t, Globales.mensaje);
+            return Globales.mensaje;
         }
-        public async Task<string> InsertObjeto(T tracker, T t, BillycockServiceContext _context)
+        public async Task<string> UpdateObjeto(T t, BillycockServiceContext _context)
         {
-            string mensaje = "Creacion XXX de " + t.GetType().Name;
+            Globales.mensaje = ("Actualizacion XXX de " + t.GetType().Name.Replace("DTO","")).ToUpper();
             try
             {
-                _context.Entry(tracker).State = EntityState.Detached;
-                await _context.AddAsync(t);
-
+                _context.Entry(t).State = EntityState.Modified;
                 await Save(_context);
-
-                mensaje = mensaje.Replace("XXX", "Correcta").ToUpper();
+                _context.Entry(t).State = EntityState.Detached;
+                Globales.mensaje = Globales.mensaje.Replace("XXX", "Correcta").ToUpper();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                mensaje = mensaje.Replace("XXX", "Incorrecta").ToUpper();
+                Globales.mensaje = Globales.mensaje.Replace("XXX", "Incorrecta").ToUpper();
             }
-            await InsertHistory(t, mensaje, _context);
-            return mensaje;
+            await InsertHistory(t, Globales.mensaje);
+            return Globales.mensaje;
         }
-        public async Task<string> UpdateObjeto(T tracker, T t, BillycockServiceContext _context)
+        public async Task<string> ExceptionMessage(T t, string MessageType)
         {
-            string mensaje = ("Actualizacion XXX de " + t.GetType().Name).ToUpper();
-            try
-            {
-                _context.Entry(tracker).State = EntityState.Detached;
-                _context.Update(t);
-                await Save(_context);
-
-                mensaje = mensaje.Replace("XXX", "Correcta").ToUpper();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                mensaje = mensaje.Replace("XXX", "Incorrecta").ToUpper();
-            }
-            await InsertHistory(t, mensaje, _context);
-            return mensaje;
-        }
-        public string ExceptionMessage(T t, string MessageType)
-        {
-            string message = "ERROR EN @PROCESO@ DE "+ t.GetType().Name.ToUpper() + "-SERVER";
+            string message = "ERROR EN @PROCESO@ DE "+ t.GetType().Name.ToUpper().Replace("DTO","") + "-SERVER";
             if (MessageType == "C")
             {
                 message = message.Replace("@PROCESO@", "CREACION");
@@ -106,24 +91,67 @@ namespace Billycock.Repositories.Repositories
             {
                 message = message.Replace("@PROCESO@", "ELIMINACION");
             }
+            await InsertHistory(t, message);
             return message;
         }
-        public async Task InsertHistory(T t, string response, BillycockServiceContext _context)
+        public async Task InsertHistory(T t, string response)
         {
             try
             {
-                await _context.AddAsync(new Historia()
+                _context.Entry(new Historia()
                 {
                     Request = JsonConvert.SerializeObject(t),
                     Response = response,
-                    //fecha = DateTime.Now
-                });
+                    fecha = SetearFechaTiempo()
+                }).State = EntityState.Added;
                 await Save(_context);
+                _context.Entry(t).State = EntityState.Detached;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+        public string ObtenerFechaFacturacionUsuario()
+        {
+            DateTime fechaHoy = DateTime.Now;
+            bool QuincenaMes = fechaHoy.Day <= 15 ? true : false;
+            DateTime oPrimerDiaDelMes = new DateTime(fechaHoy.Year, fechaHoy.Month, 1);
+
+            if (fechaHoy.Month < 12)
+            {
+                if (QuincenaMes)
+                {
+                    return SetearFecha(new DateTime(fechaHoy.Year, fechaHoy.Month, 15).AddMonths(1));
+                }
+                else
+                {
+                    return SetearFecha(oPrimerDiaDelMes.AddMonths(2).AddDays(-1));
+                }
+            }
+            else
+            {
+                if (QuincenaMes)
+                {
+                    return SetearFecha(new DateTime(fechaHoy.Year, fechaHoy.Month, 15).AddMonths(1));
+                }
+                else
+                {
+                    return SetearFecha(oPrimerDiaDelMes.AddMonths(2).AddDays(-1));
+                }
+            }
+        }        
+        public int reprocesoUsuario(int cuenta, double monto)
+        {
+            return (int)(monto * 0.9);
+        }
+        public string SetearFecha(DateTime fecha)
+        {
+            return fecha.ToString("dd'/'MM'/'yyyy");
+        }
+        public string SetearFechaTiempo()
+        {
+            return DateTime.Now.ToString("dd'/'MM'/'yyyy HH:mm:ss");
         }
     }
 }
